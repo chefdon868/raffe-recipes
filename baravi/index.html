@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baravi Snack Bar — Recipe Cards</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:#e8e4de;min-height:100vh}
+
+/* HEADER */
+.header{background:#1a2d4a;padding:0}
+.header-inner{max-width:1000px;margin:0 auto;padding:28px 24px;display:flex;justify-content:space-between;align-items:flex-end}
+.back{font-size:11px;font-weight:600;color:rgba(255,255,255,.45);text-decoration:none;letter-spacing:.08em;text-transform:uppercase}
+.back:hover{color:#f0a500}
+.header-title{text-align:right}
+.property{font-size:10px;font-weight:600;letter-spacing:.15em;color:#f0a500;text-transform:uppercase;margin-bottom:4px}
+.outlet{font-size:32px;font-weight:900;color:#fff;line-height:1;letter-spacing:-.01em}
+.header-bar{height:3px;background:#f0a500}
+
+/* HERO STRIP */
+.hero-strip{background:#1a2d4a;padding:0 24px 28px}
+.hero-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.hero-desc{font-size:14px;color:rgba(255,255,255,.55);max-width:480px;line-height:1.6}
+.hero-stats{display:flex;gap:24px;flex-shrink:0}
+.hstat{text-align:center}
+.hstat-v{font-size:22px;font-weight:800;color:#f0a500;display:block}
+.hstat-l{font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4)}
+
+/* SECTION */
+.section{max-width:1000px;margin:0 auto;padding:32px 24px}
+.section-label{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#999;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #d8d4ce}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+
+/* CARD */
+.recipe-card{background:#fff;border-radius:4px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.1);text-decoration:none;display:block;transition:transform .15s ease,box-shadow .15s ease}
+.recipe-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,0.16)}
+.card-img{height:160px;background-size:cover;background-position:center;position:relative}
+.card-img-ov{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(15,28,50,.1) 0%,rgba(15,28,50,.7) 100%)}
+.card-code{position:absolute;top:10px;right:10px;background:#f0a500;color:#1a1a1a;font-size:10px;font-weight:800;letter-spacing:.06em;padding:4px 10px;border-radius:3px}
+.card-cat{position:absolute;bottom:10px;left:12px;font-size:9px;font-weight:600;letter-spacing:.15em;color:rgba(255,255,255,.7);text-transform:uppercase}
+.card-body{padding:14px 16px 16px}
+.card-name{font-size:16px;font-weight:800;color:#1a2d4a;margin-bottom:5px;line-height:1.2}
+.card-desc{font-size:12px;color:#666;line-height:1.5;margin-bottom:12px}
+.card-footer{display:flex;justify-content:space-between;align-items:center}
+.card-price{font-size:15px;font-weight:800;color:#1a2d4a}
+.card-allergens{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.abadge{font-size:9px;font-weight:700;padding:3px 7px;border-radius:2px;text-transform:uppercase;background:#c0392b;color:#fff}
+.card-link{font-size:10px;font-weight:700;color:#f0a500;letter-spacing:.06em;text-transform:uppercase;margin-top:10px;display:block}
+
+/* FOOTER */
+.footer{background:#1a2d4a;margin-top:48px;padding:18px 24px;text-align:center}
+.footer-text{font-size:10px;font-weight:500;letter-spacing:.1em;color:rgba(255,255,255,.4);text-transform:uppercase}
+.footer-rev{font-size:10px;font-weight:600;color:#f0a500;margin-top:4px;letter-spacing:.06em}
+
+@media(max-width:640px){
+  .outlet{font-size:24px}
+  .hero-inner{flex-direction:column;align-items:flex-start;gap:16px}
+  .hero-stats{gap:16px}
+  .grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <a class="back" href="../">← All Outlets</a>
+    <div class="header-title">
+      <div class="property">Plantation Island Resort</div>
+      <div class="outlet">Baravi Snack Bar</div>
+    </div>
+  </div>
+</div>
+<div class="header-bar"></div>
+
+<div class="hero-strip">
+  <div class="hero-inner">
+    <div class="hero-desc">Beachside snack bar serving stone-baked 12" pizzas. All bases are Bakels, baked at 280°C. Recipe cards below are the kitchen reference standard — follow quantities and method exactly.</div>
+    <div class="hero-stats">
+      <div class="hstat"><span class="hstat-v">8</span><span class="hstat-l">Pizzas</span></div>
+      <div class="hstat"><span class="hstat-v">280°C</span><span class="hstat-l">Oven Temp</span></div>
+      <div class="hstat"><span class="hstat-v">12"</span><span class="hstat-l">Base Size</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Pizza Menu — Recipe Cards</div>
+  <div class="grid">
+
+    <!-- BAR-P-001 Margherita -->
+    <a class="recipe-card" href="margherita-pizza.html">
+      <div class="card-img" style="background-image:url('https://raw.githubusercontent.com/chefdon868/raffe-recipes/main/images/bar-p-001-margaherita.jpg')">
+        <div class="card-img-ov"></div>
+        <div class="card-code">BAR-P-001</div>
+        <div class="card-cat">Classic</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Margherita Pizza</div>
+        <div class="card-desc">Fresh tomato napolitana, mozzarella, fresh basil, EVOO</div>
+        <div class="card-footer">
+          <div class="card-price">$35 FJD</div>
+          <div class="card-allergens"><span class="abadge">Gluten</span><span class="abadge">Dairy</span></div>
+        </div>
+      </div>
+    </a>
+
+    <!-- BAR-P-002 Hawaiian -->
+    <a class="recipe-card" href="hawaiian-pizza.html">
+      <div class="card-img" style="background-image:url('https://raw.githubusercontent.com/chefdan868/raffe-recipes/main/images/bar-p-002-hawaiian.jpg')">
+        <div class="card-img-ov"></div>
+        <div class="card-code">BAR-P-002</div>
+        <div class="card-cat">Classic</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Hawaiian Pizza</div>
+        <div class="card-desc">Champagne ham, pineapple, mozzarella, tomato base</div>
+        <div class="card-footer">
+          <div class="card-price">$42 FJD</div>
+          <div class="card-allergens"><span class="abadge">Gluten</span><span class="abadge">Dairy</span></div>
+        </div>
+      </div>
+    </a>
+
+    <!-- BAR-P-003 Pork Belly -->
+    <a class="recipe-card" href="pork-belly-pizza.html">
+      <div class="card-img" style="background-image:url('https://raw.githubusercontent.com/chefdan868/raffe-recipes/main/images/bar-p-003-pork-belly.jpg')">
+        <div class="card-img-ov"></div>
+        <div class="card-code">BAR-P-003</div>
+        <div class="card-cat">Signature</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Pork Belly Pizza</div>
+        <div class="card-desc">Hoisin pork belly, tomato base, mozzarella, spring onion</div>
+        <div class="card-footer">
+          <div class="card-price">$42 FJD</div>
+          <div class="card-allergens"><span class="abadge">Gluten</span><span class="abadge">Dairy</span><span class="abadge">Soy</span></div>
+        </div>
+      </div>
+    </a>
+
+    <!-- BAR-P-004 Veggie Delight -->
+    <a class="recipe-card" href="veggie-delight-pizza.html">
+      <div class="card-img" style="background-image:url('https://raw.githubusercontent.com/chefdan868/raffe-recipes/main/images/bar-p-004-veggie-delight.jpg')">
+        <div class="card-img-ov"></div>
+        <div class="card-code">BAR-P-004</div>
+        <div class="card-cat">Vegetarian</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Veggie Delight Pizza</div>
+        <div class="card-desc">Zucchini, onion, mushrooms, capsicum, olives, mozzarella</div>
+        <div class="card-footer">
+          <div class="card-price">$44 FJD</div>
+          <div class="card-allergens"><span class="abadge">Gluten</span><span class="abadge">Dairy</span></div>
+        </div>
+      </div>
+    </a>
+
+    <!-- BAR-P-005 BBQ Chicken -->
+    <a class="recipe-card" href="bbq-chicken-pizza.html">
+      <div class="card-img" style="background-image:url('https://raw.githubusercontent.com/chefdan868/raffe-recipes/main/images/bar-p-005-bbq-chicken.jpg')">
+        <div class="card-img-ov"></div>
+        <div class="card-code">BAR-P-005</div>
+        <div class="card-cat">Chicken</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">BBQ Chicken Pizza</div>
+        <div class="card-desc">Grilled chicken, onion, capsicum, mushroom, BBQ swirl</div>
+        <div class="card-footer">
+          <div class="card-price">$45 FJD</div>
+          <div class="card-allergens"><span class="abadge">Gluten</span><span class="abadge">Dairy</span></div>
+        </div>
+      </div>
+    </a>
+
+    <!-- BAR-P-006 Garlic Prawn -->
+    <a class="recipe-card" href="garlic-prawn-pizza.html">
+      <div class="card-img" style="background-image:url('https://raw.githubusercontent.com/chefdan868/raffe-recipes/main/images/bar-p-006-garlic-prawn.jpg')">
+        <div class="card-img-ov"></div>
+        <div class="card-code">BAR-P-006</div>
+        <div class="card-cat">Seafood</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Garlic Prawn Pizza</div>
+        <div class="card-desc">Garlic prawns, capsicum, mozzarella, chilli mayo drizzle</div>
+        <div class="card-footer">
+          <div class="card-price">$45 FJD</div>
+          <div class="card-allergens"><span class="abadge">Gluten</span><span class="abadge">Dairy</span><span class="abadge">Egg</span><span class="abadge">Shellfish</span></div>
+        </div>
+      </div>
+    </a>
+
+    <!-- BAR-P-007 Meat Lovers -->
+    <a class="recipe-card" href="meat-lovers-pizza.html">
+      <div class="card-img" style="background-image:url('https://raw.githubusercontent.com/chefdan868/raffe-recipes/main/images/bar-p-007-meat-lovers.jpg')">
+        <div class="card-img-ov"></div>
+        <div class="card-code">BAR-P-007</div>
+        <div class="card-cat">Meat</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Meat Lovers Pizza</div>
+        <div class="card-desc">Ham, pepperoni, sausage, bacon, mozzarella, tomato base</div>
+        <div class="card-footer">
+          <div class="card-price">$45 FJD</div>
+          <div class="card-allergens"><span class="abadge">Gluten</span><span class="abadge">Dairy</span></div>
+        </div>
+      </div>
+    </a>
+
+    <!-- BAR-P-008 Sriracha Chicken -->
+    <a class="recipe-card" href="sriracha-chicken-pizza.html">
+      <div class="card-img" style="background-image:url('https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=800&q=80')">
+        <div class="card-img-ov"></div>
+        <div class="card-code">BAR-P-008</div>
+        <div class="card-cat">Spicy</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Sriracha Chicken Pizza</div>
+        <div class="card-desc">Chicken, capsicum, red onion, mozzarella, sriracha drizzle</div>
+        <div class="card-footer">
+          <div class="card-price">$45 FJD</div>
+          <div class="card-allergens"><span class="abadge">Gluten</span><span class="abadge">Dairy</span></div>
+        </div>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<div class="footer">
+  <div class="footer-text">Plantation Island Resort · Baravi Snack Bar · Raffe Hotels &amp; Resorts</div>
+  <div class="footer-rev">Chef D. Christie · Rev 1.0 · Feb 2026</div>
+</div>
+
+</body>
+</html>
