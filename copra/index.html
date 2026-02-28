@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Copra Restaurant — Recipes</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:#0f1c32;min-height:100vh;color:#fff}
+.nav{display:flex;justify-content:space-between;align-items:center;padding:20px 40px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.back{font-size:12px;font-weight:600;color:rgba(255,255,255,0.4);text-decoration:none;letter-spacing:.06em;transition:color .2s}
+.back:hover{color:#f0a500}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.dot{width:7px;height:7px;background:#f0a500;border-radius:50%}
+.nb{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.hdr{padding:48px 40px 40px;max-width:1100px;margin:0 auto;border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:40px}
+.bc{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#f0a500;margin-bottom:12px}
+h1{font-size:44px;font-weight:900;letter-spacing:-.02em;margin-bottom:6px}
+.sub{font-size:14px;color:rgba(255,255,255,0.4)}
+.grid{max-width:1100px;margin:0 auto;padding:0 40px 60px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:6px;overflow:hidden;text-decoration:none;color:inherit;display:block;transition:all .2s}
+.card:hover{border-color:rgba(240,165,0,0.3);transform:translateY(-2px)}
+.img{height:160px;background-size:cover;background-position:center;position:relative}
+.img-ov{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 30%,rgba(15,28,50,0.85))}
+.badge{position:absolute;top:10px;right:10px;background:#f0a500;color:#1a1a1a;font-size:9px;font-weight:800;letter-spacing:.08em;padding:4px 8px;border-radius:2px}
+.body{padding:18px}
+.outlet{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#f0a500;margin-bottom:6px}
+.name{font-size:16px;font-weight:800;margin-bottom:4px;line-height:1.2}
+.meta{font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:10px}
+.tags{display:flex;gap:4px;flex-wrap:wrap}
+.tag{font-size:9px;font-weight:700;padding:2px 6px;border-radius:2px;background:rgba(192,57,43,0.2);color:#e74c3c;border:1px solid rgba(192,57,43,0.3)}
+.tag.may{background:rgba(230,126,34,0.15);color:#e67e22;border-color:rgba(230,126,34,0.3)}
+footer{border-top:1px solid rgba(255,255,255,0.06);padding:24px 40px;display:flex;justify-content:space-between}
+.ft{font-size:11px;color:rgba(255,255,255,0.2)}
+.fv{font-size:11px;color:rgba(240,165,0,0.5);font-weight:600}
+@media(max-width:768px){.nav,.hdr,.grid{padding-left:20px;padding-right:20px}h1{font-size:30px}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a class="back" href="../">← All Outlets</a>
+  <div class="nav-brand"><div class="dot"></div><span class="nb">Raffe Hotels &amp; Resorts</span></div>
+</nav>
+<div class="hdr">
+  <div class="bc">Plantation Island Resort</div>
+  <h1>Copra Restaurant</h1>
+  <p class="sub">Full-service dining · All-day menu · Recipes v1.0</p>
+</div>
+<div class="grid">
+  <a class="card" href="./sweet-smoked-pork-ribs/">
+    <div class="img" style="background-image:url('https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=70')">
+      <div class="img-ov"></div>
+      <div class="badge">COP-P-001</div>
+    </div>
+    <div class="body">
+      <div class="outlet">Pork · Smoked</div>
+      <div class="name">Sweet Smoked Pork Ribs</div>
+      <div class="meta">10 portions · 20 min prep · 6 hrs smoke</div>
+      <div class="tags">
+        <span class="tag">Dairy</span>
+        <span class="tag">Mustard</span>
+        <span class="tag may">⚠ Gluten</span>
+        <span class="tag may">⚠ SO₂</span>
+      </div>
+    </div>
+  </a>
+</div>
+<footer>
+  <span class="ft">Raffe Hotels &amp; Resorts · Copra Restaurant · Confidential</span>
+  <span class="fv">v1.0 · Feb 2026</span>
+</footer>
+</body>
+</html>

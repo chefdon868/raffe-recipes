@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raffe Hotels & Resorts — Recipe Library</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #0f1c32;
+    min-height: 100vh;
+    color: #fff;
+  }
+
+  /* NAV */
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .nav-dot {
+    width: 8px; height: 8px;
+    background: #f0a500;
+    border-radius: 50%;
+  }
+
+  .nav-name {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #fff;
+  }
+
+  .nav-sub {
+    font-size: 11px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 1px;
+  }
+
+  .nav-meta {
+    font-size: 11px;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 0.06em;
+  }
+
+  /* HERO */
+  .hero {
+    padding: 64px 40px 48px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .hero-eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #f0a500;
+    margin-bottom: 16px;
+  }
+
+  .hero-title {
+    font-size: 52px;
+    font-weight: 900;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+
+  .hero-title span { color: #f0a500; }
+
+  .hero-desc {
+    font-size: 15px;
+    color: rgba(255,255,255,0.5);
+    max-width: 520px;
+    line-height: 1.6;
+  }
+
+  /* STATS ROW */
+  .stats-row {
+    display: flex;
+    gap: 0;
+    max-width: 1100px;
+    margin: 0 auto 48px;
+    padding: 0 40px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .stat-item {
+    padding: 20px 40px 20px 0;
+    margin-right: 40px;
+    border-right: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .stat-item:last-child { border-right: none; }
+
+  .stat-num {
+    font-size: 28px;
+    font-weight: 900;
+    color: #f0a500;
+    display: block;
+  }
+
+  .stat-lbl {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-top: 2px;
+  }
+
+  /* OUTLETS GRID */
+  .section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px 60px;
+  }
+
+  .section-header {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .outlets-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .outlet-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    padding: 24px;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+    display: block;
+    cursor: pointer;
+  }
+
+  .outlet-card:hover {
+    background: rgba(240,165,0,0.06);
+    border-color: rgba(240,165,0,0.3);
+    transform: translateY(-2px);
+  }
+
+  .outlet-property {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 8px;
+  }
+
+  .outlet-name {
+    font-size: 18px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .outlet-type {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 20px;
+  }
+
+  .outlet-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 16px;
+  }
+
+  .recipe-count {
+    font-size: 22px;
+    font-weight: 900;
+    color: #f0a500;
+  }
+
+  .recipe-count-label {
+    font-size: 10px;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .outlet-arrow {
+    width: 32px; height: 32px;
+    background: rgba(240,165,0,0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #f0a500;
+    transition: background 0.2s;
+  }
+
+  .outlet-card:hover .outlet-arrow {
+    background: rgba(240,165,0,0.25);
+  }
+
+  /* RECENT RECIPES */
+  .recent-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .recipe-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 6px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s, transform 0.15s;
+    display: block;
+  }
+
+  .recipe-card:hover {
+    border-color: rgba(240,165,0,0.25);
+    transform: translateY(-2px);
+  }
+
+  .recipe-card-image {
+    height: 140px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+
+  .recipe-card-image-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 40%, rgba(15,28,50,0.85));
+  }
+
+  .recipe-card-badge {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: #f0a500;
+    color: #1a1a1a;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    padding: 4px 8px;
+    border-radius: 2px;
+  }
+
+  .recipe-card-body {
+    padding: 16px;
+  }
+
+  .recipe-card-outlet {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #f0a500;
+    margin-bottom: 6px;
+  }
+
+  .recipe-card-name {
+    font-size: 15px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 4px;
+    line-height: 1.2;
+  }
+
+  .recipe-card-meta {
+    font-size: 11px;
+    color: rgba(255,255,255,0.35);
+  }
+
+  .allergen-mini {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  .allergen-mini-badge {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 2px;
+    background: rgba(192,57,43,0.2);
+    color: #e74c3c;
+    border: 1px solid rgba(192,57,43,0.3);
+  }
+
+  .allergen-mini-badge.may {
+    background: rgba(230,126,34,0.15);
+    color: #e67e22;
+    border-color: rgba(230,126,34,0.3);
+  }
+
+  /* FOOTER */
+  .footer {
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 24px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-text {
+    font-size: 11px;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 0.08em;
+  }
+
+  .footer-version {
+    font-size: 11px;
+    color: rgba(240,165,0,0.5);
+    font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
+    .nav { padding: 16px 20px; }
+    .hero { padding: 40px 20px 32px; }
+    .hero-title { font-size: 32px; }
+    .stats-row { padding: 0 20px; flex-wrap: wrap; }
+    .section { padding: 0 20px 40px; }
+    .outlets-grid { grid-template-columns: 1fr; }
+    .recent-grid { grid-template-columns: 1fr; }
+    .footer { padding: 20px; flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand">
+    <div class="nav-dot"></div>
+    <div>
+      <div class="nav-name">Raffe Hotels &amp; Resorts</div>
+      <div class="nav-sub">Recipe Library</div>
+    </div>
+  </div>
+  <div class="nav-meta">Plantation Island · Lomani · Fiji Gateway</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Group Executive Chef · Don Christie</div>
+  <h1 class="hero-title">Kitchen<br><span>Recipe Hub</span></h1>
+  <p class="hero-desc">Standardised, allergen-verified recipe cards for all Raffe properties. Scan any QR code in the kitchen to access the live version of any card.</p>
+</div>
+
+<!-- STATS -->
+<div class="stats-row">
+  <div class="stat-item">
+    <span class="stat-num">3</span>
+    <span class="stat-lbl">Properties</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num">5</span>
+    <span class="stat-lbl">Outlets</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num" id="total-recipes">1</span>
+    <span class="stat-lbl">Recipes Live</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num">14</span>
+    <span class="stat-lbl">Allergens Tracked</span>
+  </div>
+</div>
+
+<!-- OUTLETS -->
+<div class="section">
+  <div class="section-header">Outlets</div>
+  <div class="outlets-grid">
+
+    <a class="outlet-card" href="./copra/">
+      <div class="outlet-property">Plantation Island Resort</div>
+      <div class="outlet-name">Copra Restaurant</div>
+      <div class="outlet-type">Full-service dining · All-day</div>
+      <div class="outlet-footer">
+        <div>
+          <div class="recipe-count">1</div>
+          <div class="recipe-count-label">Recipes</div>
+        </div>
+        <div class="outlet-arrow">→</div>
+      </div>
+    </a>
+
+    <a class="outlet-card" href="./baravi/">
+      <div class="outlet-property">Plantation Island Resort</div>
+      <div class="outlet-name">Baravi Snack Bar</div>
+      <div class="outlet-type">Casual · Poolside</div>
+      <div class="outlet-footer">
+        <div>
+          <div class="recipe-count">0</div>
+          <div class="recipe-count-label">Recipes</div>
+        </div>
+        <div class="outlet-arrow">→</div>
+      </div>
+    </a>
+
+    <a class="outlet-card" href="./bowl/">
+      <div class="outlet-property">Plantation Island Resort</div>
+      <div class="outlet-name">Bowl Fresh Poke</div>
+      <div class="outlet-type">Casual · Health-focused · Poolside</div>
+      <div class="outlet-footer">
+        <div>
+          <div class="recipe-count">0</div>
+          <div class="recipe-count-label">Recipes</div>
+        </div>
+        <div class="outlet-arrow">→</div>
+      </div>
+    </a>
+
+    <a class="outlet-card" href="./lomani/">
+      <div class="outlet-property">Lomani Island Resort</div>
+      <div class="outlet-name">Lomani Restaurant</div>
+      <div class="outlet-type">Premium dining · Adults only</div>
+      <div class="outlet-footer">
+        <div>
+          <div class="recipe-count">0</div>
+          <div class="recipe-count-label">Recipes</div>
+        </div>
+        <div class="outlet-arrow">→</div>
+      </div>
+    </a>
+
+    <a class="outlet-card" href="./lomani/">
+      <div class="outlet-property">Lomani Island Resort</div>
+      <div class="outlet-name">Tavola Restaurant & Bar</div>
+      <div class="outlet-type">Casual dining · Bar</div>
+      <div class="outlet-footer">
+        <div>
+          <div class="recipe-count">0</div>
+          <div class="recipe-count-label">Recipes</div>
+        </div>
+        <div class="outlet-arrow">→</div>
+      </div>
+    </a>
+
+    <a class="outlet-card" href="./gateway/">
+      <div class="outlet-property">Fiji Gateway Hotel</div>
+      <div class="outlet-name">Gateway Restaurant</div>
+      <div class="outlet-type">Hotel dining · Buffet &amp; à la carte</div>
+      <div class="outlet-footer">
+        <div>
+          <div class="recipe-count">0</div>
+          <div class="recipe-count-label">Recipes</div>
+        </div>
+        <div class="outlet-arrow">→</div>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- RECENT RECIPES -->
+  <div class="section-header">Recently Added</div>
+  <div class="recent-grid">
+
+    <a class="recipe-card" href="./copra/sweet-smoked-pork-ribs/">
+      <div class="recipe-card-image" style="background-image: url('https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=70')">
+        <div class="recipe-card-image-overlay"></div>
+        <div class="recipe-card-badge">COP-P-001</div>
+      </div>
+      <div class="recipe-card-body">
+        <div class="recipe-card-outlet">Copra Restaurant</div>
+        <div class="recipe-card-name">Sweet Smoked Pork Ribs</div>
+        <div class="recipe-card-meta">10 portions · 6 hrs · 3-2-1 method</div>
+        <div class="allergen-mini">
+          <span class="allergen-mini-badge">Dairy</span>
+          <span class="allergen-mini-badge">Mustard</span>
+          <span class="allergen-mini-badge may">⚠ Gluten</span>
+        </div>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <span class="footer-text">Raffe Hotels &amp; Resorts · Group Executive Chef Office · Confidential</span>
+  <span class="footer-version">v1.0 · Feb 2026</span>
+</footer>
+
+</body>
+</html>
