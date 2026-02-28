@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Veggie Delight Pizza — Baravi Snack Bar</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:#e8e4de;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:32px 16px}
+.back-bar{width:100%;max-width:900px;margin-bottom:12px}
+.back{font-size:11px;font-weight:600;color:#666;text-decoration:none;letter-spacing:.06em}.back:hover{color:#1a2d4a}
+.card{background:#fff;width:100%;max-width:900px;border-radius:4px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.18)}
+.hero{position:relative;height:310px;background-image:url('https://raw.githubusercontent.com/chefdan868/raffe-recipes/main/images/bar-p-004-veggie-delight.jpg');background-size:cover;background-position:center 50%}
+.hero-ov{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(15,28,50,.35) 0%,rgba(15,28,50,.60) 50%,rgba(15,28,50,.93) 100%)}
+.hero-top{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;padding:18px 22px}
+.brand-badge{background:rgba(15,28,50,.78);border:1px solid rgba(255,255,255,.15);padding:8px 14px;display:flex;align-items:center;gap:10px;border-radius:3px}
+.bdot{width:7px;height:7px;background:#f0a500;border-radius:50%;flex-shrink:0}
+.btext{font-size:10px;font-weight:600;letter-spacing:.12em;color:#fff;text-transform:uppercase}
+.bsep{color:rgba(255,255,255,.35);margin:0 2px}.bolet{color:#f0a500;font-weight:700}
+.rcode{background:#f0a500;color:#1a1a1a;font-size:11px;font-weight:800;letter-spacing:.08em;padding:8px 14px;border-radius:3px}
+.hero-bot{position:absolute;bottom:0;left:0;right:0;padding:18px 28px 22px;display:flex;justify-content:space-between;align-items:flex-end}
+.cat{font-size:10px;font-weight:600;letter-spacing:.2em;color:#f0a500;text-transform:uppercase;margin-bottom:6px}
+.rname{font-size:40px;font-weight:900;color:#fff;line-height:1;letter-spacing:-.01em;margin-bottom:6px}
+.rtag{font-size:13px;color:rgba(255,255,255,.68);font-style:italic}
+.qr-box{background:rgba(255,255,255,.95);padding:10px;border-radius:4px;text-align:center;flex-shrink:0;margin-left:20px}
+.qr-box img{display:block;width:90px;height:90px}
+.qr-label{font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#1a2d4a;margin-top:5px}
+.stats{background:#1a2d4a;display:grid;grid-template-columns:repeat(6,1fr);border-bottom:3px solid #f0a500}
+.stat{padding:13px 8px;text-align:center;border-right:1px solid rgba(255,255,255,.1)}.stat:last-child{border-right:none}
+.sv{font-size:14px;font-weight:800;color:#f0a500;display:block;margin-bottom:2px}
+.sl{font-size:9px;font-weight:600;letter-spacing:.1em;color:rgba(255,255,255,.45);text-transform:uppercase}
+.body{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #e8e8e8}
+.col-l{border-right:1px solid #e8e8e8;padding:26px}.col-r{padding:26px}
+.slabel{font-size:9px;font-weight:700;letter-spacing:.2em;color:#f0a500;text-transform:uppercase;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #e8e8e8}
+.ilist{list-style:none}
+.irow{display:flex;align-items:baseline;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f0f0f0;gap:10px}.irow:last-child{border-bottom:none}
+.iname{font-size:13px;color:#1a1a1a;flex:1}.inote{font-size:11px;color:#aaa;font-style:italic}
+.iqty{font-size:13px;font-weight:700;color:#1a2d4a;white-space:nowrap;text-align:right;min-width:65px}
+.mlist{list-style:none}
+.mstep{display:flex;gap:11px;padding:7px 0;border-bottom:1px solid #f0f0f0;align-items:flex-start}.mstep:last-child{border-bottom:none}
+.mnum{width:23px;height:23px;background:#1a2d4a;color:#fff;font-size:11px;font-weight:700;border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.mtext{font-size:12.5px;line-height:1.55;color:#2a2a2a}.hl{color:#1a2d4a;font-weight:600}
+.bottom{display:grid;grid-template-columns:1fr 1fr 1fr;padding:18px 26px;border-bottom:1px solid #e8e8e8;background:#fafafa}
+.bc2{padding-right:22px}.bc2:not(:first-child){padding-left:22px;border-left:1px solid #e8e8e8;padding-right:0}
+.blbl{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#999;margin-bottom:5px}
+.btxt{font-size:12px;color:#2a2a2a;line-height:1.5}
+.arow{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.abadge{font-size:10px;font-weight:700;letter-spacing:.05em;padding:4px 10px;border-radius:3px;text-transform:uppercase;border:1.5px solid transparent}
+.ap{background:#c0392b;color:#fff}.am{background:#fff;color:#d35400;border-color:#e67e22}
+.vbadge{background:#2e7d32;color:#fff;font-size:9px;font-weight:700;padding:3px 8px;border-radius:3px;letter-spacing:.08em;text-transform:uppercase}
+.footer{background:#1a2d4a;padding:13px 26px;display:flex;justify-content:space-between;align-items:center}
+.fl{font-size:10px;font-weight:500;letter-spacing:.1em;color:rgba(255,255,255,.5);text-transform:uppercase}
+.fr{font-size:10px;font-weight:600;color:#f0a500;letter-spacing:.06em}
+@media print{body{background:#fff;padding:0}.card{box-shadow:none;border-radius:0}.hero{height:240px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.stats,.footer,.abadge,.mnum{-webkit-print-color-adjust:exact;print-color-adjust:exact}.back-bar{display:none}}
+@media(max-width:640px){.rname{font-size:28px}.hero{height:260px}.qr-box{display:none}.stats{grid-template-columns:repeat(3,1fr)}.body{grid-template-columns:1fr}.col-l{border-right:none;border-bottom:1px solid #e8e8e8}.bottom{grid-template-columns:1fr;gap:16px}.bc2:not(:first-child){border-left:none;border-top:1px solid #e8e8e8;padding-left:0;padding-top:16px}}
+</style>
+</head>
+<body>
+<div class="back-bar"><a class="back" href="../">← Baravi Snack Bar</a></div>
+<div class="card">
+  <div class="hero">
+    <div class="hero-ov"></div>
+    <div class="hero-top">
+      <div class="brand-badge"><div class="bdot"></div><span class="btext">Raffe Hotels &amp; Resorts <span class="bsep">·</span> <span class="bolet">Baravi Snack Bar</span></span></div>
+      <div class="rcode">BAR-P-004</div>
+    </div>
+    <div class="hero-bot">
+      <div>
+        <div class="cat">Pizza · Vegetarian <span class="vbadge">Vegetarian</span></div>
+        <div class="rname">Veggie Delight Pizza</div>
+        <div class="rtag">Zucchini, onion, mushrooms, capsicum, olives, mozzarella</div>
+      </div>
+      <div class="qr-box">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&color=1a2d4a&bgcolor=ffffff&data=https://raffe-recipes.pages.dev/baravi/veggie-delight-pizza/" alt="QR">
+        <div class="qr-label">Scan to view</div>
+      </div>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stat"><span class="sv">$44</span><span class="sl">Menu Price FJD</span></div>
+    <div class="stat"><span class="sv">1 × 12"</span><span class="sl">Yield / Portion</span></div>
+    <div class="stat"><span class="sv">5 min</span><span class="sl">Prep</span></div>
+    <div class="stat"><span class="sv">12–14 min</span><span class="sl">Bake</span></div>
+    <div class="stat"><span class="sv">6 slices</span><span class="sl">Serves</span></div>
+    <div class="stat"><span class="sv">280°C</span><span class="sl">Oven</span></div>
+  </div>
+  <div class="body">
+    <div class="col-l">
+      <div class="slabel">Ingredients — 1 × 12" Pizza</div>
+      <ul class="ilist">
+        <li class="irow"><span class="iname">Pizza base 12" (Bakels)</span><span class="iqty">1 base</span></li>
+        <li class="irow"><span class="iname">Tomato napolitana sauce</span><span class="iqty">120 g</span></li>
+        <li class="irow"><span class="iname">Mozzarella, shredded</span><span class="iqty">140 g</span></li>
+        <li class="irow"><span class="iname">Zucchini, thinly sliced</span><span class="iqty">40 g</span></li>
+        <li class="irow"><span class="iname">Onion, sliced</span><span class="iqty">30 g</span></li>
+        <li class="irow"><span class="iname">Mushrooms, sliced</span><span class="iqty">40 g</span></li>
+        <li class="irow"><span class="iname">Capsicum, sliced</span><span class="iqty">40 g</span></li>
+        <li class="irow"><span class="iname">Olives, sliced</span><span class="iqty">20 g</span></li>
+      </ul>
+    </div>
+    <div class="col-r">
+      <div class="slabel">Method</div>
+      <ol class="mlist">
+        <li class="mstep"><span class="mnum">1</span><span class="mtext"><span class="hl">Preheat:</span> Preheat pizza oven to 280°C.</span></li>
+        <li class="mstep"><span class="mnum">2</span><span class="mtext"><span class="hl">Sauce:</span> Spread tomato napolitana sauce leaving a 2 cm border.</span></li>
+        <li class="mstep"><span class="mnum">3</span><span class="mtext"><span class="hl">Cheese:</span> Scatter shredded mozzarella evenly over the base.</span></li>
+        <li class="mstep"><span class="mnum">4</span><span class="mtext"><span class="hl">Toppings:</span> Distribute zucchini, onion, mushrooms, capsicum and olives evenly over the cheese.</span></li>
+        <li class="mstep"><span class="mnum">5</span><span class="mtext"><span class="hl">Bake:</span> Bake 12–14 min until golden and vegetables are tender.</span></li>
+        <li class="mstep"><span class="mnum">6</span><span class="mtext"><span class="hl">Finish:</span> Slice into 6. Serve immediately.</span></li>
+      </ol>
+    </div>
+  </div>
+  <div class="bottom">
+    <div class="bc2"><div class="blbl">Plating Notes</div><div class="btxt">Colourful veg placement — spread evenly so each slice gets all varieties.</div></div>
+    <div class="bc2"><div class="blbl">Equipment</div><div class="btxt">Pizza oven · Peel · Cutter · Serving board</div></div>
+    <div class="bc2"><div class="blbl">Allergens</div><div class="arow"><span class="abadge ap">Gluten</span><span class="abadge ap">Dairy</span></div></div>
+  </div>
+  <div class="footer">
+    <span class="fl">Plantation Island Resort · Baravi Snack Bar</span>
+    <span class="fr">Chef D. Christie · Rev 1.0 · Feb 2026</span>
+  </div>
+</div>
+</body>
+</html>
