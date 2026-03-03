@@ -83,7 +83,7 @@
   .publish-final.show{display:block;}
   .publish-final a{color:#4caf50;font-size:13px;font-weight:700;word-break:break-all;}
   .publish-final .live-label{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#4caf50;margin-bottom:6px;}
-</style>
+
 </head>
 <body>
 <header>
@@ -1129,79 +1129,174 @@ function buildHero(d, o) {
   return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${d.name} — Hero Card</title>
 <style>
-  @media print { @page{size:A4 portrait;margin:0} body{margin:0;padding:0} .card{border-radius:0;box-shadow:none;width:210mm;min-height:297mm} }
+  @media print { @page{size:A4 portrait;margin:0} body{margin:0;padding:0} .card{border-radius:0;box-shadow:none;width:210mm;} }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#2a2a2a;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:16px;}
-  .card{width:100%;max-width:600px;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 8px 48px rgba(0,0,0,0.45);display:flex;flex-direction:column;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#1a1a1a;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:16px;}
+  .card{width:100%;max-width:560px;border-radius:12px;overflow:hidden;box-shadow:0 12px 60px rgba(0,0,0,0.6);}
 </style></head><body>
 <div class="card">
-  <div style="background:#1a2535;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
-    <div style="display:flex;align-items:center;gap:7px;">
-      <div style="width:7px;height:7px;border-radius:50%;background:#c9973a;"></div>
-      <span style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#fff;">${outlet}</span>
-    </div>
-    <div style="background:#c9973a;color:#1a2535;font-size:9px;font-weight:800;padding:3px 8px;border-radius:3px;letter-spacing:0.08em;">${code}</div>
-  </div>
-  <div style="position:relative;width:100%;padding-bottom:68%;flex-shrink:0;overflow:hidden;">
+
+  <!-- PHOTO + NAME -->
+  <div style="position:relative;width:100%;padding-bottom:100%;overflow:hidden;">
     ${photoBlock}
-    <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(15,25,35,0.97) 0%, rgba(15,25,35,0.55) 45%, transparent 100%);"></div>
-    <div style="position:absolute;bottom:0;left:0;right:0;padding:22px 22px 18px;">
-      <div style="font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#c9973a;margin-bottom:6px;">${d.cat} · ${service}</div>
-      <div style="font-size:36px;font-weight:900;color:#fff;line-height:1.05;letter-spacing:-0.01em;margin-bottom:8px;">${d.name}</div>
-      <div style="font-size:13px;color:rgba(255,255,255,0.75);font-style:italic;line-height:1.45;margin-bottom:10px;">${d.desc}</div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;">${dietBadges}</div>
+    <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(10,18,28,0.92) 0%, transparent 50%);"></div>
+    <!-- TOP BAR -->
+    <div style="position:absolute;top:0;left:0;right:0;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:6px;">
+        <div style="width:6px;height:6px;border-radius:50%;background:#c9973a;"></div>
+        <span style="font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#fff;">${outlet}</span>
+      </div>
+      <div style="background:#c9973a;color:#1a2535;font-size:9px;font-weight:900;padding:3px 9px;border-radius:3px;letter-spacing:0.1em;">${code}</div>
+    </div>
+    <!-- DISH NAME ONLY -->
+    <div style="position:absolute;bottom:0;left:0;right:0;padding:18px 18px 16px;">
+      <div style="font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#c9973a;margin-bottom:6px;">${d.cat} · ${service}</div>
+      <div style="font-size:36px;font-weight:900;color:#fff;line-height:1.05;letter-spacing:-0.02em;">${d.name}</div>
     </div>
   </div>
-  <div style="background:#1a2535;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
-    <div>
+
+  <!-- INFO BELOW PHOTO -->
+  <div style="background:#1a2535;">
+
+    <!-- Description + dietary -->
+    <div style="padding:14px 18px 12px;border-bottom:1px solid #2a3a50;">
+      <div style="font-size:13px;color:rgba(255,255,255,0.65);font-style:italic;line-height:1.5;margin-bottom:8px;">${d.desc}</div>
+      ${dietBadges ? `<div style="display:flex;flex-wrap:wrap;gap:5px;">${dietBadges}</div>` : ''}
+    </div>
+
+    <!-- Price row -->
+    <div style="padding:12px 18px;border-bottom:1px solid #2a3a50;display:flex;align-items:center;justify-content:space-between;">
       <div style="display:flex;align-items:baseline;gap:4px;">
-        <span style="font-size:34px;font-weight:900;color:#c9973a;line-height:1;">$${price}</span>
+        <span style="font-size:36px;font-weight:900;color:#c9973a;line-height:1;">$${price}</span>
         <span style="font-size:13px;font-weight:700;color:#c9973a;">FJD</span>
       </div>
-      <div style="font-size:8px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#556;margin-top:2px;">All prices include Fiji Government taxes</div>
-    </div>
-    <div style="text-align:right;">
-      <div style="font-size:18px;font-weight:700;color:#8899aa;">$${audPrice} AUD</div>
-      <div style="font-size:8px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#445;margin-top:2px;">Approx. AUD</div>
-    </div>
-  </div>
-  <div style="background:#fff;display:grid;grid-template-columns:1fr 1fr;flex-shrink:0;">
-    <div style="padding:12px 16px;border-right:1px solid #eee;border-bottom:1px solid #eee;">
-      <div style="font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#999;margin-bottom:4px;">Prep Time</div>
-      <div style="font-size:18px;font-weight:800;color:#1a2535;">${d.prepTime}</div>
-    </div>
-    <div style="padding:12px 16px;border-bottom:1px solid #eee;">
-      <div style="font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#999;margin-bottom:4px;">Cook Time</div>
-      <div style="font-size:18px;font-weight:800;color:#1a2535;">${d.cookTime}</div>
-    </div>
-    <div style="padding:12px 16px;border-right:1px solid #eee;">
-      <div style="font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#999;margin-bottom:4px;">Yield</div>
-      <div style="font-size:18px;font-weight:800;color:#1a2535;">${d.yield}</div>
-    </div>
-    <div style="padding:12px 16px;">
-      <div style="font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#999;margin-bottom:4px;">Base Ref</div>
-      <div style="font-size:18px;font-weight:800;color:#1a2535;">${code}</div>
-    </div>
-  </div>
-  <div style="background:#fff;padding:10px 16px 12px;border-top:1px solid #eee;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
-    <div>
-      <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;">
-        <span style="font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#999;margin-right:4px;">Contains</span>
-        ${presentBadges || '<span style="font-size:11px;color:#aaa;">No major allergens</span>'}
+      <div style="text-align:right;">
+        <div style="font-size:16px;font-weight:700;color:#8899aa;">$${audPrice} AUD</div>
+        <div style="font-size:8px;color:#445;margin-top:2px;letter-spacing:0.08em;text-transform:uppercase;">Approx. · incl. taxes</div>
       </div>
     </div>
-    <div style="text-align:center;flex-shrink:0;margin-left:12px;">
-      <img src="${qrURL}" width="70" height="70" style="display:block;border:2px solid #eee;border-radius:4px;">
-      <div style="font-size:8px;color:#aaa;margin-top:3px;letter-spacing:0.06em;text-transform:uppercase;">Full Recipe</div>
+
+    <!-- Stats row -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid #2a3a50;">
+      <div style="padding:12px 14px;border-right:1px solid #2a3a50;">
+        <div style="font-size:8px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#556;margin-bottom:4px;">Prep</div>
+        <div style="font-size:16px;font-weight:800;color:#fff;">${d.prepTime}</div>
+      </div>
+      <div style="padding:12px 14px;border-right:1px solid #2a3a50;">
+        <div style="font-size:8px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#556;margin-bottom:4px;">Cook</div>
+        <div style="font-size:16px;font-weight:800;color:#fff;">${d.cookTime}</div>
+      </div>
+      <div style="padding:12px 14px;">
+        <div style="font-size:8px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#556;margin-bottom:4px;">Yield</div>
+        <div style="font-size:16px;font-weight:800;color:#fff;">${d.yield}</div>
+      </div>
+    </div>
+
+    <!-- Allergens + QR -->
+    <div style="padding:12px 18px;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-size:8px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#556;margin-bottom:6px;">Contains</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;">${presentBadges || '<span style="font-size:11px;color:#556;">No major allergens</span>'}</div>
+      </div>
+      <div style="text-align:center;flex-shrink:0;margin-left:14px;">
+        <img src="${qrURL}" width="64" height="64" style="display:block;border:2px solid #2a3a50;border-radius:4px;">
+        <div style="font-size:7px;color:#445;margin-top:3px;letter-spacing:0.08em;text-transform:uppercase;">Full Recipe</div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="padding:10px 18px;border-top:1px solid #2a3a50;display:flex;justify-content:space-between;align-items:center;">
+      <div style="font-size:8px;color:#445;letter-spacing:0.1em;text-transform:uppercase;line-height:1.6;">${property}<br>${outlet}</div>
+      <div style="text-align:right;">
+        <div style="font-size:9px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:#c9973a;">Raffe Hotels &amp; Resorts</div>
+        <div style="font-size:8px;color:#445;margin-top:1px;">${chef} · Rev 1.0 · ${date}</div>
+      </div>
+    </div>
+
+  </div>
+</div></body></html>`;
+<div class="card">
+
+  <!-- FULL BLEED PHOTO -->
+  <div style="position:relative;width:100%;padding-bottom:145%;overflow:hidden;">
+    ${photoBlock}
+
+    <!-- TOP GRADIENT -->
+    <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(10,18,28,0.75) 0%, transparent 35%, transparent 45%, rgba(10,18,28,0.98) 100%);"></div>
+
+    <!-- TOP BAR: outlet + code -->
+    <div style="position:absolute;top:0;left:0;right:0;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:7px;">
+        <div style="width:7px;height:7px;border-radius:50%;background:#c9973a;flex-shrink:0;"></div>
+        <span style="font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#fff;">${outlet}</span>
+      </div>
+      <div style="background:#c9973a;color:#1a2535;font-size:9px;font-weight:900;padding:4px 10px;border-radius:3px;letter-spacing:0.1em;">${code}</div>
+    </div>
+
+    <!-- BOTTOM CONTENT OVERLAY -->
+    <div style="position:absolute;bottom:0;left:0;right:0;padding:20px 20px 16px;">
+
+      <!-- Category + service -->
+      <div style="font-size:9px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:#c9973a;margin-bottom:6px;">${d.cat} · ${service}</div>
+
+      <!-- Dish name -->
+      <div style="font-size:38px;font-weight:900;color:#fff;line-height:1.0;letter-spacing:-0.02em;margin-bottom:6px;">${d.name}</div>
+
+      <!-- Description -->
+      <div style="font-size:12px;color:rgba(255,255,255,0.7);font-style:italic;line-height:1.45;margin-bottom:12px;">${d.desc}</div>
+
+      <!-- Dietary badges -->
+      ${dietBadges ? `<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;">${dietBadges}</div>` : ''}
+
+      <!-- Price + stats row -->
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:12px;">
+        <div>
+          <div style="display:flex;align-items:baseline;gap:4px;">
+            <span style="font-size:40px;font-weight:900;color:#c9973a;line-height:1;">$${price}</span>
+            <span style="font-size:14px;font-weight:700;color:#c9973a;">FJD</span>
+          </div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:1px;">≈ $${audPrice} AUD · incl. taxes</div>
+        </div>
+        <div style="display:flex;gap:14px;text-align:center;">
+          <div>
+            <div style="font-size:8px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:2px;">Prep</div>
+            <div style="font-size:14px;font-weight:800;color:#fff;">${d.prepTime}</div>
+          </div>
+          <div>
+            <div style="font-size:8px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:2px;">Cook</div>
+            <div style="font-size:14px;font-weight:800;color:#fff;">${d.cookTime}</div>
+          </div>
+          <div>
+            <div style="font-size:8px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:2px;">Yield</div>
+            <div style="font-size:14px;font-weight:800;color:#fff;">${d.yield}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Allergens + QR row -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid rgba(255,255,255,0.12);">
+        <div>
+          <div style="font-size:8px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px;">Contains</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;">${presentBadges || '<span style="font-size:11px;color:rgba(255,255,255,0.4);">No major allergens</span>'}</div>
+        </div>
+        <div style="text-align:center;flex-shrink:0;margin-left:14px;">
+          <img src="${qrURL}" width="64" height="64" style="display:block;border:2px solid rgba(255,255,255,0.2);border-radius:5px;">
+          <div style="font-size:7px;color:rgba(255,255,255,0.35);margin-top:3px;letter-spacing:0.08em;text-transform:uppercase;">Full Recipe</div>
+        </div>
+      </div>
+
     </div>
   </div>
-  <div style="background:#1a2535;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
-    <div style="font-size:9px;color:#8899aa;letter-spacing:0.1em;text-transform:uppercase;line-height:1.5;">${property}<br>${outlet}</div>
+
+  <!-- FOOTER -->
+  <div style="background:#0f151e;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;">
+    <div style="font-size:8px;color:#445;letter-spacing:0.1em;text-transform:uppercase;line-height:1.6;">${property}<br>${outlet}</div>
     <div style="text-align:right;">
-      <div style="font-size:10px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:#c9973a;">Raffe Hotels &amp; Resorts</div>
-      <div style="font-size:8px;color:#556;margin-top:1px;">${chef} · Rev 1.0 · ${date}</div>
+      <div style="font-size:9px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:#c9973a;">Raffe Hotels &amp; Resorts</div>
+      <div style="font-size:8px;color:#445;margin-top:1px;">${chef} · Rev 1.0 · ${date}</div>
     </div>
   </div>
+
 </div></body></html>`;
 }
 
