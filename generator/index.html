@@ -1,0 +1,1057 @@
+# 1. Copy index.html to repo root (replaces any existing landing page)
+cp /workspaces/raffe-recipes/index.html /workspaces/raffe-recipes/index.html
+# (just upload via Codespaces file explorer — drag and drop index.html to root)
+
+# 2. Create generator folder and add the generator
+mkdir -p generator
+# drag and drop raffe-card-generator-v3.html into /generator/
+mv generator/raffe-card-generator-v3.html generator/index.html
+
+# 3. Add cards.json to root
+# drag and drop cards.json to root of repo
+
+# 4. Commit everything
+git add index.html generator/index.html cards.json
+git commit -m "Add recipe index, generator v3, cards registry"
+git push<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Raffe Card Generator</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1923; color: #fff; min-height: 100vh; }
+  header { background: #1a2535; border-bottom: 2px solid #c9973a; padding: 14px 20px; display: flex; align-items: center; gap: 10px; }
+  header .dot { width: 9px; height: 9px; border-radius: 50%; background: #c9973a; flex-shrink: 0; }
+  header h1 { font-size: 12px; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: #fff; }
+  header .sub { font-size: 12px; color: #c9973a; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+  header .badge { margin-left: auto; background: #c9973a; color: #0f1923; font-size: 10px; font-weight: 800; letter-spacing: 0.06em; padding: 4px 9px; border-radius: 4px; text-transform: uppercase; white-space: nowrap; }
+  .container { max-width: 640px; margin: 0 auto; padding: 18px 16px 40px; }
+  .fc { background: #1a2535; border-radius: 10px; border: 1px solid #2a3a50; padding: 18px; margin-bottom: 14px; }
+  .fc h2 { font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #c9973a; margin-bottom: 14px; padding-bottom: 7px; border-bottom: 1px solid #2a3a50; }
+  .field { margin-bottom: 12px; }
+  label { display: block; font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #8899aa; margin-bottom: 5px; }
+  select, input[type=text], input[type=number] { width: 100%; background: #0f1923; border: 1px solid #2a3a50; border-radius: 8px; color: #fff; font-size: 16px; padding: 12px 13px; appearance: none; -webkit-appearance: none; outline: none; transition: border-color 0.2s; }
+  select:focus, input:focus { border-color: #c9973a; }
+  .sw { position: relative; }
+  .sw::after { content: '▾'; position: absolute; right: 13px; top: 50%; transform: translateY(-50%); color: #c9973a; pointer-events: none; }
+  .fr { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .dish-preview { display: none; background: #0f1923; border: 1px solid #c9973a44; border-radius: 8px; padding: 11px 13px; margin-top: 8px; font-size: 12px; color: #aabbcc; line-height: 1.5; }
+  .dish-preview.show { display: block; }
+  .dish-preview strong { color: #c9973a; }
+  .abadges { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
+  .ab-yes { background: #c0392b; color: #fff; padding: 3px 7px; border-radius: 3px; font-size: 10px; font-weight: 700; }
+  .photo-zone { border: 2px dashed #2a3a50; border-radius: 10px; padding: 22px; text-align: center; cursor: pointer; transition: border-color 0.2s; background: #0f1923; }
+  .photo-zone img { display: none; width: 100%; max-height: 160px; object-fit: cover; border-radius: 6px; }
+  .photo-zone .ph-text { font-size: 14px; font-weight: 600; color: #8899aa; margin-top: 6px; }
+  .photo-zone .ph-hint { font-size: 11px; color: #445; margin-top: 3px; }
+  .btn-clear-photo { display: none; width: 100%; margin-top: 8px; background: #1a2535; color: #ff8080; border: 1px solid #ff808044; border-radius: 7px; padding: 9px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  .btn-generate { width: 100%; background: #c9973a; color: #0f1923; border: none; border-radius: 10px; font-size: 17px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; padding: 18px; cursor: pointer; transition: opacity 0.2s, transform 0.1s; margin-top: 4px; }
+  .btn-generate:active { transform: scale(0.98); opacity: 0.9; }
+  .btn-generate:disabled { opacity: 0.35; cursor: not-allowed; }
+  .status { text-align: center; padding: 20px; font-size: 14px; color: #8899aa; display: none; }
+  .status.show { display: block; }
+  .spin { display: inline-block; width: 22px; height: 22px; border: 2px solid #2a3a50; border-top-color: #c9973a; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 8px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #output { display: none; }
+  #output.show { display: block; }
+  .output-tabs { display: flex; gap: 0; border-radius: 10px 10px 0 0; overflow: hidden; border: 1px solid #2a3a50; border-bottom: none; }
+  .tab-btn { flex: 1; padding: 13px; background: #1a2535; color: #8899aa; border: none; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; border-right: 1px solid #2a3a50; }
+  .tab-btn:last-child { border-right: none; }
+  .tab-btn.active { background: #c9973a; color: #0f1923; }
+  .output-actions { display: flex; gap: 8px; padding: 10px; background: #1a2535; border: 1px solid #2a3a50; border-top: none; }
+  .btn-act { flex: 1; padding: 11px; border-radius: 7px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; border: none; cursor: pointer; }
+  .btn-copy { background: #0f1923; color: #c9973a; border: 1px solid #c9973a; }
+  .btn-new { background: #2a3a50; color: #fff; }
+  .preview-frame { background: #fff; border: 1px solid #2a3a50; border-top: none; border-radius: 0 0 10px 10px; overflow: hidden; }
+  .preview-frame iframe { width: 100%; border: none; display: block; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+</style>
+</head>
+<body>
+<header>
+  <div class="dot"></div>
+  <h1>Raffe Hotels &amp; Resorts</h1>
+  <span class="sub">· Card Generator</span>
+  <div class="badge">Hero + Recipe</div>
+</header>
+<div class="container">
+
+  <div class="fc">
+    <h2>Property &amp; Outlet</h2>
+    <div class="fr">
+      <div class="field">
+        <label>Property</label>
+        <div class="sw"><select id="property">
+          <option value="Plantation Island Resort">Plantation Island Resort</option>
+          <option value="Lomani Island Resort">Lomani Island Resort</option>
+          <option value="Fiji Gateway Hotel">Fiji Gateway Hotel</option>
+        </select></div>
+      </div>
+      <div class="field">
+        <label>Outlet</label>
+        <div class="sw"><select id="outlet" onchange="onOutletChange()">
+          <option value="Copra Restaurant">Copra Restaurant</option>
+          <option value="Tavola Restaurant &amp; Bar">Tavola Restaurant &amp; Bar</option>
+          <option value="BataBata">BataBata</option>
+          <option value="Baravi Snack Bar">Baravi Snack Bar</option>
+          <option value="Lomani Restaurant">Lomani Restaurant</option>
+          <option value="Gateway Restaurant">Gateway Restaurant</option>
+        </select></div>
+      </div>
+    </div>
+    <div class="fr">
+      <div class="field">
+        <label>Service Period</label>
+        <div class="sw"><select id="service" onchange="onServiceChange()">
+          <option>Lunch</option><option>Dinner</option><option>Breakfast</option><option>All Day</option>
+        </select></div>
+      </div>
+      <div class="field">
+        <label>Recipe Code</label>
+        <input type="text" id="code" placeholder="e.g. TAV-B-001">
+      </div>
+    </div>
+  </div>
+
+  <div class="fc">
+    <h2>Dish</h2>
+    <div class="field">
+      <label>Select Dish</label>
+      <div class="sw"><select id="dish" onchange="onDishChange()"></select></div>
+      <div class="dish-preview" id="dish-preview"></div>
+    </div>
+  </div>
+
+  <div class="fc">
+    <h2>Dish Photo</h2>
+    <div class="field">
+      <label>Hero Image — tap to add from camera roll</label>
+      <div class="photo-zone" id="photo-zone" onclick="document.getElementById('photo-input').click()">
+        <div id="ph-placeholder"><div style="font-size:32px">📷</div><div class="ph-text">Tap to add photo</div><div class="ph-hint">Appears full-bleed on Hero Card</div></div>
+        <img id="ph-preview" src="" alt="">
+      </div>
+      <input type="file" id="photo-input" accept="image/*" style="display:none" onchange="handlePhoto(this)">
+      <button class="btn-clear-photo" id="btn-clear-photo" onclick="clearPhoto()">✕ Remove Photo</button>
+    </div>
+  </div>
+
+  <div class="fc">
+    <h2>Card Details</h2>
+    <div class="fr">
+      <div class="field"><label>Menu Price (FJD$)</label><input type="number" id="price" placeholder="e.g. 33" inputmode="decimal"></div>
+      <div class="field"><label>Portions / Yield</label><input type="number" id="portions" value="1" min="1" inputmode="numeric"></div>
+    </div>
+    <div class="field"><label>Chef Name</label><input type="text" id="chef" value="Chef Don Christie"></div>
+  </div>
+
+  <button class="btn-generate" id="btn-gen" onclick="generate()">⚡ Generate Hero + Recipe Cards</button>
+  <div class="status" id="status"><div class="spin"></div><br>Building both cards…</div>
+
+  <div id="output">
+    <div class="output-tabs">
+      <button class="tab-btn active" onclick="switchTab('hero')">🖼 Hero Card</button>
+      <button class="tab-btn" onclick="switchTab('recipe')">📋 Recipe Card</button>
+    </div>
+    <div class="preview-frame">
+      <div class="tab-panel active" id="panel-hero"><iframe id="frame-hero" scrolling="no"></iframe></div>
+      <div class="tab-panel" id="panel-recipe"><iframe id="frame-recipe" scrolling="no"></iframe></div>
+    </div>
+
+    <!-- EDIT PANEL -->
+    <div class="fc" id="edit-panel" style="margin-top:14px;">
+      <h2>✏️ Review &amp; Edit Before Approving</h2>
+      <div style="font-size:11px;color:#8899aa;margin-bottom:14px;line-height:1.6;">Edit method steps or plating notes below. Tap <strong style="color:#c9973a;">Update Cards</strong> to re-render, then <strong style="color:#4caf50;">Approve</strong> to copy the final HTML for deployment.</div>
+
+      <div class="field">
+        <label>Plating Notes</label>
+        <textarea id="edit-plating" rows="2" style="width:100%;background:#0f1923;border:1px solid #2a3a50;border-radius:8px;color:#fff;font-size:14px;padding:12px;line-height:1.5;resize:vertical;"></textarea>
+      </div>
+      <div class="field">
+        <label>Method Steps — one per line</label>
+        <textarea id="edit-method" rows="8" style="width:100%;background:#0f1923;border:1px solid #2a3a50;border-radius:8px;color:#fff;font-size:14px;padding:12px;line-height:1.6;resize:vertical;font-family:inherit;"></textarea>
+      </div>
+      <div class="field">
+        <label>Chef / Approval Notes (optional)</label>
+        <textarea id="edit-notes" rows="2" placeholder="e.g. Tested and approved 01 Mar 2026. No substitutions." style="width:100%;background:#0f1923;border:1px solid #2a3a50;border-radius:8px;color:#fff;font-size:14px;padding:12px;line-height:1.5;resize:vertical;"></textarea>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button onclick="updateCards()" style="flex:1;background:#2a3a50;color:#fff;border:none;border-radius:8px;padding:14px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;">↻ Update Cards</button>
+        <button onclick="resetAll()" style="flex:0 0 auto;background:#1a2535;color:#8899aa;border:1px solid #2a3a50;border-radius:8px;padding:14px;font-size:13px;font-weight:700;cursor:pointer;">✕ Start Over</button>
+      </div>
+    </div>
+
+    <!-- APPROVE SECTION -->
+    <div class="fc" id="approve-panel" style="margin-top:14px;border-color:#4caf5044;">
+      <h2 style="color:#4caf50;">✓ Approve &amp; Deploy</h2>
+      <div style="font-size:11px;color:#8899aa;margin-bottom:14px;line-height:1.6;">
+        Cards are in <strong style="color:#c9973a;">DRAFT</strong> until you approve. Copy each HTML file and commit to GitHub to go live.<br>
+        <span style="color:#4caf50;font-weight:600;">Recipe URL:</span> <span id="recipe-url-display" style="color:#c9973a;font-size:11px;word-break:break-all;"></span>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button onclick="approveCard('hero')" style="flex:1;background:#4caf50;color:#fff;border:none;border-radius:8px;padding:14px;font-size:12px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;">✓ Approve Hero Card</button>
+        <button onclick="approveCard('recipe')" style="flex:1;background:#4caf50;color:#fff;border:none;border-radius:8px;padding:14px;font-size:12px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;">✓ Approve Recipe Card</button>
+      </div>
+      <div id="approve-status" style="display:none;margin-top:10px;text-align:center;font-size:12px;color:#4caf50;font-weight:700;"></div>
+    </div>
+  </div>
+
+</div>
+<script>
+// ─── ALLERGEN REFERENCE ───────────────────────────────────────────────────────
+const AL = {G:"GLUTEN",D:"DAIRY",E:"EGGS",N:"TREE NUTS",P:"PEANUTS",SF:"SHELLFISH",F:"FISH",S:"SOY",SE:"SESAME",CEL:"CELERY",MUS:"MUSTARD",LUP:"LUPIN",MOL:"MOLLUSCS",SO2:"SULPHITES"};
+const ALL_KEYS = ["G","D","E","N","P","SF","F","S","SE","CEL","MUS","LUP","MOL","SO2"];
+
+// ─── DISH DATABASE ────────────────────────────────────────────────────────────
+// Structure: outlet → service → [dishes]
+// Each dish: { key, name, cat, dietary[], price, desc, allergens[], may[], prepTime, cookTime, yield, ingredients[], method[], plating, equip }
+
+const DB = {
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// COPRA RESTAURANT — LUNCH
+// ═══════════════════════════════════════════════════════════════════════════════
+"Copra Restaurant": { "Lunch": [
+  {key:"cop-gvw",name:"Garden Veg Wrap",cat:"Wraps",dietary:["VGN"],price:32,desc:"Soft tortilla filled with grilled zucchini, roasted peppers, baby spinach, creamy hummus and garlic aioli",allergens:["G","E"],may:[],prepTime:"8 min",cookTime:"5 min",yield:"1 × Wrap",
+    ingredients:[{c:"Wrap",n:"Flour tortilla 12\"",u:"each",q:1},{c:"Filling",n:"Zucchini, grilled",u:"g",q:80},{c:"Filling",n:"Roasted red peppers",u:"g",q:60},{c:"Filling",n:"Baby spinach",u:"g",q:30},{c:"Filling",n:"Hummus",u:"g",q:50},{c:"Sauce",n:"Garlic aioli",u:"g",q:30}],
+    method:["Lay tortilla flat on board.","Spread hummus evenly across centre, leaving a 3 cm border.","Layer baby spinach, grilled zucchini and roasted peppers.","Drizzle garlic aioli over filling.","Fold sides in, roll tightly from base. Cut on 45° angle.","Plate cut-side up with fries."],
+    plating:"Serve cut on diagonal, cut-side forward. Fries in side ramekin.",equip:"Grill · Chopping board · Serrated knife"},
+  {key:"cop-pcw",name:"Pesto Chicken Wrap",cat:"Wraps",dietary:[],price:33,desc:"Grilled chicken breast, basil pesto, marinated feta, fresh lettuce and tomato in a soft tortilla",allergens:["G","D","N"],may:["N"],prepTime:"8 min",cookTime:"12 min",yield:"1 × Wrap",
+    ingredients:[{c:"Wrap",n:"Flour tortilla 12\"",u:"each",q:1},{c:"Protein",n:"Chicken breast, grilled",u:"g",q:120},{c:"Sauce",n:"Basil pesto",u:"g",q:30},{c:"Filling",n:"Marinated feta",u:"g",q:40},{c:"Filling",n:"Iceberg lettuce, shredded",u:"g",q:30},{c:"Filling",n:"Tomato, sliced",u:"g",q:40}],
+    method:["Season chicken, grill 5–6 min each side to 75°C core.","Rest 2 min, slice on bias.","Lay tortilla flat. Spread pesto across centre.","Layer lettuce, tomato, sliced chicken, and crumbled feta.","Fold sides in, roll tightly. Cut on 45° angle.","Plate with fries."],
+    plating:"Cut on diagonal. Feta visible at cut face. Fries alongside.",equip:"Grill · Probe thermometer · Serrated knife"},
+  {key:"cop-stw",name:"Spicy Tuna Wrap",cat:"Wraps",dietary:[],price:33,desc:"Local tuna marinated in chili and lime, with cucumber, red onion, shredded lettuce and sriracha mayo",allergens:["G","E","F"],may:[],prepTime:"15 min",cookTime:"0 min",yield:"1 × Wrap",
+    ingredients:[{c:"Wrap",n:"Flour tortilla 12\"",u:"each",q:1},{c:"Protein",n:"Local tuna, diced",u:"g",q:120},{c:"Marinade",n:"Lime juice, fresh",u:"ml",q:20},{c:"Marinade",n:"Chili flakes",u:"g",q:2},{c:"Filling",n:"Cucumber, julienne",u:"g",q:40},{c:"Filling",n:"Red onion, fine sliced",u:"g",q:20},{c:"Filling",n:"Iceberg lettuce, shredded",u:"g",q:30},{c:"Sauce",n:"Sriracha mayo",u:"g",q:30}],
+    method:["Dice tuna into 1.5 cm cubes. Marinate in lime, chili and salt for 10 min.","Lay tortilla flat. Spread sriracha mayo across centre.","Layer lettuce, cucumber, red onion.","Place marinated tuna over vegetables.","Fold sides in, roll tightly. Cut on 45° angle.","Plate with fries."],
+    plating:"Cut on diagonal. Tuna visible at cut face. Lime wedge garnish.",equip:"Chopping board · Mixing bowl · Serrated knife"},
+  {key:"cop-ccw",name:"Caesar Chicken Wrap",cat:"Wraps",dietary:[],price:34,desc:"Crisp chopped romaine lettuce tossed in creamy Caesar dressing, topped with grilled chicken, crispy bacon and shaved Parmesan",allergens:["G","D","E","F"],may:[],prepTime:"10 min",cookTime:"14 min",yield:"1 × Wrap",
+    ingredients:[{c:"Wrap",n:"Flour tortilla 12\"",u:"each",q:1},{c:"Protein",n:"Chicken breast, grilled",u:"g",q:110},{c:"Filling",n:"Romaine lettuce, chopped",u:"g",q:60},{c:"Filling",n:"Bacon, crispy",u:"g",q:30},{c:"Filling",n:"Parmesan, shaved",u:"g",q:15},{c:"Sauce",n:"Caesar dressing",u:"g",q:40}],
+    method:["Grill chicken breast to 75°C core. Rest and slice.","Render bacon until crisp. Drain on paper.","Toss romaine lettuce in Caesar dressing.","Lay tortilla flat. Layer dressed lettuce, sliced chicken, bacon.","Top with shaved Parmesan.","Fold sides in, roll tightly. Cut on 45°. Plate with fries."],
+    plating:"Cut on diagonal. Parmesan and bacon visible at cut face.",equip:"Grill · Fry pan · Probe thermometer · Serrated knife"},
+  {key:"cop-cap",name:"Caprese Panini",cat:"Panini",dietary:["VGN"],price:30,desc:"Fresh mozzarella, vine-ripened tomatoes, baby spinach and basil pesto on toasted artisan bread",allergens:["G","D","N"],may:[],prepTime:"5 min",cookTime:"4 min",yield:"1 × Panini",
+    ingredients:[{c:"Bread",n:"Artisan bread roll",u:"each",q:1},{c:"Filling",n:"Fresh mozzarella, sliced",u:"g",q:80},{c:"Filling",n:"Vine-ripened tomato, sliced",u:"g",q:70},{c:"Filling",n:"Baby spinach",u:"g",q:20},{c:"Sauce",n:"Basil pesto",u:"g",q:25}],
+    method:["Slice bread roll horizontally. Spread pesto on both inner faces.","Layer spinach, tomato slices, and mozzarella.","Close roll. Press in panini grill 3–4 min at medium heat until golden and cheese melts.","Cut on diagonal. Plate with fries."],
+    plating:"Cut on diagonal, cheese pull visible. Fries alongside.",equip:"Panini press · Bread knife"},
+  {key:"cop-scp",name:"Smoked Chicken Panini",cat:"Panini",dietary:[],price:32,desc:"Toasted panini with smoked chicken, sharp cheddar, caramelised onions and Dijon mayonnaise on rustic bread",allergens:["G","D","E","MUS"],may:[],prepTime:"5 min",cookTime:"4 min",yield:"1 × Panini",
+    ingredients:[{c:"Bread",n:"Rustic bread, sliced",u:"slices",q:2},{c:"Protein",n:"Smoked chicken, sliced",u:"g",q:100},{c:"Filling",n:"Sharp cheddar, sliced",u:"g",q:40},{c:"Filling",n:"Caramelised onions",u:"g",q:30},{c:"Sauce",n:"Dijon mayonnaise",u:"g",q:20}],
+    method:["Spread Dijon mayo on one inner face of both bread slices.","Layer smoked chicken, cheddar, and caramelised onions.","Close sandwich. Press in panini grill 3–4 min until golden and cheese melts.","Cut on diagonal. Plate with fries."],
+    plating:"Cut on diagonal. Cheese melt visible at cut. Fries alongside.",equip:"Panini press · Bread knife"},
+  {key:"cop-hcp",name:"Ham and Cheese Panini",cat:"Panini",dietary:[],price:33,desc:"Grilled panini with shaved ham, melted cheddar cheese and wholegrain mustard on artisan bread",allergens:["G","D","MUS"],may:[],prepTime:"4 min",cookTime:"4 min",yield:"1 × Panini",
+    ingredients:[{c:"Bread",n:"Artisan bread, sliced",u:"slices",q:2},{c:"Protein",n:"Shaved ham",u:"g",q:80},{c:"Filling",n:"Cheddar cheese, sliced",u:"g",q:40},{c:"Sauce",n:"Wholegrain mustard",u:"g",q:15}],
+    method:["Spread wholegrain mustard on one inner face of bread.","Layer shaved ham and cheddar cheese.","Close panini. Press 3–4 min until golden and cheese melts.","Cut on diagonal. Plate with fries."],
+    plating:"Cut on diagonal, cheese melt visible. Fries alongside.",equip:"Panini press · Bread knife"},
+  {key:"cop-blt",name:"Classic BLT",cat:"Sandwiches & Burgers",dietary:[],price:32,desc:"Toasted sourdough roll filled with crispy bacon, fresh lettuce, ripe tomato and creamy aioli",allergens:["G","E"],may:[],prepTime:"5 min",cookTime:"6 min",yield:"1 × Sandwich",
+    ingredients:[{c:"Bread",n:"Sourdough roll",u:"each",q:1},{c:"Protein",n:"Bacon rashers, crispy",u:"g",q:60},{c:"Filling",n:"Iceberg lettuce",u:"g",q:30},{c:"Filling",n:"Tomato, sliced",u:"g",q:60},{c:"Sauce",n:"Creamy aioli",u:"g",q:30}],
+    method:["Render bacon in pan until crisp. Drain on paper.","Toast sourdough roll cut-side down on grill or flat-top.","Spread aioli generously on both inner faces.","Layer lettuce, tomato, and crispy bacon.","Close roll. Plate with fries."],
+    plating:"Serve closed. Bacon visible at sides. Fries alongside.",equip:"Flat-top grill · Bread knife"},
+  {key:"cop-crq",name:"Croque Monsieur",cat:"Sandwiches & Burgers",dietary:[],price:33,desc:"Grilled rustic white bread layered with shaved ham, melted Swiss cheese and a creamy Dijon béchamel sauce",allergens:["G","D","MUS"],may:[],prepTime:"8 min",cookTime:"10 min",yield:"1 × Sandwich",
+    ingredients:[{c:"Bread",n:"Rustic white bread, sliced",u:"slices",q:2},{c:"Protein",n:"Shaved ham",u:"g",q:70},{c:"Filling",n:"Swiss cheese, sliced",u:"g",q:50},{c:"Sauce",n:"Dijon béchamel",u:"g",q:60}],
+    method:["Spread béchamel on one face of each bread slice.","Layer ham and Swiss cheese between slices.","Spread additional béchamel on top outer face.","Bake in oven at 180°C, 8–10 min until golden and bubbling.","Cut on diagonal. Plate with fries."],
+    plating:"Golden béchamel crust on top. Cut on diagonal. Fries alongside.",equip:"Oven · Baking tray · Bread knife"},
+  {key:"cop-gcb",name:"Grilled Chicken Burger",cat:"Sandwiches & Burgers",dietary:[],price:34,desc:"Juicy herb-marinated chicken breast on a toasted bun with crisp iceberg lettuce, ripe tomato and garlic mayo",allergens:["G","E"],may:[],prepTime:"10 min",cookTime:"14 min",yield:"1 × Burger",
+    ingredients:[{c:"Bun",n:"Burger bun, toasted",u:"each",q:1},{c:"Protein",n:"Chicken breast, herb-marinated",u:"g",q:150},{c:"Filling",n:"Iceberg lettuce",u:"g",q:25},{c:"Filling",n:"Tomato, sliced",u:"g",q:50},{c:"Sauce",n:"Garlic mayo",u:"g",q:25}],
+    method:["Marinate chicken in herbs and olive oil minimum 2 hours.","Grill chicken 5–6 min each side to 75°C core. Rest 2 min.","Toast bun cut-side down on grill. Spread garlic mayo on both faces.","Layer lettuce, tomato, and chicken breast. Close and skewer.","Plate with fries."],
+    plating:"Skewer through centre. Fries in paper cone or alongside.",equip:"Grill · Probe thermometer · Bread knife"},
+  {key:"cop-bcb",name:"Beef Cheeseburger",cat:"Sandwiches & Burgers",dietary:[],price:34,desc:"Grilled Angus beef patty topped with cheddar cheese, crisp lettuce, pickles and homemade burger sauce on a toasted bun",allergens:["G","D","E"],may:[],prepTime:"5 min",cookTime:"10 min",yield:"1 × Burger",
+    ingredients:[{c:"Bun",n:"Burger bun, toasted",u:"each",q:1},{c:"Protein",n:"Angus beef patty 180g",u:"each",q:1},{c:"Filling",n:"Cheddar cheese slice",u:"each",q:1},{c:"Filling",n:"Iceberg lettuce",u:"g",q:25},{c:"Filling",n:"Pickles, sliced",u:"g",q:20},{c:"Sauce",n:"Burger sauce (house)",u:"g",q:30}],
+    method:["Season patty with salt and pepper both sides.","Grill on high heat 3–4 min each side for medium (65°C core).","Place cheddar on patty last 1 min to melt. Toast bun cut-side down.","Spread burger sauce on both faces. Layer lettuce, pickles, patty with melted cheddar. Close and skewer.","Plate with fries."],
+    plating:"Skewer through centre. Cheese melt visible at sides. Fries alongside.",equip:"Grill or flat-top · Probe thermometer · Bread knife"},
+  {key:"cop-cls",name:"Club Sandwich",cat:"Sandwiches & Burgers",dietary:[],price:35,desc:"Triple-decker sandwich stacked with grilled chicken, crispy bacon, lettuce, tomato and a fried egg on toasted bread",allergens:["G","E"],may:[],prepTime:"10 min",cookTime:"14 min",yield:"1 × Triple-decker",
+    ingredients:[{c:"Bread",n:"White sandwich bread, toasted",u:"slices",q:3},{c:"Protein",n:"Chicken breast, grilled and sliced",u:"g",q:80},{c:"Protein",n:"Bacon rashers, crispy",u:"g",q:40},{c:"Protein",n:"Fried egg",u:"each",q:1},{c:"Filling",n:"Iceberg lettuce",u:"g",q:30},{c:"Filling",n:"Tomato, sliced",u:"g",q:50},{c:"Sauce",n:"Mayonnaise",u:"g",q:30}],
+    method:["Toast all three bread slices. Grill chicken to 75°C. Render bacon crisp. Fry egg sunny-side up.","Spread mayo on all inner faces of bread.","Layer 1 (bottom to middle): lettuce, tomato, chicken.","Place middle slice. Layer 2 (middle to top): bacon, fried egg, lettuce.","Top with final bread slice. Secure with 4 skewers and cut into 4 triangles.","Plate with fries."],
+    plating:"4 triangle quarters displayed standing. Skewers in each. Fries alongside.",equip:"Toaster or flat-top · Grill · Fry pan · Bread knife · 4 skewers"},
+  {key:"cop-kok",name:"Kokoda",cat:"Copra Classics",dietary:["GF","DF"],price:26,desc:"Local reef fish cured in fresh lime and coconut, served island-style with herbs and crisp vegetables",allergens:["F"],may:[],prepTime:"15 min",cookTime:"30 min cure",yield:"1 × Bowl",
+    ingredients:[{c:"Base",n:"Local reef fish, skin off, diced",u:"g",q:150},{c:"Cure",n:"Fresh lime juice",u:"ml",q:80},{c:"Cure",n:"Sea salt",u:"g",q:3},{c:"Coconut",n:"Fresh coconut cream",u:"ml",q:60},{c:"Vegetables",n:"Cucumber, fine dice",u:"g",q:30},{c:"Vegetables",n:"Red onion, fine dice",u:"g",q:20},{c:"Vegetables",n:"Cherry tomato, halved",u:"g",q:30},{c:"Herbs",n:"Fresh coriander, roughly chopped",u:"g",q:5}],
+    method:["Dice reef fish into 1.5 cm cubes. Place in non-reactive bowl.","Cover with fresh lime juice and salt. Refrigerate 20–30 min until fish turns opaque.","Drain excess lime. Add coconut cream. Mix gently.","Fold in cucumber, red onion, cherry tomato, and coriander.","Season with salt and white pepper. Serve immediately."],
+    plating:"Serve in chilled bowl or half coconut shell. Coriander on top. Lime wedge on side.",equip:"Non-reactive bowl · Refrigerator · Fine knife"},
+  {key:"cop-nac",name:"Loaded Nachos",cat:"Copra Classics",dietary:[],price:34,desc:"Crispy corn chips topped with spiced beef con carne, melted cheese, fresh tomato salsa, sour cream and guacamole",allergens:["D"],may:[],prepTime:"8 min",cookTime:"8 min",yield:"1 × Skillet",
+    ingredients:[{c:"Base",n:"Corn chips",u:"g",q:120},{c:"Protein",n:"Spiced beef con carne",u:"g",q:120},{c:"Topping",n:"Cheddar cheese, grated",u:"g",q:60},{c:"Garnish",n:"Fresh tomato salsa",u:"g",q:60},{c:"Garnish",n:"Sour cream",u:"g",q:40},{c:"Garnish",n:"Guacamole",u:"g",q:50},{c:"Garnish",n:"Fresh coriander",u:"g",q:5}],
+    method:["Spread corn chips in oven-proof dish or skillet.","Top evenly with warmed beef con carne.","Cover with grated cheddar.","Bake at 180°C for 6–8 min until cheese is melted and bubbling.","Top with fresh salsa. Dot sour cream and guacamole. Finish with coriander. Serve immediately."],
+    plating:"Serve in oven dish or skillet. Sour cream and guac in separate sections.",equip:"Oven · Oven-proof dish or skillet"},
+  {key:"cop-fnc",name:"Fish & Chips",cat:"Copra Classics",dietary:[],price:34,desc:"Beer-battered fresh fillet of the day served with crispy potato chips, tartar sauce and a side salad",allergens:["G","E","F","D"],may:[],prepTime:"15 min",cookTime:"10 min",yield:"1 × Plate",
+    ingredients:[{c:"Protein",n:"Fresh fish fillet of the day",u:"g",q:180},{c:"Batter",n:"Plain flour",u:"g",q:80},{c:"Batter",n:"Lager beer",u:"ml",q:100},{c:"Batter",n:"Baking powder",u:"g",q:3},{c:"Sides",n:"Potato chips, par-cooked",u:"g",q:160},{c:"Sauce",n:"Tartar sauce",u:"g",q:40},{c:"Garnish",n:"Lemon wedge",u:"each",q:1}],
+    method:["Whisk flour, baking powder and salt. Add cold beer. Whisk to smooth batter. Rest 10 min.","Heat fryer oil to 180°C.","Pat fish fillet dry. Season. Coat in batter, allowing excess to drip.","Fry 4–5 min until golden and crisp. Internal temp 65°C. Drain on paper.","Fry chips at 190°C for 3 min until golden. Plate fish over chips."],
+    plating:"Fish angled over chips. Lemon wedge on lip. Tartar in ramekin. Side salad separate.",equip:"Deep fryer x2 · Probe thermometer · Paper drain tray"},
+  {key:"cop-gpr",name:"Garlic Prawn Fried Rice",cat:"Copra Classics",dietary:["GF"],price:36,desc:"Wok fried jasmine rice with garlic prawns, egg, spring onion and a sesame soy glaze",allergens:["E","SF","S","SE"],may:[],prepTime:"10 min",cookTime:"8 min",yield:"1 × Bowl",
+    ingredients:[{c:"Base",n:"Jasmine rice, cooked and cooled",u:"g",q:200},{c:"Protein",n:"King prawns, peeled and deveined",u:"g",q:120},{c:"Aromatics",n:"Garlic, minced",u:"g",q:10},{c:"Aromatics",n:"Spring onion, sliced",u:"g",q:20},{c:"Egg",n:"Whole egg",u:"each",q:1},{c:"Sauce",n:"Sesame soy glaze",u:"ml",q:30},{c:"Oil",n:"Sesame oil",u:"ml",q:10}],
+    method:["Heat wok on high until smoking. Add vegetable oil.","Sauté garlic 30 sec. Add prawns and stir-fry 2 min until pink.","Push to side. Crack egg into centre, scramble quickly.","Add cold rice, breaking up any clumps. Toss with prawns and egg.","Add sesame soy glaze. Toss well. Finish with sesame oil and spring onion. Serve immediately."],
+    plating:"Serve in bowl. Spring onion scattered on top. Sesame seeds optional garnish.",equip:"Wok · High-heat burner · Wok spatula"},
+  {key:"cop-cis",name:"Chopped Iceberg Salad",cat:"Salads",dietary:["GF","V"],price:26,desc:"Crisp iceberg lettuce with cherry tomatoes, cucumber and creamy ranch dressing",allergens:["D","E"],may:[],prepTime:"6 min",cookTime:"0 min",yield:"1 × Bowl",
+    ingredients:[{c:"Salad",n:"Iceberg lettuce, chopped",u:"g",q:120},{c:"Salad",n:"Cherry tomatoes, halved",u:"g",q:60},{c:"Salad",n:"Cucumber, diced",u:"g",q:50},{c:"Dressing",n:"Ranch dressing",u:"ml",q:40}],
+    method:["Chop iceberg lettuce into rough 3 cm pieces.","Halve cherry tomatoes. Dice cucumber.","Combine all vegetables in bowl. Toss with ranch dressing.","Season with salt and pepper. Serve immediately."],
+    plating:"Serve in chilled bowl. Dressing tossed through, not pooled.",equip:"Chopping board · Mixing bowl"},
+  {key:"cop-tqs",name:"Tropical Quinoa Salad",cat:"Salads",dietary:["GF","V"],price:32,desc:"A vibrant mix of quinoa, roasted pumpkin, pineapple and fresh mint tossed with a zesty tahini-lime vinaigrette",allergens:["SE","N"],may:[],prepTime:"15 min",cookTime:"20 min",yield:"1 × Bowl",
+    ingredients:[{c:"Base",n:"Quinoa, cooked",u:"g",q:120},{c:"Salad",n:"Pumpkin, roasted and diced",u:"g",q:80},{c:"Salad",n:"Fresh pineapple, diced",u:"g",q:60},{c:"Herb",n:"Fresh mint, torn",u:"g",q:8},{c:"Dressing",n:"Tahini",u:"g",q:20},{c:"Dressing",n:"Lime juice, fresh",u:"ml",q:20},{c:"Dressing",n:"Honey",u:"g",q:10}],
+    method:["Cook quinoa per packet instructions. Cool completely.","Dice pumpkin 2 cm cubes. Roast at 190°C with olive oil 20 min until tender.","Whisk tahini, lime juice, olive oil and honey to smooth dressing. Season.","Combine quinoa, cooled pumpkin, pineapple, and mint.","Toss with dressing. Plate and serve."],
+    plating:"Serve in bowl or flat plate. Mint leaves on top. Lime wedge on side.",equip:"Saucepan · Oven · Roasting tray · Mixing bowl"},
+  {key:"cop-wfs",name:"Watermelon & Feta Salad",cat:"Salads",dietary:["GF","VGN"],price:33,desc:"Juicy watermelon tossed with peppery rocket, fresh mint, crumbled feta and a balsamic drizzle",allergens:["D"],may:[],prepTime:"8 min",cookTime:"0 min",yield:"1 × Plate",
+    ingredients:[{c:"Salad",n:"Watermelon, diced 3 cm",u:"g",q:200},{c:"Salad",n:"Rocket leaves",u:"g",q:30},{c:"Salad",n:"Fresh mint leaves",u:"g",q:8},{c:"Topping",n:"Marinated feta, crumbled",u:"g",q:50},{c:"Dressing",n:"Balsamic glaze",u:"ml",q:15},{c:"Dressing",n:"Extra virgin olive oil",u:"ml",q:10}],
+    method:["Dice watermelon into 3 cm cubes. Remove seeds.","Arrange rocket on plate or bowl.","Place watermelon over rocket.","Scatter mint leaves and crumbled feta.","Drizzle with balsamic glaze and olive oil. Season with cracked pepper. Serve immediately."],
+    plating:"Feta scattered visibly. Balsamic drizzle in pattern over top. Mint leaves as garnish.",equip:"Chopping board · Serving plate or bowl"}
+]},
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TAVOLA — BREAKFAST
+// ═══════════════════════════════════════════════════════════════════════════════
+"Tavola Restaurant & Bar": { "Breakfast": [
+  {key:"tav-hcc",name:"Ham and Cheese Croissant",cat:"Breakfast",dietary:[],price:18,desc:"Champagne ham and cheddar cheese croissant",allergens:["G","D"],may:[],prepTime:"3 min",cookTime:"4 min",yield:"1 × Croissant",
+    ingredients:[{c:"Pastry",n:"Butter croissant",u:"each",q:1},{c:"Filling",n:"Champagne ham, sliced",u:"g",q:60},{c:"Filling",n:"Cheddar cheese, sliced",u:"g",q:30}],
+    method:["Split croissant horizontally.","Layer champagne ham and cheddar cheese.","Close and warm in oven at 160°C for 3–4 min until cheese begins to melt.","Serve immediately on board or plate."],
+    plating:"Serve warm on board. Cut on diagonal optional.",equip:"Oven · Bread knife"},
+  {key:"tav-cnb",name:"Coconut Bread",cat:"Breakfast",dietary:["VGN"],price:19,desc:"Served warm with whipped frosting and zesty lemon syrup",allergens:["G","D","E"],may:[],prepTime:"5 min",cookTime:"35 min",yield:"1 × Slice",
+    ingredients:[{c:"Bread",n:"Coconut bread, sliced",u:"slice",q:2},{c:"Topping",n:"Whipped frosting",u:"g",q:40},{c:"Syrup",n:"Lemon syrup, zesty",u:"ml",q:30},{c:"Garnish",n:"Toasted coconut flakes",u:"g",q:5}],
+    method:["Warm coconut bread slices in oven at 160°C for 3–4 min.","Plate warm slices.","Spoon whipped frosting alongside or on top.","Drizzle lemon syrup over bread and frosting.","Garnish with toasted coconut flakes."],
+    plating:"Slices overlapping on plate. Frosting dolloped. Lemon syrup drizzled visibly. Coconut flakes scattered.",equip:"Oven · Bread knife"},
+  {key:"tav-bae",name:"Bacon & Eggs",cat:"Breakfast",dietary:[],price:24,desc:"Two eggs and streaky bacon on toast, cooked any way you like it",allergens:["G","E","D"],may:[],prepTime:"5 min",cookTime:"8 min",yield:"1 × Plate",
+    ingredients:[{c:"Protein",n:"Eggs",u:"each",q:2},{c:"Protein",n:"Streaky bacon rashers",u:"each",q:3},{c:"Toast",n:"White or sourdough bread, toasted",u:"slices",q:2},{c:"Condiment",n:"Butter",u:"g",q:15}],
+    method:["Ask guest preferred egg style: fried, scrambled, or poached.","Cook bacon on flat-top until crispy on both sides. Drain on paper.","Cook eggs to order.","Toast bread, butter while warm.","Arrange eggs and bacon on toast. Serve immediately."],
+    plating:"Eggs on toast, bacon alongside. Toast on side if preferred.",equip:"Flat-top grill · Toaster · Fry pan"},
+  {key:"tav-ffs",name:"Fresh Fruit Salad",cat:"Breakfast",dietary:["VGN"],price:25,desc:"Bowl of freshly cut fruit salad with mint syrup and yogurt",allergens:["D"],may:[],prepTime:"10 min",cookTime:"0 min",yield:"1 × Bowl",
+    ingredients:[{c:"Fruit",n:"Seasonal fruit mix (papaya, mango, pineapple, melon, banana)",u:"g",q:220},{c:"Syrup",n:"Mint syrup",u:"ml",q:20},{c:"Dairy",n:"Natural yogurt",u:"g",q:80},{c:"Garnish",n:"Fresh mint leaves",u:"g",q:3}],
+    method:["Dice and slice seasonal fruit into bite-sized pieces.","Arrange fruit in chilled bowl.","Drizzle mint syrup over fruit.","Spoon yogurt on the side or on top.","Garnish with fresh mint leaves."],
+    plating:"Colourful fruit arrangement. Yogurt in separate ramekin or nestled in bowl. Mint garnish on top.",equip:"Chopping board · Chilled bowl"},
+  {key:"tav-vbh",name:"Vanilla Bean Hotcakes",cat:"Breakfast",dietary:["VGN"],price:26,desc:"Served with whipped honey, butter and maple syrup",allergens:["G","D","E"],may:[],prepTime:"8 min",cookTime:"8 min",yield:"3 × Hotcakes",
+    ingredients:[{c:"Batter",n:"Hotcake batter (vanilla bean)",u:"ml",q:300},{c:"Topping",n:"Whipped honey butter",u:"g",q:30},{c:"Topping",n:"Maple syrup",u:"ml",q:40},{c:"Garnish",n:"Fresh berries",u:"g",q:30},{c:"Garnish",n:"Icing sugar",u:"g",q:3}],
+    method:["Heat non-stick pan or flat-top to medium. Lightly butter.","Pour batter into 3 even rounds. Cook 2–3 min until bubbles form on surface.","Flip and cook further 1–2 min until cooked through.","Stack 3 hotcakes on plate.","Top with whipped honey butter. Drizzle maple syrup. Garnish berries and icing sugar."],
+    plating:"3 hotcakes stacked. Honey butter melting on top. Maple syrup drizzled. Berries cascading down side.",equip:"Non-stick pan or flat-top · Ladle"},
+  {key:"tav-tgr",name:"Tavola Granola",cat:"Breakfast",dietary:["VGN"],price:27,desc:"Honey roasted cinnamon oats, mixed seeds, coconut, puffed rice and yogurt",allergens:["G","D","N"],may:["N"],prepTime:"3 min",cookTime:"0 min",yield:"1 × Bowl",
+    ingredients:[{c:"Base",n:"Honey roasted granola (oats, seeds, coconut, puffed rice)",u:"g",q:120},{c:"Dairy",n:"Natural yogurt",u:"g",q:120},{c:"Topping",n:"Fresh seasonal fruit",u:"g",q:60},{c:"Topping",n:"Honey drizzle",u:"ml",q:15}],
+    method:["Spoon yogurt into chilled bowl.","Layer granola over yogurt.","Top with fresh seasonal fruit.","Drizzle honey over top. Serve immediately."],
+    plating:"Yogurt base, granola piled, fruit on top. Honey drizzled visibly. Serve in wide bowl.",equip:"Chilled bowl"},
+  {key:"tav-oml",name:"Three Egg Omelette",cat:"Breakfast",dietary:[],price:28,desc:"A choice of bacon, ham, tomato, capsicum, onion, cheese and chopped herbs with toast",allergens:["G","D","E"],may:[],prepTime:"5 min",cookTime:"5 min",yield:"1 × Omelette",
+    ingredients:[{c:"Eggs",n:"Whole eggs",u:"each",q:3},{c:"Filling",n:"Guest choice filling (bacon/ham/tomato/capsicum/onion/cheese/herbs)",u:"g",q:80},{c:"Cooking",n:"Butter",u:"g",q:15},{c:"Toast",n:"Toast, buttered",u:"slices",q:2}],
+    method:["Whisk 3 eggs with pinch of salt and pepper.","Melt butter in non-stick pan on medium-high.","Pour egg mixture in. As edges set, draw toward centre with spatula.","Add filling to one half when almost set.","Fold over. Plate immediately with buttered toast."],
+    plating:"Omelette folded on plate, golden exterior. Toast alongside. Herbs sprinkled on top.",equip:"Non-stick pan · Spatula · Whisk · Toaster"},
+  {key:"tav-ebn",name:"Eggs Benedict",cat:"Breakfast",dietary:[],price:31,desc:"Soft poached eggs, shaved ham and hollandaise on English muffins",allergens:["G","D","E"],may:[],prepTime:"8 min",cookTime:"5 min",yield:"1 × Plate (2 eggs)",
+    ingredients:[{c:"Base",n:"English muffins, toasted",u:"each",q:2},{c:"Protein",n:"Shaved ham",u:"g",q:80},{c:"Protein",n:"Eggs, poached",u:"each",q:2},{c:"Sauce",n:"Hollandaise sauce",u:"ml",q:60},{c:"Garnish",n:"Paprika, chopped chives",u:"to taste",q:0}],
+    method:["Bring a deep pan of water to gentle simmer. Add splash of white vinegar.","Toast and butter English muffins.","Lay shaved ham on each muffin half.","Poach eggs 3–4 min for soft yolk. Remove with slotted spoon, drain on paper.","Place egg on ham. Spoon hollandaise over. Garnish with paprika and chives."],
+    plating:"Two muffin halves side by side. Hollandaise pooling over eggs. Paprika dusted. Chives scattered.",equip:"Deep poaching pan · Slotted spoon · Toaster"},
+  {key:"tav-bew",name:"Bacon and Egg Wrap",cat:"Breakfast",dietary:[],price:32,desc:"Two fried eggs, crispy bacon, hash browns and BBQ sauce in a tortilla wrap",allergens:["G","D","E"],may:[],prepTime:"8 min",cookTime:"10 min",yield:"1 × Wrap",
+    ingredients:[{c:"Wrap",n:"Flour tortilla 12\"",u:"each",q:1},{c:"Protein",n:"Eggs, fried",u:"each",q:2},{c:"Protein",n:"Streaky bacon, crispy",u:"each",q:3},{c:"Sides",n:"Hash browns",u:"each",q:2},{c:"Sauce",n:"BBQ sauce",u:"g",q:30}],
+    method:["Cook hash browns in fryer or oven at 190°C until golden and crispy.","Render bacon on flat-top until crispy.","Fry eggs to order.","Warm tortilla on flat-top 30 sec each side.","Lay flat, spread BBQ sauce, layer bacon, eggs, hash browns. Roll and cut on 45° angle."],
+    plating:"Cut on diagonal. Hash brown visible at cut. Served with side of BBQ sauce.",equip:"Flat-top grill · Fryer or oven · Serrated knife"},
+  {key:"tav-avs",name:"Avocado on Sourdough",cat:"Breakfast",dietary:["VGN"],price:33,desc:"Cherry tomato, basil, guacamole, two poached eggs with crumbled feta on sourdough",allergens:["G","D","E"],may:[],prepTime:"8 min",cookTime:"5 min",yield:"1 × Plate",
+    ingredients:[{c:"Base",n:"Sourdough bread, toasted",u:"slices",q:2},{c:"Topping",n:"Guacamole",u:"g",q:80},{c:"Topping",n:"Cherry tomatoes, halved",u:"g",q:60},{c:"Protein",n:"Eggs, poached",u:"each",q:2},{c:"Garnish",n:"Marinated feta, crumbled",u:"g",q:30},{c:"Garnish",n:"Fresh basil leaves",u:"g",q:5}],
+    method:["Toast sourdough slices until golden.","Spread guacamole generously on each slice.","Top with halved cherry tomatoes.","Poach eggs 3–4 min for soft yolk. Drain on paper.","Place egg on each slice. Crumble feta over. Garnish with fresh basil."],
+    plating:"Two slices side by side. Guacamole visible at edges. Egg centred. Feta and basil scattered. Drizzle EVOO optional.",equip:"Toaster · Deep poaching pan · Slotted spoon"},
+  {key:"tav-big",name:"Big Breakfast",cat:"Breakfast",dietary:[],price:34,desc:"Two eggs any way, bacon, sausage, hash browns and grilled tomato on toast with breakfast relish",allergens:["G","D","E"],may:[],prepTime:"8 min",cookTime:"12 min",yield:"1 × Full Plate",
+    ingredients:[{c:"Protein",n:"Eggs (any style)",u:"each",q:2},{c:"Protein",n:"Streaky bacon rashers",u:"each",q:3},{c:"Protein",n:"Breakfast sausage",u:"each",q:2},{c:"Sides",n:"Hash browns",u:"each",q:2},{c:"Sides",n:"Grilled tomato, halved",u:"each",q:1},{c:"Toast",n:"Toast, buttered",u:"slices",q:2},{c:"Sauce",n:"Breakfast relish",u:"g",q:30}],
+    method:["Cook sausages in oven or pan to cooked through (74°C).","Render bacon on flat-top until crispy.","Cook hash browns until golden. Grill tomato cut-side down.","Cook eggs to guest preference.","Arrange all components on large plate with buttered toast. Serve relish on side."],
+    plating:"Full plate arrangement: eggs front-centre, protein, hash browns, grilled tomato, toast at back. Relish in ramekin.",equip:"Flat-top grill · Oven · Fry pan · Toaster"}
+],
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TAVOLA — LUNCH
+// ═══════════════════════════════════════════════════════════════════════════════
+"Lunch": [
+  {key:"tav-gpb",name:"Garlic Pizza Bread",cat:"Starters",dietary:["VGN"],price:25,desc:"Confit garlic base with mozzarella",allergens:["G","D"],may:[],prepTime:"5 min",cookTime:"10 min",yield:"1 × Pizza",
+    ingredients:[{c:"Base",n:"Pizza dough",u:"each",q:1},{c:"Sauce",n:"Confit garlic base",u:"ml",q:60},{c:"Topping",n:"Mozzarella, shredded",u:"g",q:100},{c:"Finish",n:"Extra virgin olive oil",u:"ml",q:10}],
+    method:["Roll pizza dough to size.","Spread confit garlic base evenly.","Top with shredded mozzarella.","Bake at 280°C for 8–10 min until golden and bubbling.","Drizzle EVOO. Cut into 8 slices. Serve on board."],
+    plating:"Cut into 8 slices, serve on wooden board. Fresh basil optional garnish.",equip:"Pizza oven · Pizza peel · Pizza cutter"},
+  {key:"tav-vs",name:"Vegetable Samosas",cat:"Starters",dietary:["VGN"],price:25,desc:"Potato and light spiced vegetable samosas with raita mango sauce",allergens:["G"],may:[],prepTime:"15 min",cookTime:"5 min",yield:"3 × Samosas",
+    ingredients:[{c:"Pastry",n:"Samosa pastry",u:"each",q:3},{c:"Filling",n:"Potato, boiled and mashed",u:"g",q:100},{c:"Filling",n:"Mixed vegetables (peas, carrot, onion), diced",u:"g",q:60},{c:"Spice",n:"Cumin, coriander, garam masala",u:"g",q:5},{c:"Sauce",n:"Raita mango sauce",u:"ml",q:60}],
+    method:["Boil and mash potato. Mix with diced veg and spices.","Wrap filling in samosa pastry triangles. Seal edges with water.","Deep fry at 180°C for 4–5 min until golden and crispy.","Drain well on paper.","Serve with raita mango sauce in ramekin."],
+    plating:"3 samosas arranged on plate. Raita mango sauce in ramekin. Micro herbs optional.",equip:"Deep fryer · Slotted spoon · Paper drain"},
+  {key:"tav-spc",name:"Salt & Pepper Calamari",cat:"Starters",dietary:[],price:27,desc:"With roasted garlic aioli and Asian greens",allergens:["SF","E"],may:[],prepTime:"8 min",cookTime:"3 min",yield:"1 × Plate",
+    ingredients:[{c:"Protein",n:"Squid tubes, scored and sliced",u:"g",q:150},{c:"Coating",n:"Salt & pepper seasoning",u:"g",q:10},{c:"Coating",n:"Rice flour",u:"g",q:40},{c:"Sauce",n:"Roasted garlic aioli",u:"ml",q:30},{c:"Garnish",n:"Asian greens",u:"g",q:50}],
+    method:["Score squid tubes in cross-hatch pattern, slice into pieces.","Season with salt and pepper, dust in rice flour.","Deep fry at 180°C for 2–3 min until golden. Drain well.","Serve on bed of Asian greens with garlic aioli in ramekin."],
+    plating:"Pile calamari on Asian greens. Aioli in ramekin on side. Lemon wedge.",equip:"Deep fryer · Slotted spoon · Paper drain"},
+  {key:"tav-kok-l",name:"Kokoda",cat:"Starters",dietary:["GF"],price:28,desc:"Local tuna ceviche with sweet potato crisp",allergens:["F"],may:[],prepTime:"15 min",cookTime:"20 min cure",yield:"1 × Bowl",
+    ingredients:[{c:"Protein",n:"Fresh tuna, sashimi grade, diced 1cm",u:"g",q:150},{c:"Cure",n:"Fresh lime juice",u:"ml",q:60},{c:"Base",n:"Coconut cream",u:"ml",q:60},{c:"Vegetables",n:"Red onion, fine dice",u:"g",q:20},{c:"Vegetables",n:"Tomato, fine dice",u:"g",q:30},{c:"Herb",n:"Fresh coriander",u:"g",q:5},{c:"Garnish",n:"Sweet potato crisps",u:"g",q:20}],
+    method:["Dice tuna into 1cm cubes. Marinate in lime juice for 15–20 min until opaque.","Drain excess lime. Add coconut cream, diced veg, chilli, coriander.","Season and mix gently.","Fry thin sweet potato slices at 180°C until crispy.","Serve tuna in coconut shell or bowl. Crisps on side."],
+    plating:"Serve in coconut shell or chilled bowl. Sweet potato crisps on side. Coriander on top.",equip:"Non-reactive bowl · Deep fryer · Mandoline"},
+  {key:"tav-tod",name:"Trio of Dips",cat:"Starters",dietary:["VGN"],price:29,desc:"Beetroot dip, hummus and basil pesto with focaccia",allergens:["G","N","D"],may:[],prepTime:"5 min",cookTime:"3 min",yield:"1 × Board",
+    ingredients:[{c:"Dips",n:"Beetroot dip",u:"g",q:80},{c:"Dips",n:"Hummus",u:"g",q:80},{c:"Dips",n:"Basil pesto",u:"g",q:60},{c:"Bread",n:"Focaccia, sliced",u:"slices",q:4},{c:"Finish",n:"EVOO drizzle",u:"ml",q:10}],
+    method:["Portion dips into three separate ramekins.","Slice focaccia and toast lightly.","Arrange ramekins and toasted focaccia on wooden board.","Drizzle EVOO over dips. Serve immediately."],
+    plating:"Serve on wooden board. Three ramekins with colour contrast. Focaccia fanned alongside.",equip:"Wooden board · 3 ramekins"},
+  {key:"tav-fc",name:"Fried Cauliflower",cat:"Starters",dietary:["V"],price:29,desc:"Roasted pumpkin purée, hummus and toasted sesame",allergens:["SE"],may:[],prepTime:"10 min",cookTime:"5 min",yield:"1 × Plate",
+    ingredients:[{c:"Protein",n:"Cauliflower florets",u:"g",q:200},{c:"Batter",n:"Tempura batter",u:"ml",q:100},{c:"Sauce",n:"Roasted pumpkin purée",u:"g",q:60},{c:"Sauce",n:"Hummus",u:"g",q:40},{c:"Garnish",n:"Toasted sesame seeds",u:"g",q:5}],
+    method:["Cut cauliflower into even florets.","Dip in tempura batter. Deep fry at 180°C for 3–4 min until golden.","Drain well on paper.","Swoosh pumpkin purée and hummus on plate.","Stack cauliflower. Scatter sesame seeds."],
+    plating:"Purée swoosh on plate, cauliflower stacked, sesame scattered. Micro herbs optional.",equip:"Deep fryer · Slotted spoon · Paper drain"},
+  {key:"tav-tpr",name:"Tempura Prawns",cat:"Starters",dietary:[],price:32,desc:"Crispy king prawns with Japanese dipping sauce",allergens:["SF","G"],may:[],prepTime:"10 min",cookTime:"3 min",yield:"6 × Pieces",
+    ingredients:[{c:"Protein",n:"King prawns, butterflied, peeled and deveined",u:"each",q:6},{c:"Batter",n:"Tempura batter (ice cold)",u:"ml",q:150},{c:"Sauce",n:"Japanese dipping sauce",u:"ml",q:60}],
+    method:["Prepare tempura batter with ice-cold water. Keep ice cold.","Butterfly prawns — cut down back without separating.","Dip prawns in batter, shake off excess.","Deep fry at 180°C for 2–3 min until light golden. Drain.","Serve stacked with dipping sauce in separate bowl."],
+    plating:"Stack 6 prawns on plate. Dipping sauce in small bowl. Shiso leaf or lime garnish.",equip:"Deep fryer · Slotted spoon · Mixing bowl"},
+  {key:"tav-ts",name:"Tavola Salad",cat:"Salads",dietary:[],price:28,desc:"Roasted beetroot, capsicum, toasted almond flakes and basil dressing",allergens:["N"],may:[],prepTime:"10 min",cookTime:"0 min",yield:"1 × Bowl",
+    ingredients:[{c:"Salad",n:"Mixed greens",u:"g",q:80},{c:"Salad",n:"Roasted beetroot, diced",u:"g",q:100},{c:"Salad",n:"Roasted capsicum, diced",u:"g",q:80},{c:"Topping",n:"Toasted almond flakes",u:"g",q:20},{c:"Dressing",n:"Basil dressing",u:"ml",q:40}],
+    method:["Roast beetroot and capsicum, cool and dice.","Toss greens with basil dressing.","Top with roasted veg.","Garnish toasted almonds."],
+    plating:"Build height in bowl. Almonds on top last.",equip:"Mixing bowl · Roasting tray"},
+  {key:"tav-tcc",name:"Thai Coconut Chicken Noodle Salad",cat:"Salads",dietary:[],price:30,desc:"Crunchy Thai noodle salad with green curry chicken and kaffir lime dressing",allergens:["G","N"],may:[],prepTime:"15 min",cookTime:"12 min",yield:"1 × Bowl",
+    ingredients:[{c:"Protein",n:"Chicken breast, green curry cooked",u:"g",q:150},{c:"Base",n:"Thai noodles, cooked and cooled",u:"g",q:100},{c:"Salad",n:"Mixed greens, bean sprouts, carrot, cucumber",u:"g",q:80},{c:"Garnish",n:"Crushed peanuts",u:"g",q:20},{c:"Dressing",n:"Kaffir lime dressing",u:"ml",q:40}],
+    method:["Cook chicken in green curry paste until cooked through. Cool and slice.","Cook and cool noodles.","Toss salad ingredients together.","Arrange in large bowl. Slice chicken and fan on top.","Drizzle dressing. Garnish with crushed peanuts."],
+    plating:"Large bowl, chicken fanned on top, dressing drizzled, peanuts scattered.",equip:"Saucepan · Mixing bowl"},
+  {key:"tav-gk",name:"Greek Salad",cat:"Salads",dietary:["VGN","GF"],price:30,desc:"Tomato, feta, cucumber, olives, basil and EVOO",allergens:["D"],may:[],prepTime:"8 min",cookTime:"0 min",yield:"1 × Bowl",
+    ingredients:[{c:"Salad",n:"Tomato, diced",u:"g",q:100},{c:"Salad",n:"Cucumber, diced",u:"g",q:80},{c:"Salad",n:"Kalamata olives",u:"g",q:30},{c:"Topping",n:"Feta cheese, crumbled",u:"g",q:60},{c:"Herb",n:"Fresh basil",u:"g",q:5},{c:"Dressing",n:"EVOO",u:"ml",q:30}],
+    method:["Dice tomato and cucumber into rough 2 cm pieces.","Crumble feta over vegetables.","Add kalamata olives and fresh basil.","Dress with EVOO and season generously."],
+    plating:"Toss gently. Feta on top. Basil garnish.",equip:"Chopping board · Mixing bowl"},
+  {key:"tav-csl",name:"Caesar Salad",cat:"Salads",dietary:[],price:32,desc:"Cos leaves, smoked bacon, croutons, parmesan, anchovies and soft poached egg",allergens:["G","D","E","F"],may:[],prepTime:"10 min",cookTime:"5 min",yield:"1 × Bowl",
+    ingredients:[{c:"Salad",n:"Cos lettuce leaves, washed and torn",u:"g",q:150},{c:"Protein",n:"Smoked bacon, crispy",u:"g",q:40},{c:"Garnish",n:"Croutons",u:"g",q:30},{c:"Garnish",n:"Parmesan, shaved",u:"g",q:20},{c:"Garnish",n:"Anchovies",u:"each",q:3},{c:"Protein",n:"Soft poached egg",u:"each",q:1},{c:"Dressing",n:"Caesar dressing",u:"ml",q:50}],
+    method:["Wash and tear cos leaves into large pieces.","Crisp bacon, crumble. Make croutons.","Poach egg a la minute for soft yolk.","Toss leaves with Caesar dressing.","Top with bacon, croutons, parmesan, anchovies. Place egg on top."],
+    plating:"Whole cos leaves. Egg on top still runny. Parmesan shaved. Anchovies draped.",equip:"Saucepan · Fry pan · Mixing bowl"},
+  {key:"tav-tch",name:"Triple Cheese Pizza",cat:"Pizza",dietary:["VGN"],price:34,desc:"Parmesan, mozzarella and blue cheese on tomato base",allergens:["G","D"],may:[],prepTime:"5 min",cookTime:"12 min",yield:"1 × Pizza",
+    ingredients:[{c:"Base",n:"Pizza dough",u:"each",q:1},{c:"Sauce",n:"Tomato Napoli base",u:"ml",q:60},{c:"Topping",n:"Parmesan, grated",u:"g",q:40},{c:"Topping",n:"Mozzarella, shredded",u:"g",q:100},{c:"Topping",n:"Blue cheese, crumbled",u:"g",q:40}],
+    method:["Roll pizza dough to size.","Spread tomato base.","Top with three cheeses — distribute evenly.","Bake at 280°C for 10–12 min until golden and bubbling.","Cut into 8 slices. Serve with fresh basil garnish."],
+    plating:"Cut into 8 slices, serve on board. Fresh basil garnish.",equip:"Pizza oven · Pizza peel · Pizza cutter"},
+  {key:"tav-gvp",name:"Grilled Vegetable Pizza",cat:"Pizza",dietary:["VGN"],price:33,desc:"Zucchini, eggplant, red pepper, basil pesto, olives, tomato base, mozzarella",allergens:["G","D","N"],may:[],prepTime:"10 min",cookTime:"12 min",yield:"1 × Pizza",
+    ingredients:[{c:"Base",n:"Pizza dough",u:"each",q:1},{c:"Sauce",n:"Tomato Napoli base",u:"ml",q:60},{c:"Topping",n:"Zucchini, grilled and sliced",u:"g",q:50},{c:"Topping",n:"Eggplant, grilled and sliced",u:"g",q:50},{c:"Topping",n:"Red pepper, grilled",u:"g",q:40},{c:"Topping",n:"Kalamata olives",u:"g",q:20},{c:"Topping",n:"Mozzarella, shredded",u:"g",q:120},{c:"Finish",n:"Basil pesto drizzle",u:"ml",q:20}],
+    method:["Grill zucchini, eggplant and red pepper until tender and charred.","Roll dough, spread tomato base.","Top with grilled veg and olives.","Add mozzarella.","Bake at 280°C for 10–12 min. Drizzle pesto after bake."],
+    plating:"Cut 8 slices, pesto drizzle visible. Fresh basil.",equip:"Pizza oven · Grill · Pizza peel · Pizza cutter"},
+  {key:"tav-cpp",name:"Chilli Prawn Pizza",cat:"Pizza",dietary:[],price:36,desc:"Prawns, capsicum, red onion, chilli, tomato base, mozzarella",allergens:["SF","G","D"],may:[],prepTime:"8 min",cookTime:"12 min",yield:"1 × Pizza",
+    ingredients:[{c:"Base",n:"Pizza dough",u:"each",q:1},{c:"Sauce",n:"Tomato Napoli base",u:"ml",q:60},{c:"Protein",n:"Prawns, peeled and deveined",u:"g",q:120},{c:"Topping",n:"Capsicum, sliced",u:"g",q:40},{c:"Topping",n:"Red onion, sliced",u:"g",q:30},{c:"Topping",n:"Fresh chilli, sliced",u:"g",q:10},{c:"Topping",n:"Mozzarella, shredded",u:"g",q:120}],
+    method:["Roll dough, spread tomato base.","Top with prawns, capsicum, red onion and chilli.","Add mozzarella.","Bake at 280°C for 10–12 min until prawns cooked and cheese golden.","Cut 8 slices. Garnish fresh chilli on top."],
+    plating:"Cut 8 slices. Fresh chilli visible on top.",equip:"Pizza oven · Pizza peel · Pizza cutter"},
+  {key:"tav-tcp",name:"Tandoori Chicken Pizza",cat:"Pizza",dietary:[],price:36,desc:"Charred tandoori chicken, red onion, tomato base, chutney, raita, mozzarella",allergens:["G","D"],may:[],prepTime:"10 min",cookTime:"12 min",yield:"1 × Pizza",
+    ingredients:[{c:"Base",n:"Pizza dough",u:"each",q:1},{c:"Sauce",n:"Tomato Napoli base",u:"ml",q:60},{c:"Protein",n:"Tandoori chicken, charred and diced",u:"g",q:120},{c:"Topping",n:"Red onion, sliced",u:"g",q:30},{c:"Topping",n:"Mozzarella, shredded",u:"g",q:120},{c:"Finish",n:"Raita drizzle",u:"ml",q:30},{c:"Finish",n:"Mango chutney drizzle",u:"ml",q:20}],
+    method:["Marinate chicken in tandoori paste. Grill until charred.","Roll dough, spread tomato base.","Top with tandoori chicken, red onion, mozzarella.","Bake at 280°C for 10–12 min.","Drizzle raita and mango chutney after bake. Cut 8 slices."],
+    plating:"Cut 8 slices. Raita and chutney drizzled after bake.",equip:"Pizza oven · Grill · Pizza peel · Pizza cutter"},
+  {key:"tav-haw",name:"Hawaiian Pizza",cat:"Pizza",dietary:[],price:36,desc:"Champagne ham, pineapple, tomato base, mozzarella",allergens:["G","D"],may:[],prepTime:"5 min",cookTime:"12 min",yield:"1 × Pizza",
+    ingredients:[{c:"Base",n:"Pizza dough",u:"each",q:1},{c:"Sauce",n:"Tomato Napoli base",u:"ml",q:60},{c:"Protein",n:"Champagne ham, sliced",u:"g",q:80},{c:"Topping",n:"Pineapple, diced or sliced",u:"g",q:80},{c:"Topping",n:"Mozzarella, shredded",u:"g",q:120}],
+    method:["Roll dough, spread tomato base.","Layer champagne ham and pineapple.","Top with mozzarella.","Bake at 280°C for 10–12 min until golden and bubbling.","Cut 8 slices."],
+    plating:"Cut 8 slices. Serve on board.",equip:"Pizza oven · Pizza peel · Pizza cutter"},
+  {key:"tav-bbq",name:"BBQ Meat Lovers Pizza",cat:"Pizza",dietary:[],price:37,desc:"Salami, lamb sausage, pork belly, tomato base, mozzarella",allergens:["G","D"],may:[],prepTime:"8 min",cookTime:"12 min",yield:"1 × Pizza",
+    ingredients:[{c:"Base",n:"Pizza dough",u:"each",q:1},{c:"Sauce",n:"Tomato Napoli base",u:"ml",q:60},{c:"Protein",n:"Salami, sliced",u:"g",q:40},{c:"Protein",n:"Lamb sausage, sliced",u:"g",q:50},{c:"Protein",n:"Pork belly, slow cooked and diced",u:"g",q:50},{c:"Topping",n:"Mozzarella, shredded",u:"g",q:120}],
+    method:["Roll dough, spread tomato base.","Distribute salami, lamb sausage and pork belly evenly.","Top with mozzarella.","Bake at 280°C for 10–12 min until golden.","Cut 8 slices."],
+    plating:"Cut 8 slices. Serve on board. Fresh herbs optional.",equip:"Pizza oven · Pizza peel · Pizza cutter"},
+  {key:"tav-ccb",name:"Classic Cheeseburger",cat:"Burgers & Sandwiches",dietary:[],price:33,desc:"Angus beef, cheddar, tomato, burger sauce with fries and salad",allergens:["G","D"],may:[],prepTime:"5 min",cookTime:"10 min",yield:"1 × Burger",
+    ingredients:[{c:"Bun",n:"Burger bun, toasted",u:"each",q:1},{c:"Protein",n:"Angus beef patty 180g",u:"each",q:1},{c:"Filling",n:"Cheddar cheese slice",u:"each",q:1},{c:"Filling",n:"Lettuce",u:"g",q:25},{c:"Filling",n:"Tomato, sliced",u:"g",q:40},{c:"Sauce",n:"Burger sauce",u:"g",q:30},{c:"Sides",n:"Fries + garden salad",u:"serve",q:1}],
+    method:["Grill patty to order (med-well 6 min each side).","Toast bun. Melt cheddar on patty last minute.","Spread burger sauce on both faces.","Assemble: bun, sauce, lettuce, tomato, patty.","Serve with fries and salad."],
+    plating:"Burger on board with fries. Salad in side bowl. Ketchup on side.",equip:"Grill · Flat-top · Bread knife"},
+  {key:"tav-ftb",name:"Fish Tempura Burger",cat:"Burgers & Sandwiches",dietary:[],price:33,desc:"Tempura fish, tomato, lettuce, tartare sauce, dill pickle with fries and salad",allergens:["F","G","E"],may:[],prepTime:"8 min",cookTime:"6 min",yield:"1 × Burger",
+    ingredients:[{c:"Bun",n:"Burger bun, toasted",u:"each",q:1},{c:"Protein",n:"Reef fish fillet, tempura battered",u:"g",q:150},{c:"Filling",n:"Lettuce",u:"g",q:25},{c:"Filling",n:"Tomato, sliced",u:"g",q:40},{c:"Sauce",n:"Tartare sauce",u:"g",q:30},{c:"Garnish",n:"Dill pickle",u:"each",q:1},{c:"Sides",n:"Fries + garden salad",u:"serve",q:1}],
+    method:["Batter fish fillet in tempura batter. Deep fry at 180°C for 4–5 min until golden.","Toast bun.","Assemble: bun, lettuce, fish, tomato, tartare, pickle.","Serve with fries and salad."],
+    plating:"Burger on board with fries. Salad on side.",equip:"Deep fryer · Bread knife"},
+  {key:"tav-csb",name:"Chicken Schnitzel Burger",cat:"Burgers & Sandwiches",dietary:[],price:35,desc:"Panko chicken, bacon, cheese, lettuce, tomato, avocado, garlic mayo with fries and salad",allergens:["G","D","E"],may:[],prepTime:"10 min",cookTime:"8 min",yield:"1 × Burger",
+    ingredients:[{c:"Bun",n:"Burger bun, toasted",u:"each",q:1},{c:"Protein",n:"Chicken breast, panko crumbed",u:"g",q:180},{c:"Protein",n:"Bacon, 2 rashers",u:"each",q:2},{c:"Filling",n:"Cheddar slice",u:"each",q:1},{c:"Filling",n:"Lettuce, tomato, avocado",u:"g",q:80},{c:"Sauce",n:"Garlic mayo",u:"g",q:30},{c:"Sides",n:"Fries + garden salad",u:"serve",q:1}],
+    method:["Crumb chicken: flour, egg wash, panko. Deep fry at 180°C for 5–6 min.","Cook bacon until crispy. Toast bun.","Assemble with all toppings.","Serve with fries and salad."],
+    plating:"Burger on board. Fries in paper cone. Salad on side.",equip:"Deep fryer · Fry pan · Bread knife"},
+  {key:"tav-ass",name:"Angus Steak Sandwich",cat:"Burgers & Sandwiches",dietary:[],price:36,desc:"12hr roasted scotch fillet, balsamic onions, lettuce, tomato, garlic aioli with fries and salad",allergens:["G","D"],may:[],prepTime:"8 min",cookTime:"0 min",yield:"1 × Sandwich",
+    ingredients:[{c:"Bread",n:"Ciabatta, toasted",u:"each",q:1},{c:"Protein",n:"Scotch fillet, 12hr slow roast, sliced",u:"g",q:180},{c:"Filling",n:"Balsamic onions, caramelised",u:"g",q:40},{c:"Filling",n:"Lettuce",u:"g",q:25},{c:"Filling",n:"Tomato, sliced",u:"g",q:40},{c:"Sauce",n:"Garlic aioli",u:"g",q:30},{c:"Sides",n:"Fries + garden salad",u:"serve",q:1}],
+    method:["Slice pre-roasted scotch fillet against the grain.","Toast ciabatta. Spread aioli.","Layer lettuce, tomato, steak, balsamic onions.","Serve open or closed with fries and salad."],
+    plating:"Open sandwich style on board. Fries alongside. Salad on side.",equip:"Bread knife · Oven (for slow roast, done in advance)"},
+  {key:"tav-cpa",name:"Chicken Parmigiana",cat:"Parmigiana",dietary:[],price:33,desc:"Classic chicken, tomato Napoli, mozzarella with fries and salad",allergens:["G","D","E"],may:[],prepTime:"10 min",cookTime:"8 min",yield:"1 × Plate",
+    ingredients:[{c:"Protein",n:"Chicken breast, panko crumbed",u:"g",q:200},{c:"Sauce",n:"Tomato Napoli",u:"ml",q:80},{c:"Topping",n:"Mozzarella, shredded",u:"g",q:60},{c:"Sides",n:"Fries + garden salad",u:"serve",q:1}],
+    method:["Crumb chicken: flour, egg wash, panko. Pan fry until golden both sides.","Top with Napoli and mozzarella.","Gratinate in oven at 200°C for 3–4 min until cheese melted and golden.","Serve with fries and salad."],
+    plating:"Parmi on plate, fries and salad on side.",equip:"Fry pan · Oven · Baking tray"},
+  {key:"tav-cbp",name:"Chicken & Bacon Parmigiana",cat:"Parmigiana",dietary:[],price:35,desc:"Chicken, bacon, tomato Napoli, mozzarella with fries and salad",allergens:["G","D","E"],may:[],prepTime:"10 min",cookTime:"8 min",yield:"1 × Plate",
+    ingredients:[{c:"Protein",n:"Chicken breast, panko crumbed",u:"g",q:200},{c:"Protein",n:"Bacon, 2 rashers",u:"each",q:2},{c:"Sauce",n:"Tomato Napoli",u:"ml",q:80},{c:"Topping",n:"Mozzarella, shredded",u:"g",q:60},{c:"Sides",n:"Fries + garden salad",u:"serve",q:1}],
+    method:["Crumb chicken, pan fry until golden.","Cook bacon until crispy. Layer on chicken.","Top with Napoli and mozzarella.","Gratinate in oven at 200°C for 3–4 min.","Serve with fries and salad."],
+    plating:"Parmi on plate, bacon visible on top. Fries and salad on side.",equip:"Fry pan · Oven · Baking tray"},
+  {key:"tav-hpa",name:"Hawaiian Parmigiana",cat:"Parmigiana",dietary:[],price:35,desc:"Ham, pineapple, tomato Napoli, mozzarella with fries and salad",allergens:["G","D"],may:[],prepTime:"10 min",cookTime:"8 min",yield:"1 × Plate",
+    ingredients:[{c:"Protein",n:"Chicken breast, panko crumbed",u:"g",q:200},{c:"Topping",n:"Champagne ham, sliced",u:"g",q:50},{c:"Topping",n:"Pineapple slices",u:"g",q:50},{c:"Sauce",n:"Tomato Napoli",u:"ml",q:80},{c:"Topping",n:"Mozzarella, shredded",u:"g",q:60},{c:"Sides",n:"Fries + garden salad",u:"serve",q:1}],
+    method:["Crumb chicken, pan fry until golden.","Layer ham and pineapple on top of chicken.","Top with Napoli and mozzarella.","Gratinate in oven at 200°C for 3–4 min.","Serve with fries and salad."],
+    plating:"Parmi on plate. Pineapple visible. Fries and salad on side.",equip:"Fry pan · Oven · Baking tray"},
+  {key:"tav-ppa",name:"Prawn Parmigiana",cat:"Parmigiana",dietary:[],price:38,desc:"Sweet chilli prawn, tomato Napoli, mozzarella with fries and salad",allergens:["SF","G","D"],may:[],prepTime:"10 min",cookTime:"8 min",yield:"1 × Plate",
+    ingredients:[{c:"Protein",n:"King prawns, butterflied and crumbed",u:"g",q:200},{c:"Sauce",n:"Sweet chilli sauce",u:"ml",q:30},{c:"Sauce",n:"Tomato Napoli",u:"ml",q:80},{c:"Topping",n:"Mozzarella, shredded",u:"g",q:60},{c:"Sides",n:"Fries + garden salad",u:"serve",q:1}],
+    method:["Butterfly and crumb prawns. Pan fry until golden.","Fan prawns on plate. Drizzle sweet chilli.","Top with Napoli and mozzarella.","Gratinate in oven at 200°C for 3–4 min.","Serve with fries and salad."],
+    plating:"Prawns fanned on plate. Fries and salad on side.",equip:"Fry pan · Oven · Baking tray"},
+  {key:"tav-fnc-l",name:"Fish & Chips",cat:"Market Fish",dietary:[],price:31,desc:"Tempura battered local fillet, green salad, tartare sauce, lemon wedge",allergens:["F","G","E"],may:[],prepTime:"10 min",cookTime:"8 min",yield:"1 × Plate",
+    ingredients:[{c:"Protein",n:"Local reef fish fillet",u:"g",q:200},{c:"Batter",n:"Tempura batter (ice cold)",u:"ml",q:150},{c:"Sides",n:"Potato fries",u:"g",q:150},{c:"Sauce",n:"Tartare sauce",u:"g",q:40},{c:"Garnish",n:"Lemon wedge",u:"each",q:1},{c:"Sides",n:"Green salad",u:"g",q:60}],
+    method:["Portion fish fillet. Dip in ice-cold tempura batter.","Deep fry at 180°C for 5–6 min until golden and cooked through. Drain.","Fry chips at 190°C until golden.","Plate fish on paper, fries beside. Tartare in ramekin. Lemon wedge. Salad on side."],
+    plating:"Fish on paper, fries beside. Tartare in ramekin. Lemon wedge. Salad on side.",equip:"Deep fryer x2 · Probe thermometer · Paper drain"},
+  {key:"tav-mbp",name:"Mixed Berry Pavlova",cat:"Desserts",dietary:["GF"],price:15,desc:"Whipped cream, mixed berry on vanilla bean meringue",allergens:["E","D"],may:[],prepTime:"5 min",cookTime:"2 hrs (batch)",yield:"1 × Pavlova",
+    ingredients:[{c:"Base",n:"Vanilla bean meringue nest, pre-baked",u:"each",q:1},{c:"Cream",n:"Whipped cream",u:"ml",q:60},{c:"Topping",n:"Mixed berries (strawberry, blueberry, raspberry)",u:"g",q:80},{c:"Garnish",n:"Fresh mint sprig",u:"each",q:1},{c:"Garnish",n:"Icing sugar",u:"g",q:3}],
+    method:["Retrieve pre-baked meringue nest from storage.","Fill centre generously with whipped cream.","Top with mixed berries.","Garnish with fresh mint. Dust icing sugar at table or pass."],
+    plating:"Centre plate. Berries cascading. Mint sprig. Dust icing sugar.",equip:"Piping bag · Sieve"},
+  {key:"tav-pbc",name:"Peanut Butter Caramel Tart",cat:"Desserts",dietary:[],price:16,desc:"Bittersweet chocolate and peanut butter tart",allergens:["G","D","N","P"],may:[],prepTime:"5 min",cookTime:"4 hrs (batch set)",yield:"1 × Slice",
+    ingredients:[{c:"Base",n:"Sweet pastry tart shell, pre-baked",u:"each",q:1},{c:"Filling",n:"Peanut butter filling",u:"g",q:60},{c:"Topping",n:"Salted caramel",u:"g",q:30},{c:"Topping",n:"Bittersweet chocolate ganache",u:"g",q:40},{c:"Garnish",n:"Sea salt flakes",u:"g",q:1}],
+    method:["Retrieve pre-set tart from refrigerator.","Plate on flat plate.","Drizzle chocolate ganache on plate or over tart.","Scatter sea salt flakes.","Serve immediately."],
+    plating:"Slice on plate. Chocolate drizzle. Sea salt flakes visible.",equip:"Refrigerator · Plate"},
+  {key:"tav-chm",name:"Chocolate Mousse",cat:"Desserts",dietary:["GF"],price:17,desc:"White and milk chocolate with mixed berry compote",allergens:["D","E"],may:[],prepTime:"5 min",cookTime:"4 hrs (batch set)",yield:"1 × Glass",
+    ingredients:[{c:"Mousse",n:"White chocolate mousse layer",u:"g",q:60},{c:"Mousse",n:"Milk chocolate mousse layer",u:"g",q:60},{c:"Topping",n:"Mixed berry compote",u:"g",q:60},{c:"Garnish",n:"Fresh mint sprig",u:"each",q:1}],
+    method:["Retrieve pre-set mousse glass from refrigerator.","Spoon berry compote over the top.","Garnish with fresh mint. Serve immediately."],
+    plating:"Serve in glass. Berry compote on top. Mint garnish.",equip:"Refrigerator · Serving glass"}
+],
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TAVOLA — DINNER
+// ═══════════════════════════════════════════════════════════════════════════════
+"Dinner": [
+  {key:"tav-gpb-d",name:"Garlic Pizza Bread",cat:"Starters",dietary:["VGN"],price:25,desc:"Confit garlic base with mozzarella",allergens:["G","D"],may:[],prepTime:"5 min",cookTime:"10 min",yield:"1 × Pizza",
+    ingredients:[{c:"Base",n:"Pizza dough",u:"each",q:1},{c:"Sauce",n:"Confit garlic base",u:"ml",q:60},{c:"Topping",n:"Mozzarella, shredded",u:"g",q:100},{c:"Finish",n:"EVOO",u:"ml",q:10}],
+    method:["Roll pizza dough to size.","Spread confit garlic base evenly.","Top with shredded mozzarella.","Bake at 280°C for 8–10 min until golden.","Drizzle EVOO. Cut into 8 slices. Serve on board."],
+    plating:"Cut into 8 slices on wooden board. Fresh basil optional.",equip:"Pizza oven · Pizza peel · Pizza cutter"},
+  {key:"tav-spc-d",name:"Salt & Pepper Calamari",cat:"Starters",dietary:[],price:27,desc:"With roasted garlic aioli and Asian greens",allergens:["SF","E"],may:[],prepTime:"8 min",cookTime:"3 min",yield:"1 × Plate",
+    ingredients:[{c:"Protein",n:"Squid tubes, scored and sliced",u:"g",q:150},{c:"Coating",n:"Salt & pepper seasoning + rice flour",u:"g",q:50},{c:"Sauce",n:"Roasted garlic aioli",u:"ml",q:30},{c:"Garnish",n:"Asian greens",u:"g",q:50}],
+    method:["Score squid, slice into pieces. Season and dust in rice flour.","Deep fry at 180°C for 2–3 min until golden. Drain.","Serve on bed of Asian greens with garlic aioli in ramekin."],
+    plating:"Pile calamari on Asian greens. Aioli in ramekin. Lemon wedge.",equip:"Deep fryer · Slotted spoon"},
+  {key:"tav-kok-d",name:"Kokoda",cat:"Starters",dietary:["GF"],price:28,desc:"Local tuna ceviche with sweet potato crisp",allergens:["F"],may:[],prepTime:"15 min",cookTime:"20 min cure",yield:"1 × Bowl",
+    ingredients:[{c:"Protein",n:"Fresh tuna, sashimi grade, diced 1cm",u:"g",q:150},{c:"Cure",n:"Fresh lime juice",u:"ml",q:60},{c:"Base",n:"Coconut cream",u:"ml",q:60},{c:"Vegetables",n:"Red onion, tomato, chilli, coriander",u:"g",q:60},{c:"Garnish",n:"Sweet potato crisps",u:"g",q:20}],
+    method:["Dice tuna into 1cm cubes. Marinate in lime juice 15–20 min.","Drain, add coconut cream and diced vegetables.","Season and mix gently.","Fry sweet potato crisps at 180°C until crispy.","Serve in coconut shell or chilled bowl with crisps on side."],
+    plating:"Coconut shell or chilled bowl. Sweet potato crisps on side. Coriander on top.",equip:"Non-reactive bowl · Deep fryer"},
+  {key:"tav-tod-d",name:"Trio of Dips",cat:"Starters",dietary:["VGN"],price:29,desc:"Beetroot dip, hummus and basil pesto with focaccia",allergens:["G","N","D"],may:[],prepTime:"5 min",cookTime:"3 min",yield:"1 × Board",
+    ingredients:[{c:"Dips",n:"Beetroot dip",u:"g",q:80},{c:"Dips",n:"Hummus",u:"g",q:80},{c:"Dips",n:"Basil pesto",u:"g",q:60},{c:"Bread",n:"Focaccia, sliced and toasted",u:"slices",q:4}],
+    method:["Portion dips into three separate ramekins.","Slice and lightly toast focaccia.","Arrange on wooden board. Drizzle EVOO over dips."],
+    plating:"Wooden board. Three ramekins. Focaccia fanned alongside.",equip:"Wooden board · 3 ramekins"},
+  {key:"tav-lko",name:"Lamb Kofta",cat:"Starters",dietary:[],price:30,desc:"Mixed lettuce, crunchy vegetables and yogurt dip",allergens:["D"],may:[],prepTime:"15 min",cookTime:"10 min",yield:"2 × Kofta",
+    ingredients:[{c:"Protein",n:"Lamb mince, seasoned kofta",u:"g",q:200},{c:"Spice",n:"Cumin, coriander, garlic, onion",u:"g",q:10},{c:"Salad",n:"Mixed lettuce and crunchy vegetables",u:"g",q:80},{c:"Sauce",n:"Yogurt dip",u:"ml",q:60}],
+    method:["Mix lamb mince with spices. Shape into 2 kofta logs.","Grill on chargrill 4–5 min each side.","Rest 2 min.","Serve on bed of mixed lettuce with yogurt dip in ramekin."],
+    plating:"Bed of mixed lettuce. Kofta on top. Yogurt dip in ramekin.",equip:"Chargrill · Meat thermometer"},
+  {key:"tav-tpr-d",name:"Tempura Prawns",cat:"Starters",dietary:[],price:32,desc:"Crispy king prawns with Japanese dipping sauce",allergens:["SF","G"],may:[],prepTime:"10 min",cookTime:"3 min",yield:"6 × Pieces",
+    ingredients:[{c:"Protein",n:"King prawns, butterflied",u:"each",q:6},{c:"Batter",n:"Tempura batter (ice cold)",u:"ml",q:150},{c:"Sauce",n:"Japanese dipping sauce",u:"ml",q:60}],
+    method:["Prepare tempura batter. Keep ice cold.","Butterfly prawns. Dip in batter, shake off excess.","Deep fry at 180°C for 2–3 min. Drain.","Serve stacked with dipping sauce in bowl."],
+    plating:"Stack 6 prawns on plate. Dipping sauce in small bowl.",equip:"Deep fryer · Slotted spoon"},
+  {key:"tav-tcc-d",name:"Thai Coconut Chicken Noodle Salad",cat:"Salads",dietary:[],price:30,desc:"Thai noodle salad with green curry chicken and kaffir lime dressing",allergens:["G","N"],may:[],prepTime:"15 min",cookTime:"12 min",yield:"1 × Bowl",
+    ingredients:[{c:"Protein",n:"Chicken breast, green curry cooked and sliced",u:"g",q:150},{c:"Base",n:"Thai noodles, cooked and cooled",u:"g",q:100},{c:"Salad",n:"Mixed greens, bean sprouts, carrot, cucumber",u:"g",q:80},{c:"Garnish",n:"Crushed peanuts",u:"g",q:20},{c:"Dressing",n:"Kaffir lime dressing",u:"ml",q:40}],
+    method:["Cook chicken in green curry paste. Cool and slice.","Cook and cool noodles.","Toss salad ingredients. Arrange in bowl.","Fan chicken on top. Drizzle dressing. Garnish peanuts."],
+    plating:"Large bowl. Chicken fanned on top. Peanuts scattered.",equip:"Saucepan · Mixing bowl"},
+  {key:"tav-gk-d",name:"Greek Salad",cat:"Salads",dietary:["VGN","GF"],price:30,desc:"Tomato, feta, cucumber, olives, basil and EVOO",allergens:["D"],may:[],prepTime:"8 min",cookTime:"0 min",yield:"1 × Bowl",
+    ingredients:[{c:"Salad",n:"Tomato, diced",u:"g",q:100},{c:"Salad",n:"Cucumber, diced",u:"g",q:80},{c:"Salad",n:"Kalamata olives",u:"g",q:30},{c:"Topping",n:"Feta cheese, crumbled",u:"g",q:60},{c:"Herb",n:"Fresh basil",u:"g",q:5},{c:"Dressing",n:"EVOO",u:"ml",q:30}],
+    method:["Dice tomato and cucumber. Crumble feta over.","Add olives and fresh basil.","Dress with EVOO and season generously."],
+    plating:"Toss gently. Feta on top. Basil garnish.",equip:"Chopping board · Mixing bowl"},
+  {key:"tav-sas",name:"Salmon Salad",cat:"Salads",dietary:["GF"],price:38,desc:"Flaked oven roasted Tasmanian salmon, iceberg, green beans, potatoes and balsamic",allergens:["F"],may:[],prepTime:"10 min",cookTime:"15 min",yield:"1 × Plate",
+    ingredients:[{c:"Protein",n:"Tasmanian salmon, oven roasted and flaked",u:"g",q:180},{c:"Salad",n:"Iceberg lettuce, shredded",u:"g",q:80},{c:"Salad",n:"Green beans, blanched",u:"g",q:60},{c:"Salad",n:"Baby potatoes, boiled and halved",u:"g",q:80},{c:"Dressing",n:"Balsamic dressing",u:"ml",q:40}],
+    method:["Oven roast salmon at 180°C for 12–15 min. Flake salmon, keep warm.","Blanch green beans. Boil and cool baby potatoes.","Arrange iceberg on plate. Add beans and potatoes.","Top with flaked salmon.","Drizzle balsamic dressing."],
+    plating:"Iceberg bed. Potatoes and beans arranged. Flaked salmon on top. Balsamic drizzled.",equip:"Oven · Saucepan"},
+  {key:"tav-gvp-d",name:"Grilled Vegetable Pizza",cat:"Pizza",dietary:["VGN"],price:33,desc:"Zucchini, eggplant, red pepper, basil pesto, olives, tomato base, mozzarella",allergens:["G","D","N"],may:[],prepTime:"10 min",cookTime:"12 min",yield:"1 × Pizza",
+    ingredients:[{c:"Base",n:"Pizza dough",u:"each",q:1},{c:"Sauce",n:"Tomato Napoli base",u:"ml",q:60},{c:"Topping",n:"Grilled zucchini, eggplant, red pepper",u:"g",q:140},{c:"Topping",n:"Kalamata olives",u:"g",q:20},{c:"Topping",n:"Mozzarella, shredded",u:"g",q:120},{c:"Finish",n:"Basil pesto",u:"ml",q:20}],
+    method:["Grill vegetables until tender and charred.","Roll dough, spread base, add veg, olives, mozzarella.","Bake at 280°C 10–12 min. Drizzle pesto after bake.","Cut 8 slices."],
+    plating:"Cut 8 slices. Pesto drizzle visible. Fresh basil.",equip:"Pizza oven · Grill · Pizza peel · Pizza cutter"},
+  {key:"tav-cpp-d",name:"Chilli Prawn Pizza",cat:"Pizza",dietary:[],price:36,desc:"Prawns, capsicum, red onion, chilli, tomato base, mozzarella",allergens:["SF","G","D"],may:[],prepTime:"8 min",cookTime:"12 min",yield:"1 × Pizza",
+    ingredients:[{c:"Base",n:"Pizza dough",u:"each",q:1},{c:"Sauce",n:"Tomato Napoli base",u:"ml",q:60},{c:"Protein",n:"Prawns, peeled and deveined",u:"g",q:120},{c:"Topping",n:"Capsicum, red onion, fresh chilli",u:"g",q:80},{c:"Topping",n:"Mozzarella, shredded",u:"g",q:120}],
+    method:["Roll dough, spread base. Top with prawns, veg, chilli, mozzarella.","Bake at 280°C 10–12 min. Cut 8 slices."],
+    plating:"Cut 8 slices. Fresh chilli on top.",equip:"Pizza oven · Pizza peel · Pizza cutter"},
+  {key:"tav-tcp-d",name:"Tandoori Chicken Pizza",cat:"Pizza",dietary:[],price:36,desc:"Charred tandoori chicken, red onion, tomato base, chutney, raita, mozzarella",allergens:["G","D"],may:[],prepTime:"10 min",cookTime:"12 min",yield:"1 × Pizza",
+    ingredients:[{c:"Base",n:"Pizza dough",u:"each",q:1},{c:"Sauce",n:"Tomato Napoli base",u:"ml",q:60},{c:"Protein",n:"Tandoori chicken, charred and diced",u:"g",q:120},{c:"Topping",n:"Red onion, mozzarella",u:"g",q:150},{c:"Finish",n:"Raita + mango chutney drizzle",u:"ml",q:50}],
+    method:["Char tandoori-marinated chicken on grill.","Roll dough, spread base, top with chicken, onion, mozzarella.","Bake at 280°C 10–12 min. Drizzle raita and chutney after bake."],
+    plating:"Cut 8 slices. Raita and chutney drizzled.",equip:"Pizza oven · Grill · Pizza peel · Pizza cutter"},
+  {key:"tav-haw-d",name:"Hawaiian Pizza",cat:"Pizza",dietary:[],price:36,desc:"Champagne ham, pineapple, tomato base, mozzarella",allergens:["G","D"],may:[],prepTime:"5 min",cookTime:"12 min",yield:"1 × Pizza",
+    ingredients:[{c:"Base",n:"Pizza dough",u:"each",q:1},{c:"Sauce",n:"Tomato Napoli base",u:"ml",q:60},{c:"Protein",n:"Champagne ham",u:"g",q:80},{c:"Topping",n:"Pineapple + mozzarella",u:"g",q:200}],
+    method:["Roll dough, spread base, layer ham, pineapple, mozzarella.","Bake at 280°C 10–12 min. Cut 8 slices."],
+    plating:"Cut 8 slices on board.",equip:"Pizza oven · Pizza peel · Pizza cutter"},
+  {key:"tav-bbq-d",name:"BBQ Meat Lovers Pizza",cat:"Pizza",dietary:[],price:37,desc:"Salami, lamb sausage, pork belly, tomato base, mozzarella",allergens:["G","D"],may:[],prepTime:"8 min",cookTime:"12 min",yield:"1 × Pizza",
+    ingredients:[{c:"Base",n:"Pizza dough",u:"each",q:1},{c:"Sauce",n:"Tomato Napoli base",u:"ml",q:60},{c:"Protein",n:"Salami + lamb sausage + pork belly",u:"g",q:140},{c:"Topping",n:"Mozzarella, shredded",u:"g",q:120}],
+    method:["Roll dough, spread base, distribute proteins, top with mozzarella.","Bake at 280°C 10–12 min. Cut 8 slices."],
+    plating:"Cut 8 slices on board.",equip:"Pizza oven · Pizza peel · Pizza cutter"},
+  {key:"tav-pvp",name:"Puttanesca Vegetable Pasta",cat:"Pasta",dietary:["VGN"],price:34,desc:"Mixed local veg, basil, cherry tomatoes, spinach and parmesan on linguine",allergens:["G","D"],may:[],prepTime:"10 min",cookTime:"15 min",yield:"1 × Bowl",
+    ingredients:[{c:"Pasta",n:"Linguine",u:"g",q:180},{c:"Vegetables",n:"Mixed local vegetables, diced",u:"g",q:150},{c:"Sauce",n:"Cherry tomatoes, halved",u:"g",q:60},{c:"Sauce",n:"Fresh spinach",u:"g",q:40},{c:"Finish",n:"Parmesan, grated",u:"g",q:20},{c:"Finish",n:"Fresh basil + EVOO",u:"g",q:10}],
+    method:["Cook linguine al dente in salted boiling water.","Sauté vegetables in EVOO.","Add halved cherry tomatoes and spinach. Season.","Toss with drained pasta.","Finish with parmesan and fresh basil."],
+    plating:"Deep bowl. Parmesan shaved on top. Fresh basil garnish.",equip:"Large pot · Sauté pan"},
+  {key:"tav-cmp",name:"Chicken & Mushroom Pasta",cat:"Pasta",dietary:[],price:40,desc:"Creamy mushroom linguine with breast fillet chicken, green peas and parmesan",allergens:["G","D"],may:[],prepTime:"10 min",cookTime:"15 min",yield:"1 × Bowl",
+    ingredients:[{c:"Pasta",n:"Linguine",u:"g",q:180},{c:"Protein",n:"Chicken breast, sliced",u:"g",q:150},{c:"Sauce",n:"Mushrooms, sliced",u:"g",q:80},{c:"Sauce",n:"Cream",u:"ml",q:100},{c:"Sauce",n:"Green peas",u:"g",q:40},{c:"Finish",n:"Parmesan, grated",u:"g",q:20},{c:"Aromatics",n:"Garlic",u:"g",q:8}],
+    method:["Cook linguine al dente.","Slice and pan-fry chicken until cooked through.","Sauté mushrooms with garlic until golden.","Add cream, reduce by half. Season.","Toss with pasta and peas. Finish with parmesan."],
+    plating:"Deep bowl. Sliced chicken on top. Parmesan. Cracked pepper.",equip:"Large pot · Sauté pan"},
+  {key:"tav-smr",name:"Seafood Marinara",cat:"Pasta",dietary:[],price:42,desc:"Reef fish, prawns, mussels, squid linguine, tomato Napoli, parmesan and basil",allergens:["SF","F","MOL","G","D"],may:[],prepTime:"10 min",cookTime:"15 min",yield:"1 × Bowl",
+    ingredients:[{c:"Pasta",n:"Linguine",u:"g",q:180},{c:"Protein",n:"Reef fish, diced",u:"g",q:60},{c:"Protein",n:"Prawns, peeled",u:"g",q:60},{c:"Protein",n:"Mussels in shell",u:"each",q:4},{c:"Protein",n:"Squid, sliced",u:"g",q:40},{c:"Sauce",n:"Tomato Napoli",u:"ml",q:150},{c:"Finish",n:"Parmesan + fresh basil",u:"g",q:25}],
+    method:["Cook linguine al dente.","Sauté seafood in order: mussels first (lid on until open), then prawns, fish, squid last.","Add Napoli sauce, simmer 3–4 min.","Toss with pasta.","Garnish parmesan and basil."],
+    plating:"Deep bowl. Mussels in shell visible. Basil on top.",equip:"Large pot · Sauté pan · Lid"},
+  {key:"tav-fvc",name:"Fijian Vegetable Curry",cat:"Curries",dietary:["VGN"],price:34,desc:"With roti, jasmine rice and pappadum",allergens:["G"],may:[],prepTime:"10 min",cookTime:"25 min",yield:"1 × Bowl",
+    ingredients:[{c:"Curry",n:"Mixed vegetables, diced",u:"g",q:250},{c:"Sauce",n:"Fijian curry paste",u:"g",q:40},{c:"Sauce",n:"Coconut milk",u:"ml",q:200},{c:"Sides",n:"Jasmine rice, cooked",u:"g",q:150},{c:"Sides",n:"Roti",u:"each",q:2},{c:"Sides",n:"Pappadum",u:"each",q:2}],
+    method:["Sauté curry paste until fragrant.","Add vegetables and coconut milk. Simmer 20 min until tender.","Cook jasmine rice. Warm roti. Fry pappadum.","Serve curry in bowl with rice, roti and pappadum on side plate."],
+    plating:"Curry in bowl. Rice on side plate with roti and pappadum.",equip:"Saucepan · Rice cooker · Fryer or dry pan"},
+  {key:"tav-abr",name:"Angus Beef Rendang",cat:"Curries",dietary:[],price:35,desc:"Rendang style curry with jasmine rice and vegetables",allergens:[],may:[],prepTime:"15 min",cookTime:"3 hrs (braise)",yield:"1 × Bowl",
+    ingredients:[{c:"Protein",n:"Angus beef, diced",u:"g",q:200},{c:"Sauce",n:"Rendang paste",u:"g",q:50},{c:"Sauce",n:"Coconut milk",u:"ml",q:200},{c:"Aromatics",n:"Lemongrass, kaffir lime leaves",u:"each",q:2},{c:"Sides",n:"Jasmine rice, cooked",u:"g",q:150},{c:"Sides",n:"Steamed vegetables",u:"g",q:80}],
+    method:["Sear beef in batches until browned.","Add rendang paste, coconut milk, lemongrass, kaffir lime leaves.","Slow braise 2–3 hours until tender. Reduce sauce to thick consistency.","Serve in bowl with moulded rice and steamed veg."],
+    plating:"Rice moulded, rendang ladled beside. Steamed veg. Kaffir lime leaf garnish.",equip:"Heavy-based pot · Rice cooker"},
+  {key:"tav-gtc",name:"Green Thai Chicken Curry",cat:"Curries",dietary:[],price:37,desc:"Green Thai chicken curry with jasmine rice and vegetables",allergens:[],may:[],prepTime:"10 min",cookTime:"20 min",yield:"1 × Bowl",
+    ingredients:[{c:"Protein",n:"Chicken thigh, sliced",u:"g",q:200},{c:"Sauce",n:"Green curry paste",u:"g",q:40},{c:"Sauce",n:"Coconut milk",u:"ml",q:200},{c:"Aromatics",n:"Bamboo shoots, Thai basil",u:"g",q:40},{c:"Sides",n:"Jasmine rice, cooked",u:"g",q:150},{c:"Sides",n:"Steamed vegetables",u:"g",q:80}],
+    method:["Sauté curry paste in oil until fragrant.","Add coconut milk, bring to simmer.","Add sliced chicken, cook through 10–12 min.","Add bamboo shoots and Thai basil.","Serve with rice and steamed veg."],
+    plating:"Rice moulded, curry ladled beside. Thai basil garnish.",equip:"Saucepan · Rice cooker"},
+  {key:"tav-ccb-d",name:"Classic Cheeseburger",cat:"Burgers & Sandwiches",dietary:[],price:33,desc:"Angus beef, cheddar, tomato, burger sauce with fries and salad",allergens:["G","D"],may:[],prepTime:"5 min",cookTime:"10 min",yield:"1 × Burger",
+    ingredients:[{c:"Bun",n:"Burger bun, toasted",u:"each",q:1},{c:"Protein",n:"Angus beef patty 180g",u:"each",q:1},{c:"Filling",n:"Cheddar, lettuce, tomato",u:"g",q:65},{c:"Sauce",n:"Burger sauce",u:"g",q:30},{c:"Sides",n:"Fries + garden salad",u:"serve",q:1}],
+    method:["Grill patty to order. Melt cheddar on top.","Toast bun. Assemble. Serve with fries and salad."],
+    plating:"Burger on board. Fries beside. Salad in side bowl.",equip:"Grill · Flat-top · Bread knife"},
+  {key:"tav-csb-d",name:"Chicken Schnitzel Burger",cat:"Burgers & Sandwiches",dietary:[],price:35,desc:"Panko chicken, bacon, cheese, lettuce, tomato, avocado, garlic mayo with fries and salad",allergens:["G","D","E"],may:[],prepTime:"10 min",cookTime:"8 min",yield:"1 × Burger",
+    ingredients:[{c:"Bun",n:"Burger bun, toasted",u:"each",q:1},{c:"Protein",n:"Chicken breast, panko crumbed",u:"g",q:180},{c:"Protein",n:"Bacon, 2 rashers",u:"each",q:2},{c:"Filling",n:"Cheddar, lettuce, tomato, avocado",u:"g",q:110},{c:"Sauce",n:"Garlic mayo",u:"g",q:30},{c:"Sides",n:"Fries + garden salad",u:"serve",q:1}],
+    method:["Crumb chicken: flour, egg wash, panko. Deep fry at 180°C for 5–6 min.","Cook bacon. Toast bun. Assemble. Serve with fries and salad."],
+    plating:"Burger on board. Fries in paper cone. Salad on side.",equip:"Deep fryer · Fry pan · Bread knife"},
+  {key:"tav-ass-d",name:"Angus Steak Sandwich",cat:"Burgers & Sandwiches",dietary:[],price:36,desc:"12hr roasted scotch fillet, balsamic onions, lettuce, tomato, garlic aioli with fries and salad",allergens:["G","D"],may:[],prepTime:"8 min",cookTime:"0 min",yield:"1 × Sandwich",
+    ingredients:[{c:"Bread",n:"Ciabatta, toasted",u:"each",q:1},{c:"Protein",n:"Scotch fillet, 12hr slow roast, sliced",u:"g",q:180},{c:"Filling",n:"Balsamic onions, lettuce, tomato",u:"g",q:105},{c:"Sauce",n:"Garlic aioli",u:"g",q:30},{c:"Sides",n:"Fries + garden salad",u:"serve",q:1}],
+    method:["Slice pre-roasted scotch fillet. Toast ciabatta. Spread aioli.","Layer lettuce, tomato, steak, balsamic onions. Serve with fries and salad."],
+    plating:"Open sandwich style on board. Fries alongside.",equip:"Bread knife"},
+  {key:"tav-cpa-d",name:"Chicken Parmigiana",cat:"Parmigiana",dietary:[],price:33,desc:"Classic chicken, tomato Napoli, mozzarella with fries and salad",allergens:["G","D","E"],may:[],prepTime:"10 min",cookTime:"8 min",yield:"1 × Plate",
+    ingredients:[{c:"Protein",n:"Chicken breast, panko crumbed",u:"g",q:200},{c:"Sauce",n:"Tomato Napoli",u:"ml",q:80},{c:"Topping",n:"Mozzarella, shredded",u:"g",q:60},{c:"Sides",n:"Fries + garden salad",u:"serve",q:1}],
+    method:["Crumb chicken, pan fry until golden. Top with Napoli and mozzarella.","Gratinate in oven at 200°C for 3–4 min.","Serve with fries and salad."],
+    plating:"Parmi on plate. Fries and salad on side.",equip:"Fry pan · Oven"},
+  {key:"tav-cbp-d",name:"Chicken & Bacon Parmigiana",cat:"Parmigiana",dietary:[],price:35,desc:"Chicken, bacon, tomato Napoli, mozzarella with fries and salad",allergens:["G","D","E"],may:[],prepTime:"10 min",cookTime:"8 min",yield:"1 × Plate",
+    ingredients:[{c:"Protein",n:"Chicken breast, panko crumbed",u:"g",q:200},{c:"Protein",n:"Bacon, 2 rashers",u:"each",q:2},{c:"Sauce",n:"Tomato Napoli",u:"ml",q:80},{c:"Topping",n:"Mozzarella, shredded",u:"g",q:60},{c:"Sides",n:"Fries + garden salad",u:"serve",q:1}],
+    method:["Crumb chicken, pan fry until golden. Layer bacon on top.","Top with Napoli and mozzarella.","Gratinate in oven at 200°C for 3–4 min."],
+    plating:"Parmi on plate. Bacon visible on top. Fries and salad on side.",equip:"Fry pan · Oven"},
+  {key:"tav-hpa-d",name:"Hawaiian Parmigiana",cat:"Parmigiana",dietary:[],price:35,desc:"Ham, pineapple, tomato Napoli, mozzarella with fries and salad",allergens:["G","D"],may:[],prepTime:"10 min",cookTime:"8 min",yield:"1 × Plate",
+    ingredients:[{c:"Protein",n:"Chicken breast, panko crumbed",u:"g",q:200},{c:"Topping",n:"Champagne ham + pineapple",u:"g",q:100},{c:"Sauce",n:"Tomato Napoli",u:"ml",q:80},{c:"Topping",n:"Mozzarella, shredded",u:"g",q:60},{c:"Sides",n:"Fries + garden salad",u:"serve",q:1}],
+    method:["Crumb chicken, pan fry. Layer ham and pineapple. Top with Napoli and mozzarella.","Gratinate in oven at 200°C for 3–4 min."],
+    plating:"Parmi on plate. Pineapple visible. Fries and salad on side.",equip:"Fry pan · Oven"},
+  {key:"tav-rfd",name:"Reef Fish of the Day",cat:"From the Grill",dietary:["GF"],price:35,desc:"Grilled fresh reef fish fillet with fries and salad or steamed veg and baked potato",allergens:["F"],may:[],prepTime:"5 min",cookTime:"8 min",yield:"1 × Plate",
+    ingredients:[{c:"Protein",n:"Reef fish fillet of the day",u:"g",q:220},{c:"Seasoning",n:"Sea salt, cracked pepper, olive oil",u:"to taste",q:0},{c:"Sides",n:"Fries + garden salad OR steamed veg + baked potato",u:"serve",q:1}],
+    method:["Season fish fillet with salt, pepper and olive oil.","Grill on hot chargrill 3–4 min each side until cooked through.","Rest 1 min.","Serve with chosen sides."],
+    plating:"Fish centred on plate. Sides arranged. Lemon wedge. Herb butter optional.",equip:"Chargrill · Fish spatula"},
+  {key:"tav-grck",name:"Grilled Chicken Breast",cat:"From the Grill",dietary:["GF"],price:36,desc:"Herb-marinated chicken breast with fries and salad or steamed veg and baked potato",allergens:[],may:[],prepTime:"5 min + marinate",cookTime:"14 min",yield:"1 × Plate",
+    ingredients:[{c:"Protein",n:"Chicken breast, herb-marinated",u:"g",q:200},{c:"Seasoning",n:"Mixed herbs, garlic, olive oil",u:"to taste",q:0},{c:"Sides",n:"Fries + garden salad OR steamed veg + baked potato",u:"serve",q:1}],
+    method:["Marinate chicken in herbs, garlic and olive oil (minimum 2 hours).","Grill 6–7 min each side to 75°C core.","Rest 3 min.","Serve with chosen sides."],
+    plating:"Chicken sliced on plate. Sides arranged. Herb garnish.",equip:"Chargrill · Probe thermometer"},
+  {key:"tav-yft",name:"Yellow Fin Tuna",cat:"From the Grill",dietary:["GF"],price:38,desc:"Grilled yellow fin tuna steak with fries and salad or steamed veg and baked potato",allergens:["F"],may:[],prepTime:"5 min",cookTime:"6 min",yield:"1 × Plate",
+    ingredients:[{c:"Protein",n:"Yellow fin tuna steak 200g",u:"each",q:1},{c:"Seasoning",n:"Sea salt, cracked pepper, olive oil",u:"to taste",q:0},{c:"Sides",n:"Fries + garden salad OR steamed veg + baked potato",u:"serve",q:1}],
+    method:["Brush tuna steak with olive oil. Season.","Grill on very hot chargrill 2–3 min each side for medium-rare (pink centre).","Rest 1 min.","Serve with chosen sides."],
+    plating:"Tuna centred. Sides arranged. Lemon wedge.",equip:"Chargrill · Fish spatula"},
+  {key:"tav-abs",name:"Angus Beef Sirloin Steak",cat:"From the Grill",dietary:["GF"],price:45,desc:"300g Angus sirloin with fries and salad or steamed veg and baked potato",allergens:[],may:[],prepTime:"5 min",cookTime:"10 min",yield:"1 × Plate",
+    ingredients:[{c:"Protein",n:"Angus sirloin steak 300g",u:"each",q:1},{c:"Seasoning",n:"Sea salt, cracked pepper, olive oil",u:"to taste",q:0},{c:"Sides",n:"Fries + garden salad OR steamed veg + baked potato",u:"serve",q:1}],
+    method:["Bring steak to room temperature.","Season generously with salt and pepper.","Grill to order: Rare 3 min/side · Medium 5 min/side · Well 7 min/side.","Rest 5 min before serving. Serve with chosen sides."],
+    plating:"Steak sliced on plate. Sides arranged. Jus optional.",equip:"Chargrill · Probe thermometer · Meat knife"},
+  {key:"tav-mbp-d",name:"Mixed Berry Pavlova",cat:"Desserts",dietary:["GF"],price:15,desc:"Whipped cream, mixed berry on vanilla bean meringue",allergens:["E","D"],may:[],prepTime:"5 min",cookTime:"2 hrs (batch)",yield:"1 × Pavlova",
+    ingredients:[{c:"Base",n:"Vanilla bean meringue nest",u:"each",q:1},{c:"Cream",n:"Whipped cream",u:"ml",q:60},{c:"Topping",n:"Mixed berries",u:"g",q:80},{c:"Garnish",n:"Mint sprig + icing sugar",u:"each",q:1}],
+    method:["Fill meringue nest with whipped cream.","Top with mixed berries.","Garnish mint. Dust icing sugar."],
+    plating:"Centre plate. Berries cascading. Mint sprig. Icing sugar dusted.",equip:"Piping bag · Sieve"},
+  {key:"tav-pbc-d",name:"Peanut Butter Caramel Tart",cat:"Desserts",dietary:[],price:16,desc:"Bittersweet chocolate and peanut butter tart",allergens:["G","D","N","P"],may:[],prepTime:"5 min",cookTime:"4 hrs (batch set)",yield:"1 × Slice",
+    ingredients:[{c:"Tart",n:"Pre-set tart (pastry, PB filling, salted caramel, chocolate ganache)",u:"each",q:1},{c:"Garnish",n:"Sea salt flakes",u:"g",q:1}],
+    method:["Retrieve pre-set tart from refrigerator.","Plate. Drizzle chocolate ganache. Scatter sea salt flakes."],
+    plating:"Slice on plate. Chocolate drizzle. Sea salt visible.",equip:"Refrigerator"},
+  {key:"tav-chm-d",name:"Chocolate Mousse",cat:"Desserts",dietary:["GF"],price:17,desc:"White and milk chocolate with mixed berry compote",allergens:["D","E"],may:[],prepTime:"5 min",cookTime:"4 hrs (batch set)",yield:"1 × Glass",
+    ingredients:[{c:"Mousse",n:"White + milk chocolate mousse (pre-set glass)",u:"each",q:1},{c:"Topping",n:"Mixed berry compote",u:"g",q:60},{c:"Garnish",n:"Mint sprig",u:"each",q:1}],
+    method:["Retrieve pre-set glass from refrigerator.","Spoon berry compote over top.","Garnish with fresh mint. Serve immediately."],
+    plating:"Serve in glass. Berry compote on top. Mint garnish.",equip:"Refrigerator"}
+]},
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// BATABATA
+// ═══════════════════════════════════════════════════════════════════════════════
+"BataBata": { "All Day": [
+  {key:"bat-c1",name:"Ice Cream Cone — 1 Scoop",cat:"Cones",dietary:[],price:6,desc:"Single scoop of house-made ice cream in a waffle cone",allergens:["G","D","E"],may:["N"],prepTime:"1 min",cookTime:"0 min",yield:"1 × Cone",
+    ingredients:[{c:"Ice Cream",n:"Ice cream, 1 scoop (flavour of the day)",u:"scoop",q:1},{c:"Cone",n:"Waffle cone",u:"each",q:1}],
+    method:["Select waffle cone. Check for cracks.","Scoop 1 level scoop of ice cream using correct size scoop.","Press gently into cone. Ensure stable base.","Serve immediately."],
+    plating:"Cone upright. Scoop centred. Serve in holder or hand direct to guest.",equip:"Ice cream scoop · Cone holder"},
+  {key:"bat-c2",name:"Ice Cream Cone — 2 Scoops",cat:"Cones",dietary:[],price:10,desc:"Double scoop of house-made ice cream in a waffle cone",allergens:["G","D","E"],may:["N"],prepTime:"1 min",cookTime:"0 min",yield:"1 × Cone",
+    ingredients:[{c:"Ice Cream",n:"Ice cream, 2 scoops (same or different flavours)",u:"scoop",q:2},{c:"Cone",n:"Waffle cone",u:"each",q:1}],
+    method:["Select waffle cone. Check for cracks.","Scoop first scoop into cone, press firmly.","Add second scoop on top, angled slightly for stability.","Serve immediately."],
+    plating:"Two scoops stacked. Serve immediately to prevent dripping.",equip:"Ice cream scoop · Cone holder"},
+  {key:"bat-c3",name:"Ice Cream Cone — 3 Scoops",cat:"Cones",dietary:[],price:14,desc:"Triple scoop of house-made ice cream in a waffle cone",allergens:["G","D","E"],may:["N"],prepTime:"2 min",cookTime:"0 min",yield:"1 × Cone",
+    ingredients:[{c:"Ice Cream",n:"Ice cream, 3 scoops (guest choice of flavours)",u:"scoop",q:3},{c:"Cone",n:"Waffle cone",u:"each",q:1}],
+    method:["Select waffle cone. Check for cracks.","Scoop first scoop firmly into cone.","Add second scoop, third scoop angled and balanced.","Serve immediately with napkin."],
+    plating:"Three scoops stacked tall. Napkin wrapped around cone. Serve immediately.",equip:"Ice cream scoop · Cone holder"},
+  {key:"bat-cu1",name:"Ice Cream Cup — 1 Scoop",cat:"Cups",dietary:[],price:6,desc:"Single scoop of house-made ice cream served in a cup",allergens:["D","E"],may:["G","N"],prepTime:"1 min",cookTime:"0 min",yield:"1 × Cup",
+    ingredients:[{c:"Ice Cream",n:"Ice cream, 1 scoop (flavour of the day)",u:"scoop",q:1},{c:"Cup",n:"Ice cream cup",u:"each",q:1}],
+    method:["Open cup. Scoop 1 level scoop of ice cream.","Place in cup. Ensure presentation is clean.","Serve with a spoon."],
+    plating:"Clean cup. Scoop centred. Spoon alongside.",equip:"Ice cream scoop"},
+  {key:"bat-cu2",name:"Ice Cream Cup — 2 Scoops",cat:"Cups",dietary:[],price:10,desc:"Double scoop of house-made ice cream served in a cup",allergens:["D","E"],may:["G","N"],prepTime:"1 min",cookTime:"0 min",yield:"1 × Cup",
+    ingredients:[{c:"Ice Cream",n:"Ice cream, 2 scoops (guest choice of flavours)",u:"scoop",q:2},{c:"Cup",n:"Ice cream cup",u:"each",q:1}],
+    method:["Open cup. Scoop 2 scoops side by side in cup.","Serve with spoon."],
+    plating:"Two scoops side by side. Spoon alongside.",equip:"Ice cream scoop"},
+  {key:"bat-cu3",name:"Ice Cream Cup — 3 Scoops",cat:"Cups",dietary:[],price:14,desc:"Triple scoop of house-made ice cream served in a cup",allergens:["D","E"],may:["G","N"],prepTime:"1 min",cookTime:"0 min",yield:"1 × Cup",
+    ingredients:[{c:"Ice Cream",n:"Ice cream, 3 scoops (guest choice of flavours)",u:"scoop",q:3},{c:"Cup",n:"Ice cream cup",u:"each",q:1}],
+    method:["Open cup. Scoop 3 scoops of ice cream into cup.","Serve with spoon."],
+    plating:"Three scoops in cup. Spoon alongside.",equip:"Ice cream scoop"},
+  {key:"bat-bdc",name:"Bata Cup — Donut Cup",cat:"Bata Cup",dietary:[],price:14,desc:"House-made cinnamon donut cup filled with ice cream scoops",allergens:["G","D","E"],may:["N"],prepTime:"3 min",cookTime:"0 min",yield:"1 × Donut Cup",
+    ingredients:[{c:"Cup",n:"Cinnamon donut cup (house-made)",u:"each",q:1},{c:"Ice Cream",n:"Ice cream, 2 scoops (guest choice)",u:"scoop",q:2},{c:"Topping",n:"Cinnamon sugar dusting",u:"g",q:5}],
+    method:["Retrieve pre-made cinnamon donut cup from display.","Check donut is fresh — not older than 4 hours.","Scoop 2 scoops of ice cream into donut cup.","Dust lightly with cinnamon sugar. Serve immediately."],
+    plating:"Donut cup upright on board or plate. Scoops visible above rim. Cinnamon sugar dusted.",equip:"Ice cream scoop · Serving board"},
+  {key:"bat-tsm",name:"Thick Shake — Mixed Berry",cat:"Thick Shakes",dietary:[],price:16,desc:"House-made thick shake blended with mixed berry ice cream and fresh berries",allergens:["D","E"],may:["G","N"],prepTime:"3 min",cookTime:"0 min",yield:"1 × Shake (400ml)",
+    ingredients:[{c:"Ice Cream",n:"Mixed berry ice cream",u:"scoops",q:3},{c:"Base",n:"Full cream milk",u:"ml",q:80},{c:"Topping",n:"Whipped cream",u:"ml",q:40},{c:"Garnish",n:"Fresh berries + wafer straw",u:"each",q:1}],
+    method:["Place 3 scoops mixed berry ice cream into blender.","Add milk. Blend until thick and smooth — do not over-blend.","Pour into chilled glass. Top with whipped cream.","Garnish with fresh berries and wafer straw."],
+    plating:"Chilled glass. Whipped cream piped on top. Berries on cream. Wafer straw inserted.",equip:"High-speed blender · Chilled glass · Piping bag"},
+  {key:"bat-tsc",name:"Thick Shake — Chocolate",cat:"Thick Shakes",dietary:[],price:16,desc:"House-made thick shake blended with chocolate ice cream",allergens:["D","E"],may:["G","N"],prepTime:"3 min",cookTime:"0 min",yield:"1 × Shake (400ml)",
+    ingredients:[{c:"Ice Cream",n:"Chocolate ice cream",u:"scoops",q:3},{c:"Base",n:"Full cream milk",u:"ml",q:80},{c:"Topping",n:"Whipped cream",u:"ml",q:40},{c:"Garnish",n:"Chocolate shavings + wafer straw",u:"each",q:1}],
+    method:["Place 3 scoops chocolate ice cream into blender.","Add milk. Blend until thick and smooth.","Pour into chilled glass. Top with whipped cream.","Garnish with chocolate shavings and wafer straw."],
+    plating:"Chilled glass. Whipped cream piped. Chocolate shavings on top. Wafer straw.",equip:"High-speed blender · Chilled glass · Piping bag"},
+  {key:"bat-gdc",name:"Gourmet Donut — Custard",cat:"Gourmet Donuts",dietary:[],price:8,desc:"House-made fried donut filled with vanilla custard, dusted with icing sugar",allergens:["G","D","E"],may:[],prepTime:"5 min",cookTime:"3 min",yield:"1 × Donut",
+    ingredients:[{c:"Dough",n:"Donut dough, proofed and portioned",u:"each",q:1},{c:"Filling",n:"Vanilla custard",u:"g",q:50},{c:"Finish",n:"Icing sugar",u:"g",q:5}],
+    method:["Deep fry proofed donut at 175°C for 1.5 min each side until golden.","Drain on paper. Cool 2 min — not too long or difficult to fill.","Fill with vanilla custard using piping bag and fine nozzle.","Dust generously with icing sugar. Serve immediately."],
+    plating:"Dust visible on top. Serve on board or in paper bag. Eat fresh.",equip:"Deep fryer · Piping bag · Fine nozzle · Sieve"},
+  {key:"bat-gdd",name:"Gourmet Donut — Double Chocolate",cat:"Gourmet Donuts",dietary:[],price:8,desc:"House-made fried donut dipped in chocolate ganache and topped with chocolate sprinkles",allergens:["G","D","E"],may:[],prepTime:"5 min",cookTime:"3 min",yield:"1 × Donut",
+    ingredients:[{c:"Dough",n:"Donut dough, proofed and portioned",u:"each",q:1},{c:"Glaze",n:"Chocolate ganache, warm",u:"g",q:40},{c:"Topping",n:"Chocolate sprinkles",u:"g",q:5}],
+    method:["Deep fry proofed donut at 175°C for 1.5 min each side until golden.","Drain on paper. Cool 2 min.","Dip top of donut into warm chocolate ganache.","Immediately top with chocolate sprinkles. Set 1 min before serving."],
+    plating:"Ganache visible on top. Sprinkles set. Serve on board or in paper bag.",equip:"Deep fryer · Dipping bowl · Serving board"},
+  {key:"bat-cdh",name:"Cinnamon Donut Mix — Half Batch",cat:"Cinnamon Donuts",dietary:[],price:12,desc:"Half batch of house-made cinnamon sugar mini donuts — approx. 12 pieces",allergens:["G","D","E"],may:[],prepTime:"15 min",cookTime:"10 min",yield:"12 × Mini Donuts",
+    ingredients:[{c:"Dough",n:"Donut dough, proofed",u:"g",q:400},{c:"Fry",n:"Vegetable oil",u:"L",q:2},{c:"Coating",n:"Caster sugar",u:"g",q:60},{c:"Coating",n:"Ground cinnamon",u:"g",q:8}],
+    method:["Portion proofed dough into 12 even balls (approx. 33g each).","Deep fry in batches at 175°C for 1.5 min each side until golden.","Drain on paper 30 sec.","While still warm, toss in cinnamon sugar mixture.","Serve in basket or bag immediately."],
+    plating:"Pile in basket or paper bag. Serve immediately while warm.",equip:"Deep fryer · Slotted spoon · Mixing bowl · Sieve"},
+  {key:"bat-cdf",name:"Cinnamon Donut Mix — Full Batch",cat:"Cinnamon Donuts",dietary:[],price:22,desc:"Full batch of house-made cinnamon sugar mini donuts — approx. 24 pieces",allergens:["G","D","E"],may:[],prepTime:"20 min",cookTime:"18 min",yield:"24 × Mini Donuts",
+    ingredients:[{c:"Dough",n:"Donut dough, proofed",u:"g",q:800},{c:"Fry",n:"Vegetable oil",u:"L",q:2},{c:"Coating",n:"Caster sugar",u:"g",q:120},{c:"Coating",n:"Ground cinnamon",u:"g",q:16}],
+    method:["Portion proofed dough into 24 even balls (approx. 33g each).","Deep fry in batches at 175°C for 1.5 min each side until golden.","Drain on paper 30 sec.","While still warm, toss generously in cinnamon sugar mixture.","Serve in large basket or paper bag immediately."],
+    plating:"Large pile in basket or paper bag. Serve immediately while warm.",equip:"Deep fryer · Slotted spoon · Large mixing bowl · Sieve"}
+]}
+};
+
+// ─── PROPERTY / OUTLET / SERVICE SLUG MAPS ────────────────────────────────────
+const PROP_CODES = {
+  "Plantation Island Resort": "PIR",
+  "Lomani Island Resort": "LOM",
+  "Fiji Gateway Hotel": "FGH"
+};
+const OUTLET_SLUGS = {
+  "Copra Restaurant": "copra",
+  "Tavola Restaurant & Bar": "tavola",
+  "BataBata": "batabata",
+  "Baravi Snack Bar": "baravi",
+  "Lomani Restaurant": "lomani",
+  "Gateway Restaurant": "gateway"
+};
+const SERVICE_SLUGS = {
+  "Breakfast": "breakfast",
+  "Lunch": "lunch",
+  "Dinner": "dinner",
+  "All Day": "all-day"
+};
+function toSlug(name) {
+  return name.toLowerCase().replace(/[^\w\s-]/g, '').trim().replace(/[\s_]+/g, '-');
+}
+function getRecipeURL(d, o) {
+  const prop = PROP_CODES[o.property] || 'PIR';
+  const outlet = OUTLET_SLUGS[o.outlet] || o.outlet.toLowerCase();
+  const service = SERVICE_SLUGS[o.service] || o.service.toLowerCase();
+  const dish = toSlug(d.name);
+  return `https://recipes.exechef.com/${prop}/${outlet}/${service}/${dish}`;
+}
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let photoB64 = "";
+let htmlHero = "";
+let htmlRecipe = "";
+let currentDish = null;
+let currentOpts = null;
+
+// ─── PHOTO ────────────────────────────────────────────────────────────────────
+function handlePhoto(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    photoB64 = e.target.result;
+    const img = document.getElementById("ph-preview");
+    img.src = photoB64; img.style.display = "block";
+    document.getElementById("ph-placeholder").style.display = "none";
+    document.getElementById("photo-zone").style.borderColor = "#c9973a";
+    document.getElementById("btn-clear-photo").style.display = "block";
+  };
+  reader.readAsDataURL(file);
+}
+function clearPhoto() {
+  photoB64 = "";
+  document.getElementById("ph-preview").style.display = "none";
+  document.getElementById("ph-placeholder").style.display = "block";
+  document.getElementById("photo-zone").style.borderColor = "#2a3a50";
+  document.getElementById("btn-clear-photo").style.display = "none";
+  document.getElementById("photo-input").value = "";
+}
+
+// ─── OUTLET / SERVICE CHANGE ──────────────────────────────────────────────────
+function onOutletChange() {
+  const outlet = document.getElementById("outlet").value;
+  const serviceEl = document.getElementById("service");
+  if (outlet === "BataBata") serviceEl.value = "All Day";
+  else if (outlet === "Tavola Restaurant & Bar") serviceEl.value = "Breakfast";
+  else serviceEl.value = "Lunch";
+  refreshDishList();
+}
+function onServiceChange() { refreshDishList(); }
+
+function refreshDishList() {
+  const outlet = document.getElementById("outlet").value;
+  const service = document.getElementById("service").value;
+  const dishEl = document.getElementById("dish");
+  let dishes = [];
+  if (DB[outlet] && DB[outlet][service]) dishes = DB[outlet][service];
+  else if (DB[outlet]) { const first = Object.keys(DB[outlet])[0]; if (first) dishes = DB[outlet][first]; }
+  dishEl.innerHTML = "";
+  const groups = {};
+  dishes.forEach(d => { if (!groups[d.cat]) groups[d.cat]=[]; groups[d.cat].push(d); });
+  if (Object.keys(groups).length === 0) {
+    const opt = document.createElement("option");
+    opt.value = ""; opt.text = "— No dishes for this combination —";
+    dishEl.appendChild(opt);
+  } else {
+    Object.entries(groups).forEach(([cat, items]) => {
+      const group = document.createElement("optgroup");
+      group.label = "— " + cat.toUpperCase() + " —";
+      items.forEach(d => {
+        const opt = document.createElement("option");
+        opt.value = d.key; opt.text = d.name;
+        group.appendChild(opt);
+      });
+      dishEl.appendChild(group);
+    });
+  }
+  onDishChange();
+}
+
+function getDish() {
+  const key = document.getElementById("dish").value;
+  const outlet = document.getElementById("outlet").value;
+  if (!DB[outlet]) return null;
+  return Object.values(DB[outlet]).flat().find(d => d.key === key) || null;
+}
+
+// ─── DISH CHANGE ──────────────────────────────────────────────────────────────
+function onDishChange() {
+  const d = getDish();
+  const el = document.getElementById("dish-preview");
+  if (!d) { el.classList.remove("show"); return; }
+  document.getElementById("price").value = d.price;
+  const badges = d.allergens.map(a=>`<span class="ab-yes">${AL[a]||a}</span>`).join("");
+  const diet = d.dietary.length ? `<strong>${d.dietary.join(" · ")}</strong> · ` : "";
+  el.innerHTML = `${diet}<strong>FJD$${d.price}</strong> · ${d.prepTime} prep · ${d.cookTime} cook · ${d.yield}<br><em style="color:#9ab;margin-top:4px;display:block;">${d.desc}</em><div class="abadges">${badges||'<span style="color:#556;font-size:11px">No major allergens</span>'}</div>`;
+  el.classList.add("show");
+}
+
+// ─── TABS ─────────────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll(".tab-btn").forEach((b,i)=>b.classList.toggle("active",i===(tab==="hero"?0:1)));
+  document.querySelectorAll(".tab-panel").forEach((p,i)=>p.classList.toggle("active",i===(tab==="hero"?0:1)));
+}
+
+// ─── APPROVE & COPY ───────────────────────────────────────────────────────────
+function approveCard(type) {
+  const html = type === "recipe" ? htmlRecipe : htmlHero;
+  const label = type === "recipe" ? "Recipe Card" : "Hero Card";
+  navigator.clipboard.writeText(html).then(() => {
+    const status = document.getElementById("approve-status");
+    status.style.display = "block";
+    status.textContent = `✓ ${label} HTML copied — ready to commit to GitHub`;
+    setTimeout(() => status.style.display = "none", 4000);
+  });
+}
+
+function resetAll() {
+  document.getElementById("output").classList.remove("show");
+  document.getElementById("approve-status").style.display = "none";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+// ─── UPDATE CARDS FROM EDIT PANEL ─────────────────────────────────────────────
+function updateCards() {
+  if (!currentDish || !currentOpts) return;
+  const editedMethod = document.getElementById("edit-method").value
+    .split("\n").map(s=>s.trim()).filter(Boolean);
+  const editedPlating = document.getElementById("edit-plating").value.trim();
+  const editedNotes = document.getElementById("edit-notes").value.trim();
+  const editedDish = {...currentDish,
+    method: editedMethod.length ? editedMethod : currentDish.method,
+    plating: editedPlating || currentDish.plating,
+    chefNotes: editedNotes
+  };
+  htmlHero   = buildHero(editedDish, currentOpts);
+  htmlRecipe = buildRecipe(editedDish, currentOpts);
+  function writeFrame(frame, html) {
+    const doc = frame.contentDocument || frame.contentWindow.document;
+    doc.open(); doc.write(html); doc.close();
+    setTimeout(() => { frame.style.height = (doc.body.scrollHeight + 20) + "px"; }, 600);
+  }
+  writeFrame(document.getElementById("frame-hero"), htmlHero);
+  writeFrame(document.getElementById("frame-recipe"), htmlRecipe);
+}
+
+// ─── GENERATE ─────────────────────────────────────────────────────────────────
+function generate() {
+  const d = getDish(); if (!d) return;
+  const opts = {
+    property: document.getElementById("property").value,
+    outlet: document.getElementById("outlet").value,
+    service: document.getElementById("service").value,
+    code: document.getElementById("code").value || "—",
+    chef: document.getElementById("chef").value || "Chef Don Christie",
+    price: parseFloat(document.getElementById("price").value) || d.price,
+    portions: parseInt(document.getElementById("portions").value) || 1,
+    photo: photoB64
+  };
+  currentDish = d;
+  currentOpts = opts;
+  document.getElementById("btn-gen").disabled = true;
+  document.getElementById("status").classList.add("show");
+  document.getElementById("output").classList.remove("show");
+  setTimeout(() => {
+    htmlHero   = buildHero(d, opts);
+    htmlRecipe = buildRecipe(d, opts);
+    function writeFrame(frame, html) {
+      const doc = frame.contentDocument || frame.contentWindow.document;
+      doc.open(); doc.write(html); doc.close();
+      setTimeout(() => { frame.style.height = (doc.body.scrollHeight + 20) + "px"; }, 600);
+    }
+    writeFrame(document.getElementById("frame-hero"), htmlHero);
+    writeFrame(document.getElementById("frame-recipe"), htmlRecipe);
+    // Populate edit panel
+    document.getElementById("edit-method").value = d.method.join("\n");
+    document.getElementById("edit-plating").value = d.plating;
+    document.getElementById("edit-notes").value = "";
+    // Show recipe URL
+    const recipeURL = getRecipeURL(d, opts);
+    document.getElementById("recipe-url-display").textContent = recipeURL;
+    document.getElementById("status").classList.remove("show");
+    document.getElementById("btn-gen").disabled = false;
+    document.getElementById("output").classList.add("show");
+    document.getElementById("output").scrollIntoView({behavior:"smooth"});
+  }, 700);
+}
+
+// ─── BUILD HERO CARD ──────────────────────────────────────────────────────────
+function buildHero(d, o) {
+  const {property, outlet, service, code, chef, price, photo} = o;
+  const date = new Date().toLocaleDateString("en-AU",{month:"short",year:"numeric"});
+  const audPrice = (price * 0.685).toFixed(2);
+  const recipeURL = getRecipeURL(d, o);
+  const qrURL = `https://api.qrserver.com/v1/create-qr-code/?size=90x90&margin=4&data=${encodeURIComponent(recipeURL)}`;
+  const dietBadges = d.dietary.map(t=>`<span style="border:1.5px solid rgba(255,255,255,0.7);color:#fff;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:0.08em;">${t}</span>`).join(" ");
+  const presentBadges = d.allergens.map(a=>`<span style="border:1.5px solid #c0392b;color:#c0392b;padding:4px 9px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:0.06em;background:#fff;">${AL[a]||a}</span>`).join(" ");
+  const photoBlock = photo
+    ? `<img src="${photo}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;">`
+    : `<div style="position:absolute;inset:0;background:linear-gradient(160deg,#1a2535 0%,#243347 60%,#1a2535 100%);"></div>`;
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${d.name} — Hero Card</title>
+<style>
+  @media print { @page{size:A4 portrait;margin:0} body{margin:0;padding:0} .card{border-radius:0;box-shadow:none;width:210mm;min-height:297mm} }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#2a2a2a;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:16px;}
+  .card{width:100%;max-width:600px;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 8px 48px rgba(0,0,0,0.45);display:flex;flex-direction:column;}
+</style></head><body>
+<div class="card">
+  <div style="background:#1a2535;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+    <div style="display:flex;align-items:center;gap:7px;">
+      <div style="width:7px;height:7px;border-radius:50%;background:#c9973a;"></div>
+      <span style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#fff;">${outlet}</span>
+    </div>
+    <div style="background:#c9973a;color:#1a2535;font-size:9px;font-weight:800;padding:3px 8px;border-radius:3px;letter-spacing:0.08em;">${code}</div>
+  </div>
+  <div style="position:relative;width:100%;padding-bottom:68%;flex-shrink:0;overflow:hidden;">
+    ${photoBlock}
+    <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(15,25,35,0.97) 0%, rgba(15,25,35,0.55) 45%, transparent 100%);"></div>
+    <div style="position:absolute;bottom:0;left:0;right:0;padding:22px 22px 18px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#c9973a;margin-bottom:6px;">${d.cat} · ${service}</div>
+      <div style="font-size:36px;font-weight:900;color:#fff;line-height:1.05;letter-spacing:-0.01em;margin-bottom:8px;">${d.name}</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.75);font-style:italic;line-height:1.45;margin-bottom:10px;">${d.desc}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;">${dietBadges}</div>
+    </div>
+  </div>
+  <div style="background:#1a2535;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+    <div>
+      <div style="display:flex;align-items:baseline;gap:4px;">
+        <span style="font-size:34px;font-weight:900;color:#c9973a;line-height:1;">$${price}</span>
+        <span style="font-size:13px;font-weight:700;color:#c9973a;">FJD</span>
+      </div>
+      <div style="font-size:8px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#556;margin-top:2px;">All prices include Fiji Government taxes</div>
+    </div>
+    <div style="text-align:right;">
+      <div style="font-size:18px;font-weight:700;color:#8899aa;">$${audPrice} AUD</div>
+      <div style="font-size:8px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#445;margin-top:2px;">Approx. AUD</div>
+    </div>
+  </div>
+  <div style="background:#fff;display:grid;grid-template-columns:1fr 1fr;flex-shrink:0;">
+    <div style="padding:12px 16px;border-right:1px solid #eee;border-bottom:1px solid #eee;">
+      <div style="font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#999;margin-bottom:4px;">Prep Time</div>
+      <div style="font-size:18px;font-weight:800;color:#1a2535;">${d.prepTime}</div>
+    </div>
+    <div style="padding:12px 16px;border-bottom:1px solid #eee;">
+      <div style="font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#999;margin-bottom:4px;">Cook Time</div>
+      <div style="font-size:18px;font-weight:800;color:#1a2535;">${d.cookTime}</div>
+    </div>
+    <div style="padding:12px 16px;border-right:1px solid #eee;">
+      <div style="font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#999;margin-bottom:4px;">Yield</div>
+      <div style="font-size:18px;font-weight:800;color:#1a2535;">${d.yield}</div>
+    </div>
+    <div style="padding:12px 16px;">
+      <div style="font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#999;margin-bottom:4px;">Base Ref</div>
+      <div style="font-size:18px;font-weight:800;color:#1a2535;">${code}</div>
+    </div>
+  </div>
+  <div style="background:#fff;padding:10px 16px 12px;border-top:1px solid #eee;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+    <div>
+      <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;">
+        <span style="font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#999;margin-right:4px;">Contains</span>
+        ${presentBadges || '<span style="font-size:11px;color:#aaa;">No major allergens</span>'}
+      </div>
+    </div>
+    <div style="text-align:center;flex-shrink:0;margin-left:12px;">
+      <img src="${qrURL}" width="70" height="70" style="display:block;border:2px solid #eee;border-radius:4px;">
+      <div style="font-size:8px;color:#aaa;margin-top:3px;letter-spacing:0.06em;text-transform:uppercase;">Full Recipe</div>
+    </div>
+  </div>
+  <div style="background:#1a2535;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+    <div style="font-size:9px;color:#8899aa;letter-spacing:0.1em;text-transform:uppercase;line-height:1.5;">${property}<br>${outlet}</div>
+    <div style="text-align:right;">
+      <div style="font-size:10px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:#c9973a;">Raffe Hotels &amp; Resorts</div>
+      <div style="font-size:8px;color:#556;margin-top:1px;">${chef} · Rev 1.0 · ${date}</div>
+    </div>
+  </div>
+</div></body></html>`;
+}
+
+// ─── BUILD RECIPE CARD ────────────────────────────────────────────────────────
+function buildRecipe(d, o) {
+  const {property, outlet, service, code, chef, price, photo, portions} = o;
+  const date = new Date().toLocaleDateString("en-AU",{month:"short",year:"numeric"});
+  const scaled = d.ingredients.map(i => {
+    if (i.q === 0 || i.u === "to taste") return {...i, display:"to taste"};
+    const s = i.q * portions;
+    let disp;
+    if (["each","slices","scoop","scoops","slice","serve"].includes(i.u)) disp = Math.round(s);
+    else if (s < 10) disp = (Math.round(s*2)/2).toFixed(1);
+    else if (s < 100) disp = Math.round(s/5)*5;
+    else disp = Math.round(s/10)*10;
+    return {...i, display: disp};
+  });
+  const groups = {};
+  scaled.forEach(i => { if (!groups[i.c]) groups[i.c]=[]; groups[i.c].push(i); });
+  let ingRows = "";
+  Object.entries(groups).forEach(([comp, items]) => {
+    ingRows += `<tr><td colspan="3" style="background:#f5f5f5;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#666;padding:5px 10px;">${comp}</td></tr>`;
+    items.forEach(i => {
+      ingRows += `<tr><td style="padding:7px 10px;border-bottom:1px solid #f0f0f0;font-size:12px;">${i.n}</td><td style="padding:7px 10px;border-bottom:1px solid #f0f0f0;font-size:12px;text-align:center;color:#888;">${i.u!=="to taste"&&i.q>0?i.u:""}</td><td style="padding:7px 10px;border-bottom:1px solid #f0f0f0;font-size:12px;font-weight:700;text-align:right;">${i.display}</td></tr>`;
+    });
+  });
+  const methodSteps = d.method.map((s,i)=>`<div style="display:flex;gap:9px;margin-bottom:9px;align-items:flex-start;"><div style="width:20px;height:20px;border-radius:50%;background:#1a2535;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${i+1}</div><div style="font-size:12px;line-height:1.55;padding-top:2px;">${s}</div></div>`).join("");
+  const presentBadges = d.allergens.map(a=>`<span style="background:#c0392b;color:#fff;padding:3px 7px;border-radius:3px;font-size:9px;font-weight:700;">${AL[a]||a}</span>`).join(" ");
+  const mayBadges = (d.may||[]).filter(a=>!d.allergens.includes(a)).map(a=>`<span style="background:#e67e22;color:#fff;padding:3px 7px;border-radius:3px;font-size:9px;font-weight:700;">MAY: ${AL[a]||a}</span>`).join(" ");
+  const absentBadges = ALL_KEYS.filter(k=>!d.allergens.includes(k)&&!(d.may||[]).includes(k)).map(a=>`<span style="background:#ecf0f1;color:#aaa;padding:2px 5px;border-radius:3px;font-size:8px;font-weight:600;">${AL[a]||a}</span>`).join(" ");
+  const dietBadges = d.dietary.map(t=>`<span style="border:1px solid #c9973a;color:#c9973a;padding:3px 7px;border-radius:3px;font-size:9px;font-weight:700;">${t}</span>`).join(" ");
+  const heroImg = photo ? `<div style="width:100%;height:200px;overflow:hidden;"><img src="${photo}" style="width:100%;height:100%;object-fit:cover;display:block;"></div>`
+    : `<div style="width:100%;height:40px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;"><span style="font-size:10px;color:#bbb;letter-spacing:0.1em;text-transform:uppercase;">Add dish photo</span></div>`;
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${d.name} — Recipe Card</title>
+<style>
+  @media print { @page{size:A4 portrait;margin:0} body{margin:0;padding:0} .card{border-radius:0;box-shadow:none;width:210mm;} }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#e8e8e8;padding:16px;}
+  .card{max-width:794px;margin:0 auto;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.15);}
+</style></head><body>
+<div class="card">
+  <div style="background:#1a2535;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;">
+    <div style="display:flex;align-items:center;gap:7px;">
+      <div style="width:7px;height:7px;border-radius:50%;background:#c9973a;"></div>
+      <span style="font-size:10px;font-weight:700;letter-spacing:0.13em;text-transform:uppercase;color:#fff;">Raffe Hotels &amp; Resorts</span>
+      <span style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#c9973a;">· ${outlet}</span>
+    </div>
+    <div style="background:#c9973a;color:#1a2535;font-size:9px;font-weight:800;padding:3px 7px;border-radius:3px;letter-spacing:0.08em;">${code}</div>
+  </div>
+  <div style="padding:16px 20px 10px;border-bottom:3px solid #c9973a;">
+    <div style="font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#c9973a;margin-bottom:3px;">${d.cat} · ${service}</div>
+    <div style="font-size:26px;font-weight:900;color:#1a2535;margin-bottom:4px;line-height:1.1;">${d.name}</div>
+    <div style="font-size:12px;color:#777;font-style:italic;margin-bottom:8px;">${d.desc}</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;">${dietBadges}</div>
+  </div>
+  <div style="background:#1a2535;display:grid;grid-template-columns:repeat(5,1fr);text-align:center;">
+    ${[["FJD$"+o.price,"Price"],[portions+"×","Portions"],[d.prepTime,"Prep"],[d.cookTime,"Cook"],[service,"Service"]].map(([v,l])=>`<div style="padding:10px 4px;border-right:1px solid #2a3a50;"><div style="font-size:13px;font-weight:800;color:#c9973a;">${v}</div><div style="font-size:8px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#8899aa;margin-top:2px;">${l}</div></div>`).join("")}
+  </div>
+  ${heroImg}
+  <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #eee;">
+    <div style="border-right:1px solid #eee;">
+      <div style="padding:9px 12px 0;"><div style="font-size:9px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#c9973a;border-bottom:1px solid #eee;padding-bottom:5px;">Ingredients</div></div>
+      <table style="width:100%;border-collapse:collapse;">
+        <thead><tr style="background:#1a2535;"><th style="padding:5px 10px;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8899aa;text-align:left;">Ingredient</th><th style="padding:5px 10px;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8899aa;text-align:center;">Unit</th><th style="padding:5px 10px;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8899aa;text-align:right;">Qty</th></tr></thead>
+        <tbody>${ingRows}</tbody>
+      </table>
+    </div>
+    <div style="padding:12px;">
+      <div style="font-size:9px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#c9973a;border-bottom:1px solid #eee;padding-bottom:5px;margin-bottom:10px;">Method</div>
+      ${methodSteps}
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid #eee;">
+    <div style="padding:10px 13px;border-right:1px solid #eee;"><div style="font-size:8px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#999;margin-bottom:4px;">Plating Notes</div><div style="font-size:11px;line-height:1.5;color:#333;">${d.plating}</div></div>
+    <div style="padding:10px 13px;border-right:1px solid #eee;"><div style="font-size:8px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#999;margin-bottom:4px;">Equipment</div><div style="font-size:11px;line-height:1.5;color:#333;">${d.equip}</div></div>
+    <div style="padding:10px 13px;"><div style="font-size:8px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#999;margin-bottom:4px;">Allergens</div><div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:4px;">${presentBadges||'<span style="font-size:10px;color:#aaa;">None</span>'}${mayBadges}</div><div style="display:flex;flex-wrap:wrap;gap:2px;">${absentBadges}</div></div>
+  </div>
+  <div style="background:#f8f8f8;padding:9px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee;">
+    <div style="font-size:9px;color:#aaa;">Approved by: <span style="border-bottom:1px solid #ccc;display:inline-block;width:120px;">&nbsp;</span></div>
+    <div style="font-size:9px;color:#aaa;">Date: <span style="border-bottom:1px solid #ccc;display:inline-block;width:80px;">&nbsp;</span></div>
+    <div style="font-size:9px;color:#aaa;">Version: 1.0</div>
+  </div>
+  ${d.chefNotes ? `<div style="background:#fffdf0;padding:8px 16px;border-bottom:1px solid #eee;"><div style="font-size:8px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#c9973a;margin-bottom:3px;">Chef Notes</div><div style="font-size:11px;color:#555;line-height:1.5;">${d.chefNotes}</div></div>` : ''}
+  <div style="background:#1a2535;padding:9px 16px;display:flex;justify-content:space-between;align-items:center;">
+    <div style="font-size:9px;color:#8899aa;letter-spacing:0.08em;text-transform:uppercase;">${property} · ${outlet}</div>
+    <div style="font-size:9px;color:#c9973a;font-weight:600;">${chef} · Rev 1.0 · ${date}</div>
+  </div>
+</div></body></html>`;
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+refreshDishList();
+</script>
+</body>
+</html>
