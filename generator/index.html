@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -50,9 +51,39 @@
   .btn-new { background: #2a3a50; color: #fff; }
   .preview-frame { background: #fff; border: 1px solid #2a3a50; border-top: none; border-radius: 0 0 10px 10px; overflow: hidden; }
   .preview-frame iframe { width: 100%; border: none; display: block; }
-  .tab-panel { display: none; }
-  .tab-panel.active { display: block; }
-</style>
+  /* ── SETTINGS MODAL ── */
+  .settings-btn{margin-left:auto;background:none;border:1px solid #2a3a50;color:#8899aa;border-radius:7px;padding:8px 12px;font-size:16px;cursor:pointer;transition:all 0.2s;}
+  .settings-btn:hover{border-color:#c9973a;color:#c9973a;}
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;align-items:center;justify-content:center;padding:20px;}
+  .modal-overlay.show{display:flex;}
+  .modal{background:#1a2535;border:1px solid #2a3a50;border-radius:12px;width:100%;max-width:500px;padding:24px;position:relative;}
+  .modal h3{font-size:12px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;color:#c9973a;margin-bottom:6px;}
+  .modal .modal-sub{font-size:11px;color:#556;line-height:1.6;margin-bottom:18px;}
+  .modal .modal-sub a{color:#c9973a;}
+  .modal-close{position:absolute;top:14px;right:16px;background:none;border:none;color:#556;font-size:20px;cursor:pointer;padding:4px;}
+  .token-field{display:flex;gap:8px;align-items:flex-start;}
+  .token-field input{flex:1;background:#0f1923;border:1px solid #2a3a50;border-radius:8px;color:#fff;font-size:14px;padding:12px;font-family:monospace;}
+  .token-field input:focus{border-color:#c9973a;outline:none;}
+  .btn-save-token{background:#c9973a;color:#1a2535;border:none;border-radius:8px;padding:12px 18px;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+  .token-status{margin-top:10px;font-size:11px;padding:8px 12px;border-radius:6px;display:none;}
+  .token-status.ok{display:block;background:#0d1a0d;color:#4caf50;border:1px solid #4caf5044;}
+  .token-status.err{display:block;background:#1a0d0d;color:#f44336;border:1px solid #f4433644;}
+  /* ── PUBLISH BUTTON ── */
+  .btn-publish{width:100%;background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:800;letter-spacing:0.07em;text-transform:uppercase;padding:18px;cursor:pointer;transition:opacity 0.2s,transform 0.1s;margin-top:4px;}
+  .btn-publish:active{transform:scale(0.98);}
+  .btn-publish:disabled{opacity:0.4;cursor:not-allowed;}
+  .publish-progress{margin-top:14px;display:none;}
+  .publish-progress.show{display:block;}
+  .progress-step{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:7px;margin-bottom:6px;background:#0f1923;font-size:12px;color:#8899aa;transition:all 0.3s;}
+  .progress-step.active{background:#1a2535;color:#fff;border:1px solid #c9973a44;}
+  .progress-step.done{background:#0d1a0d;color:#4caf50;border:1px solid #4caf5044;}
+  .progress-step.error{background:#1a0d0d;color:#f44336;border:1px solid #f4433644;}
+  .progress-step .step-icon{font-size:14px;flex-shrink:0;width:20px;text-align:center;}
+  .publish-final{display:none;margin-top:12px;padding:14px;background:#0d1a0d;border:1px solid #4caf5044;border-radius:8px;text-align:center;}
+  .publish-final.show{display:block;}
+  .publish-final a{color:#4caf50;font-size:13px;font-weight:700;word-break:break-all;}
+  .publish-final .live-label{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#4caf50;margin-bottom:6px;}
+
 </head>
 <body>
 <header>
@@ -60,7 +91,32 @@
   <h1>Raffe Hotels &amp; Resorts</h1>
   <span class="sub">· Card Generator</span>
   <div class="badge">Hero + Recipe</div>
+  <button class="settings-btn" onclick="openSettings()" title="GitHub Settings">⚙️</button>
 </header>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeSettings()">✕</button>
+    <h3>GitHub Connection</h3>
+    <div class="modal-sub">
+      One-time setup. Create a token at <a href="https://github.com/settings/tokens/new" target="_blank">github.com/settings/tokens/new</a> — select <strong>repo</strong> scope. Paste it below and it saves to this browser forever.
+    </div>
+    <div class="token-field">
+      <input type="password" id="gh-token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+      <button class="btn-save-token" onclick="saveToken()">Save</button>
+    </div>
+    <div id="token-status" class="token-status"></div>
+    <div style="margin-top:18px;padding-top:14px;border-top:1px solid #2a3a50;">
+      <div style="font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#556;margin-bottom:8px;">Repository</div>
+      <div class="token-field">
+        <input type="text" id="gh-repo-input" placeholder="chefdon868/raffe-recipes" style="font-family:monospace;font-size:13px;">
+        <button class="btn-save-token" onclick="saveRepo()">Save</button>
+      </div>
+      <div id="repo-status" class="token-status"></div>
+    </div>
+  </div>
+</div>
 <div class="container">
 
   <div class="fc">
@@ -168,18 +224,29 @@
       </div>
     </div>
 
-    <!-- APPROVE SECTION -->
+    <!-- PUBLISH SECTION -->
     <div class="fc" id="approve-panel" style="margin-top:14px;border-color:#4caf5044;">
-      <h2 style="color:#4caf50;">✓ Approve &amp; Deploy</h2>
-      <div style="font-size:11px;color:#8899aa;margin-bottom:14px;line-height:1.6;">
-        Cards are in <strong style="color:#c9973a;">DRAFT</strong> until you approve. Copy each HTML file and commit to GitHub to go live.<br>
-        <span style="color:#4caf50;font-weight:600;">Recipe URL:</span> <span id="recipe-url-display" style="color:#c9973a;font-size:11px;word-break:break-all;"></span>
+      <h2 style="color:#4caf50;">✓ Approve &amp; Publish</h2>
+      <div style="font-size:11px;color:#8899aa;margin-bottom:6px;line-height:1.7;">
+        Cards are <strong style="color:#c9973a;">DRAFT</strong> until published.<br>
+        <span style="color:#4caf50;font-weight:700;">Live URL:</span> <span id="recipe-url-display" style="color:#c9973a;font-size:11px;word-break:break-all;"></span>
       </div>
-      <div style="display:flex;gap:10px;">
-        <button onclick="approveCard('hero')" style="flex:1;background:#4caf50;color:#fff;border:none;border-radius:8px;padding:14px;font-size:12px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;">✓ Approve Hero Card</button>
-        <button onclick="approveCard('recipe')" style="flex:1;background:#4caf50;color:#fff;border:none;border-radius:8px;padding:14px;font-size:12px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;">✓ Approve Recipe Card</button>
+
+      <button class="btn-publish" id="btn-publish" onclick="publishToGitHub()">🚀 Publish to GitHub</button>
+
+      <div class="publish-progress" id="publish-progress">
+        <div class="progress-step" id="step-hero"><span class="step-icon">⬜</span> Hero Card</div>
+        <div class="progress-step" id="step-recipe"><span class="step-icon">⬜</span> Recipe Card</div>
+        <div class="progress-step" id="step-image"><span class="step-icon">⬜</span> Dish Photo</div>
+        <div class="progress-step" id="step-registry"><span class="step-icon">⬜</span> Registry (cards.json)</div>
       </div>
-      <div id="approve-status" style="display:none;margin-top:10px;text-align:center;font-size:12px;color:#4caf50;font-weight:700;"></div>
+
+      <div class="publish-final" id="publish-final">
+        <div class="live-label">✓ Live in ~90 seconds</div>
+        <a id="publish-live-url" href="#" target="_blank"></a>
+      </div>
+
+      <div id="approve-status" style="display:none;margin-top:8px;text-align:center;font-size:12px;color:#4caf50;font-weight:700;padding:10px;background:#0d1a0d;border-radius:6px;"></div>
     </div>
   </div>
 
@@ -674,7 +741,44 @@ function getRecipeURL(d, o) {
   const outlet = OUTLET_SLUGS[o.outlet] || o.outlet.toLowerCase();
   const service = SERVICE_SLUGS[o.service] || o.service.toLowerCase();
   const dish = toSlug(d.name);
-  return `https://recipes.exechef.com/${prop}/${outlet}/${service}/${dish}`;
+  return `https://recipes.exechef.com/${prop}/${outlet}/${service}/${dish}/`;
+}
+function buildPaths(d, o) {
+  const prop = PROP_CODES[o.property] || 'PIR';
+  const outlet = OUTLET_SLUGS[o.outlet] || 'outlet';
+  const service = SERVICE_SLUGS[o.service] || 'all-day';
+  const dish = toSlug(d.name);
+  const base = `${prop}/${outlet}/${service}/${dish}`;
+  return {
+    heroPath:   `${base}/hero.html`,
+    recipePath: `${base}/index.html`,
+    imagePath:  `images/${base}/${dish}.jpg`,
+    imageFile:  `${dish}.jpg`,
+    recipeURL:  `https://recipes.exechef.com/${base}/`,
+    prop, outlet, service, dish, base
+  };
+}
+function buildRegistryEntry(d, o) {
+  const p = buildPaths(d, o);
+  return JSON.stringify({
+    name: d.name,
+    property: o.property,
+    propertyCode: p.prop,
+    outlet: o.outlet,
+    outletSlug: p.outlet,
+    service: o.service,
+    serviceSlug: p.service,
+    slug: p.dish,
+    code: o.code,
+    price: o.price,
+    dietary: d.dietary,
+    allergens: d.allergens,
+    cat: d.cat,
+    desc: d.desc,
+    image: `/images/${p.base}/${p.dish}.jpg`,
+    recipeURL: `/${p.base}/`,
+    heroURL: `/${p.base}/hero.html`
+  }, null, 2);
 }
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
@@ -772,16 +876,171 @@ function switchTab(tab) {
   document.querySelectorAll(".tab-panel").forEach((p,i)=>p.classList.toggle("active",i===(tab==="hero"?0:1)));
 }
 
-// ─── APPROVE & COPY ───────────────────────────────────────────────────────────
-function approveCard(type) {
-  const html = type === "recipe" ? htmlRecipe : htmlHero;
-  const label = type === "recipe" ? "Recipe Card" : "Hero Card";
-  navigator.clipboard.writeText(html).then(() => {
-    const status = document.getElementById("approve-status");
-    status.style.display = "block";
-    status.textContent = `✓ ${label} HTML copied — ready to commit to GitHub`;
-    setTimeout(() => status.style.display = "none", 4000);
+// ─── SETTINGS ─────────────────────────────────────────────────────────────────
+function openSettings() {
+  document.getElementById("gh-token-input").value = localStorage.getItem("gh_token") || "";
+  document.getElementById("gh-repo-input").value = localStorage.getItem("gh_repo") || "chefdon868/raffe-recipes";
+  document.getElementById("settings-modal").classList.add("show");
+}
+function closeSettings() {
+  document.getElementById("settings-modal").classList.remove("show");
+}
+function saveToken() {
+  const val = document.getElementById("gh-token-input").value.trim();
+  const el = document.getElementById("token-status");
+  if (!val) { el.className="token-status err"; el.textContent="Please enter a token."; return; }
+  localStorage.setItem("gh_token", val);
+  el.className="token-status ok"; el.textContent="✓ Token saved.";
+}
+function saveRepo() {
+  const val = document.getElementById("gh-repo-input").value.trim();
+  const el = document.getElementById("repo-status");
+  if (!val || !val.includes("/")) { el.className="token-status err"; el.textContent="Format: owner/repo"; return; }
+  localStorage.setItem("gh_repo", val);
+  el.className="token-status ok"; el.textContent="✓ Repository saved.";
+}
+
+// ─── GITHUB API HELPERS ───────────────────────────────────────────────────────
+async function ghGetFile(repo, path, token) {
+  const r = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+    headers: { Authorization: `token ${token}`, Accept: "application/vnd.github.v3+json" }
   });
+  if (r.status === 404) return null;
+  if (!r.ok) throw new Error(`GitHub GET ${path}: ${r.status}`);
+  return r.json();
+}
+async function ghPutFile(repo, path, content, token, message, sha) {
+  const body = { message, content: btoa(unescape(encodeURIComponent(content))), branch: "main" };
+  if (sha) body.sha = sha;
+  const r = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+    method: "PUT",
+    headers: { Authorization: `token ${token}`, Accept: "application/vnd.github.v3+json", "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+  if (!r.ok) { const e = await r.json(); throw new Error(e.message || `PUT ${path} failed`); }
+  return r.json();
+}
+async function ghPutBinary(repo, path, base64Data, token, message, sha) {
+  // base64Data is already a base64 string (no data:... prefix)
+  const body = { message, content: base64Data, branch: "main" };
+  if (sha) body.sha = sha;
+  const r = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+    method: "PUT",
+    headers: { Authorization: `token ${token}`, Accept: "application/vnd.github.v3+json", "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+  if (!r.ok) { const e = await r.json(); throw new Error(e.message || `PUT binary ${path} failed`); }
+  return r.json();
+}
+
+// ─── STEP UI HELPERS ──────────────────────────────────────────────────────────
+function stepActive(id, label) {
+  const el = document.getElementById(id);
+  el.className = "progress-step active";
+  el.innerHTML = `<span class="step-icon">⏳</span> ${label}`;
+}
+function stepDone(id, label) {
+  const el = document.getElementById(id);
+  el.className = "progress-step done";
+  el.innerHTML = `<span class="step-icon">✓</span> ${label}`;
+}
+function stepError(id, label) {
+  const el = document.getElementById(id);
+  el.className = "progress-step error";
+  el.innerHTML = `<span class="step-icon">✕</span> ${label}`;
+}
+function stepReset(id, label) {
+  const el = document.getElementById(id);
+  el.className = "progress-step";
+  el.innerHTML = `<span class="step-icon">⬜</span> ${label}`;
+}
+
+// ─── PUBLISH TO GITHUB ────────────────────────────────────────────────────────
+async function publishToGitHub() {
+  const token = localStorage.getItem("gh_token");
+  const repo  = localStorage.getItem("gh_repo") || "chefdon868/raffe-recipes";
+  if (!token) {
+    openSettings();
+    document.getElementById("token-status").className = "token-status err";
+    document.getElementById("token-status").textContent = "Please add your GitHub token first.";
+    return;
+  }
+  if (!currentDish || !currentOpts) return;
+
+  const paths = buildPaths(currentDish, currentOpts);
+  const btn = document.getElementById("btn-publish");
+  btn.disabled = true;
+
+  const prog = document.getElementById("publish-progress");
+  prog.classList.add("show");
+  document.getElementById("publish-final").classList.remove("show");
+
+  stepReset("step-hero","Hero Card");
+  stepReset("step-recipe","Recipe Card");
+  stepReset("step-image","Dish Photo");
+  stepReset("step-registry","Registry (cards.json)");
+
+  let allOk = true;
+
+  // ── Step 1: Hero Card ──
+  try {
+    stepActive("step-hero","Uploading Hero Card…");
+    const existing = await ghGetFile(repo, paths.heroPath, token);
+    await ghPutFile(repo, paths.heroPath, htmlHero, token,
+      `Add Hero Card: ${currentDish.name}`, existing?.sha);
+    stepDone("step-hero","Hero Card ✓");
+  } catch(e) { stepError("step-hero",`Hero Card — ${e.message}`); allOk=false; }
+
+  // ── Step 2: Recipe Card ──
+  try {
+    stepActive("step-recipe","Uploading Recipe Card…");
+    const existing = await ghGetFile(repo, paths.recipePath, token);
+    await ghPutFile(repo, paths.recipePath, htmlRecipe, token,
+      `Add Recipe Card: ${currentDish.name}`, existing?.sha);
+    stepDone("step-recipe","Recipe Card ✓");
+  } catch(e) { stepError("step-recipe",`Recipe Card — ${e.message}`); allOk=false; }
+
+  // ── Step 3: Photo (if uploaded) ──
+  if (currentOpts.photo) {
+    try {
+      stepActive("step-image","Uploading dish photo…");
+      const b64 = currentOpts.photo.split(",")[1]; // strip data:...;base64,
+      const existing = await ghGetFile(repo, paths.imagePath, token);
+      await ghPutBinary(repo, paths.imagePath, b64, token,
+        `Add photo: ${currentDish.name}`, existing?.sha);
+      stepDone("step-image","Dish Photo ✓");
+    } catch(e) { stepError("step-image",`Photo — ${e.message}`); allOk=false; }
+  } else {
+    stepDone("step-image","Dish Photo — skipped (no photo uploaded)");
+  }
+
+  // ── Step 4: Registry ──
+  try {
+    stepActive("step-registry","Updating cards.json…");
+    const existing = await ghGetFile(repo, "cards.json", token);
+    let cards = [];
+    if (existing) {
+      const decoded = decodeURIComponent(escape(atob(existing.content.replace(/\n/g,""))));
+      cards = JSON.parse(decoded);
+    }
+    // Remove existing entry for same slug if updating
+    cards = cards.filter(c => !(c.slug === paths.dish && c.outletSlug === paths.outlet && c.serviceSlug === paths.service));
+    const entry = JSON.parse(buildRegistryEntry(currentDish, currentOpts));
+    cards.push(entry);
+    await ghPutFile(repo, "cards.json", JSON.stringify(cards, null, 2), token,
+      `Registry: add ${currentDish.name}`, existing?.sha);
+    stepDone("step-registry","Registry ✓");
+  } catch(e) { stepError("step-registry",`Registry — ${e.message}`); allOk=false; }
+
+  // ── Final ──
+  btn.disabled = false;
+  if (allOk) {
+    const finalEl = document.getElementById("publish-final");
+    const linkEl = document.getElementById("publish-live-url");
+    linkEl.href = paths.recipeURL;
+    linkEl.textContent = paths.recipeURL;
+    finalEl.classList.add("show");
+  }
 }
 
 function resetAll() {
@@ -846,8 +1105,8 @@ function generate() {
     document.getElementById("edit-plating").value = d.plating;
     document.getElementById("edit-notes").value = "";
     // Show recipe URL
-    const recipeURL = getRecipeURL(d, opts);
-    document.getElementById("recipe-url-display").textContent = recipeURL;
+    const paths = buildPaths(d, opts);
+    document.getElementById("recipe-url-display").textContent = paths.recipeURL;
     document.getElementById("status").classList.remove("show");
     document.getElementById("btn-gen").disabled = false;
     document.getElementById("output").classList.add("show");
