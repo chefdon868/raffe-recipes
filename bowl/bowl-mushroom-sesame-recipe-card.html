@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mushroom Sesame — BOWL Fresh Poke</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #f2f2f0; color: #1a1a1a; }
+  .card { max-width: 900px; margin: 20px auto; background: #fff; box-shadow: 0 4px 24px rgba(0,0,0,0.13); }
+
+  .header { background: #1a2e1a; padding: 14px 22px; display: flex; justify-content: space-between; align-items: center; }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .header-logo img { height: 38px; }
+  .header-logo-text { color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+  .outlet-name { color: #4caf50; font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; }
+  .recipe-code { background: #4caf50; color: #fff; font-size: 12px; font-weight: 800; letter-spacing: 1.5px; padding: 6px 14px; border-radius: 3px; }
+
+  .hero { position: relative; height: 340px; overflow: hidden; background: #1a2e1a; }
+  .hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .hero-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1a3a1a 0%, #2d5a2d 100%); }
+  .hero-placeholder span { color: rgba(255,255,255,0.25); font-size: 13px; letter-spacing: 2px; text-transform: uppercase; }
+  .hero-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(10,25,10,0.85)); padding: 28px 28px 22px; }
+  .dish-category { color: #4caf50; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 6px; }
+  .dish-name { color: #fff; font-size: 40px; font-weight: 900; line-height: 1.1; letter-spacing: -0.5px; }
+  .dish-subtitle { color: rgba(255,255,255,0.65); font-size: 14px; margin-top: 6px; font-style: italic; }
+
+  .stats-bar { background: #1a2e1a; display: flex; }
+  .stat { flex: 1; padding: 13px 8px; text-align: center; border-right: 1px solid rgba(255,255,255,0.08); }
+  .stat:last-child { border-right: none; }
+  .stat-value { color: #4caf50; font-size: 16px; font-weight: 800; line-height: 1; }
+  .stat-label { color: rgba(255,255,255,0.45); font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 4px; }
+
+  .body { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .col { padding: 26px 28px; }
+  .col:first-child { border-right: 1px solid #eee; }
+
+  .section-title { font-size: 10px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: #4caf50; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid #4caf50; }
+
+  .ing-table { width: 100%; border-collapse: collapse; }
+  .ing-table th { text-align: left; font-size: 9px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: #aaa; padding: 0 0 8px 0; border-bottom: 1px solid #eee; }
+  .ing-table th.qty { text-align: right; }
+  .ing-table td { padding: 9px 0; border-bottom: 1px solid #f5f5f5; font-size: 14px; vertical-align: top; line-height: 1.4; }
+  .ing-table td.qty { text-align: right; font-weight: 700; color: #1a2e1a; white-space: nowrap; padding-left: 10px; }
+  .ing-note { display: block; font-size: 11px; color: #999; font-style: italic; margin-top: 2px; }
+  .component-header td { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: #4caf50; padding-top: 18px; padding-bottom: 4px; border-bottom: none; }
+
+  .method-steps { list-style: none; }
+  .method-steps li { display: flex; gap: 14px; margin-bottom: 14px; align-items: flex-start; }
+  .step-num { background: #1a2e1a; color: #fff; min-width: 26px; height: 26px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; flex-shrink: 0; margin-top: 1px; }
+  .step-text { font-size: 14px; line-height: 1.55; color: #333; }
+
+  .bottom-strip { display: grid; grid-template-columns: 1fr 1fr 1fr; border-top: 1px solid #eee; }
+  .strip-col { padding: 18px 22px; border-right: 1px solid #eee; }
+  .strip-col:last-child { border-right: none; }
+  .strip-label { font-size: 9px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #aaa; margin-bottom: 8px; }
+  .strip-content { font-size: 13px; color: #444; line-height: 1.55; }
+
+  .allergen-badges { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+  .badge { padding: 4px 9px; border-radius: 3px; font-size: 10px; font-weight: 800; letter-spacing: 0.5px; }
+  .badge-present { background: #c0392b; color: #fff; }
+  .badge-may { background: #e67e22; color: #fff; }
+  .badge-absent { background: #ecf0f1; color: #ccc; }
+
+  .approval { display: grid; grid-template-columns: 1fr 1fr 1fr; border-top: 1px solid #eee; background: #fafafa; }
+  .approval-cell { padding: 14px 22px; border-right: 1px solid #eee; }
+  .approval-cell:last-child { border-right: none; }
+  .approval-label { font-size: 9px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #aaa; margin-bottom: 6px; }
+  .approval-value { font-size: 12px; color: #555; border-bottom: 1px solid #ddd; padding-bottom: 3px; min-height: 20px; }
+
+  .footer { background: #1a2e1a; padding: 14px 22px; display: flex; justify-content: space-between; align-items: center; }
+  .footer-left { color: rgba(255,255,255,0.55); font-size: 11px; letter-spacing: 0.5px; }
+  .footer-right { color: #4caf50; font-size: 11px; font-weight: 600; }
+
+  @media print {
+    body { background: #fff; }
+    .card { box-shadow: none; margin: 0; max-width: 100%; }
+    .hero { height: 280px; }
+    @page { size: A4; margin: 0; }
+  }
+  @media (max-width: 600px) {
+    .body { grid-template-columns: 1fr; }
+    .col:first-child { border-right: none; border-bottom: 1px solid #eee; }
+    .bottom-strip { grid-template-columns: 1fr; }
+    .strip-col { border-right: none; border-bottom: 1px solid #eee; }
+    .stats-bar { flex-wrap: wrap; }
+    .stat { flex: 1 1 33%; }
+    .dish-name { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+<div class="card">
+
+  <div class="header">
+    <div class="header-left">
+      <div class="header-logo">
+        <img src="images/bowl-poke-logo.png" alt="BOWL Poke" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <span class="header-logo-text" style="display:none">BOWL POKE</span>
+      </div>
+      <span class="outlet-name">&nbsp;·&nbsp; BOWL Fresh Poke</span>
+    </div>
+    <div class="recipe-code">BWL-MS-002</div>
+  </div>
+
+  <div class="hero">
+    <img src="images/mushroom-sesame.jpg" alt="Mushroom Sesame" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="hero-placeholder" style="display:none"><span>Add photo: images/mushroom-sesame.jpg</span></div>
+    <div class="hero-overlay">
+      <div class="dish-category">Poke Bowl · Vegan</div>
+      <div class="dish-name">Mushroom Sesame</div>
+      <div class="dish-subtitle">Grilled mushrooms, sesame goma dressing, seaweed salad, radish, cherry tomato</div>
+    </div>
+  </div>
+
+  <div class="stats-bar"><div class="stat"><div class="stat-value">1 portion</div><div class="stat-label">Yield</div></div><div class="stat"><div class="stat-value">100 g</div><div class="stat-label">Mushrooms</div></div><div class="stat"><div class="stat-value">200 g</div><div class="stat-label">Rice</div></div><div class="stat"><div class="stat-value">10 min</div><div class="stat-label">Prep</div></div><div class="stat"><div class="stat-value">6 min</div><div class="stat-label">Grill</div></div><div class="stat"><div class="stat-value">BWL-MS-002</div><div class="stat-label">Recipe Ref</div></div></div>
+
+  <div class="body">
+    <div class="col">
+      <div class="section-title">Ingredients</div>
+      <table class="ing-table">
+        <thead><tr><th>Ingredient</th><th>Unit</th><th class="qty">Qty</th></tr></thead>
+        <tbody><tr class="component-header"><td colspan="3">Protein / Hero</td></tr><tr><td>Mushrooms<span class="ing-note">Grilled and roughly chopped</span></td><td>g</td><td class="qty">100</td></tr><tr class="component-header"><td colspan="3">Poke Rice Base</td></tr><tr><td>White Rice (seasoned)<span class="ing-note">See recipe BWL-SRS-007</span></td><td>g</td><td class="qty">200</td></tr><tr class="component-header"><td colspan="3">Bowl Toppings</td></tr><tr><td>Seaweed Salad<span class="ing-note">Dressed</span></td><td>g</td><td class="qty">25</td></tr><tr><td>Radish<span class="ing-note">Julienne</span></td><td>g</td><td class="qty">25</td></tr><tr><td>Cherry Tomato<span class="ing-note">Halved — equator cut</span></td><td>ea</td><td class="qty">6</td></tr><tr class="component-header"><td colspan="3">Sauce</td></tr><tr><td>Sesame Goma Dressing<span class="ing-note">Drizzle over mushrooms</span></td><td>g</td><td class="qty">50</td></tr></tbody>
+      </table>
+    </div>
+    <div class="col">
+      <div class="section-title">Method</div>
+      <ol class="method-steps"><li><span class="step-num">1</span><span class="step-text">Season mushrooms with salt, pepper and a splash of soy. Grill on high heat until golden and slightly charred — approximately 5–6 minutes. Roughly chop.</span></li><li><span class="step-num">2</span><span class="step-text">Portion 200 g seasoned poke rice into bowl and press gently.</span></li><li><span class="step-num">3</span><span class="step-text">Arrange seaweed salad, julienne radish, and halved cherry tomatoes in neat sections around the bowl.</span></li><li><span class="step-num">4</span><span class="step-text">Place grilled mushrooms in the centre or as a prominent section.</span></li><li><span class="step-num">5</span><span class="step-text">Drizzle sesame goma dressing directly over mushrooms. Serve immediately.</span></li></ol>
+    </div>
+  </div>
+
+  <div class="bottom-strip">
+    <div class="strip-col">
+      <div class="strip-label">Plating &amp; Service Notes</div>
+      <div class="strip-content">Keep toppings in distinct colour sections for visual impact. Drizzle goma dressing over mushrooms only — do not coat the full bowl. Garnish with toasted sesame seeds.</div>
+    </div>
+    <div class="strip-col">
+      <div class="strip-label">Equipment</div>
+      <div class="strip-content">Grill · Rice bowl · Ladle · Squeeze bottle</div>
+    </div>
+    <div class="strip-col">
+      <div class="strip-label">Allergens</div>
+      <div class="allergen-badges"><span class="badge badge-may">G</span><span class="badge badge-absent">D</span><span class="badge badge-absent">E</span><span class="badge badge-absent">N</span><span class="badge badge-absent">P</span><span class="badge badge-absent">SF</span><span class="badge badge-absent">F</span><span class="badge badge-present">S</span><span class="badge badge-present">SE</span><span class="badge badge-absent">CEL</span><span class="badge badge-absent">MUS</span><span class="badge badge-absent">MOL</span><span class="badge badge-absent">SO₂</span></div>
+    </div>
+  </div>
+
+  <div class="approval">
+    <div class="approval-cell"><div class="approval-label">Chef</div><div class="approval-value">D. Christie</div></div>
+    <div class="approval-cell"><div class="approval-label">Date</div><div class="approval-value">March 2026</div></div>
+    <div class="approval-cell"><div class="approval-label">Version</div><div class="approval-value">Rev 1.0</div></div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-left">Plantation Island Resort &nbsp;·&nbsp; BOWL Fresh Poke</div>
+    <div class="footer-right">Chef D. Christie &nbsp;·&nbsp; Rev 1.0 &nbsp;·&nbsp; March 2026</div>
+  </div>
+
+</div>
+</body>
+</html>

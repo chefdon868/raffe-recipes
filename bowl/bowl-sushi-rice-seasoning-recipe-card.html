@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sushi Rice Seasoning — BOWL Poke</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #f2f2f0; color: #1a1a1a; }
+
+  .card { max-width: 900px; margin: 20px auto; background: #fff; box-shadow: 0 4px 24px rgba(0,0,0,0.13); }
+
+  /* HEADER */
+  .header { background: #1a2e1a; padding: 14px 22px; display: flex; justify-content: space-between; align-items: center; }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .header-logo img { height: 38px; }
+  .header-logo-text { color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; opacity: 0.85; }
+  .outlet-name { color: #4caf50; font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; }
+  .recipe-code { background: #4caf50; color: #fff; font-size: 12px; font-weight: 800; letter-spacing: 1.5px; padding: 6px 14px; border-radius: 3px; }
+
+  /* HERO */
+  .hero { position: relative; height: 320px; overflow: hidden; background: #2d4a2d; }
+  .hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .hero-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1a3a1a 0%, #2d5a2d 100%); }
+  .hero-placeholder span { color: rgba(255,255,255,0.3); font-size: 13px; letter-spacing: 2px; text-transform: uppercase; }
+  .hero-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(10,25,10,0.82)); padding: 28px 28px 22px; }
+  .dish-category { color: #4caf50; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 6px; }
+  .dish-name { color: #fff; font-size: 38px; font-weight: 900; line-height: 1.1; letter-spacing: -0.5px; }
+  .dish-subtitle { color: rgba(255,255,255,0.7); font-size: 14px; margin-top: 5px; font-style: italic; }
+
+  /* STATS BAR */
+  .stats-bar { background: #1a2e1a; display: flex; }
+  .stat { flex: 1; padding: 13px 8px; text-align: center; border-right: 1px solid rgba(255,255,255,0.08); }
+  .stat:last-child { border-right: none; }
+  .stat-value { color: #4caf50; font-size: 17px; font-weight: 800; line-height: 1; }
+  .stat-label { color: rgba(255,255,255,0.5); font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 4px; }
+
+  /* BODY */
+  .body { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .col { padding: 28px 28px; }
+  .col:first-child { border-right: 1px solid #eee; }
+
+  .section-title { font-size: 10px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: #4caf50; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #4caf50; }
+
+  /* INGREDIENTS TABLE */
+  .ing-table { width: 100%; border-collapse: collapse; }
+  .ing-table th { text-align: left; font-size: 9px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: #888; padding: 0 0 8px 0; border-bottom: 1px solid #eee; }
+  .ing-table th:last-child { text-align: right; }
+  .ing-table td { padding: 9px 0; border-bottom: 1px solid #f5f5f5; font-size: 14px; vertical-align: top; line-height: 1.4; }
+  .ing-table td:last-child { text-align: right; font-weight: 700; color: #1a2e1a; white-space: nowrap; padding-left: 10px; }
+  .ing-note { display: block; font-size: 11px; color: #888; font-style: italic; margin-top: 2px; }
+  .component-header td { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: #4caf50; padding-top: 16px; padding-bottom: 4px; border-bottom: none; background: none; }
+
+  /* METHOD */
+  .method-steps { list-style: none; }
+  .method-steps li { display: flex; gap: 14px; margin-bottom: 14px; align-items: flex-start; }
+  .step-num { background: #1a2e1a; color: #fff; min-width: 26px; height: 26px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; flex-shrink: 0; margin-top: 1px; }
+  .step-text { font-size: 14px; line-height: 1.55; color: #333; }
+
+  /* BOTTOM STRIP */
+  .bottom-strip { display: grid; grid-template-columns: 1fr 1fr 1fr; border-top: 1px solid #eee; }
+  .strip-col { padding: 18px 22px; border-right: 1px solid #eee; }
+  .strip-col:last-child { border-right: none; }
+  .strip-label { font-size: 9px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #aaa; margin-bottom: 8px; }
+  .strip-content { font-size: 13px; color: #333; line-height: 1.5; }
+
+  /* ALLERGENS */
+  .allergen-badges { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+  .badge { padding: 4px 9px; border-radius: 3px; font-size: 10px; font-weight: 800; letter-spacing: 0.5px; }
+  .badge-present { background: #c0392b; color: #fff; }
+  .badge-may { background: #e67e22; color: #fff; }
+  .badge-absent { background: #ecf0f1; color: #bbb; }
+
+  /* APPROVAL BLOCK */
+  .approval { display: grid; grid-template-columns: 1fr 1fr 1fr; border-top: 1px solid #eee; background: #fafafa; }
+  .approval-cell { padding: 14px 22px; border-right: 1px solid #eee; }
+  .approval-cell:last-child { border-right: none; }
+  .approval-label { font-size: 9px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #aaa; margin-bottom: 6px; }
+  .approval-value { font-size: 12px; color: #555; border-bottom: 1px solid #ddd; padding-bottom: 3px; min-height: 20px; }
+
+  /* FOOTER */
+  .footer { background: #1a2e1a; padding: 14px 22px; display: flex; justify-content: space-between; align-items: center; }
+  .footer-left { color: rgba(255,255,255,0.6); font-size: 11px; letter-spacing: 0.5px; }
+  .footer-right { color: #4caf50; font-size: 11px; font-weight: 600; }
+
+  /* PRINT */
+  @media print {
+    body { background: #fff; }
+    .card { box-shadow: none; margin: 0; max-width: 100%; }
+    .hero { height: 280px; }
+  }
+  @media (max-width: 600px) {
+    .body { grid-template-columns: 1fr; }
+    .col:first-child { border-right: none; border-bottom: 1px solid #eee; }
+    .bottom-strip { grid-template-columns: 1fr; }
+    .strip-col { border-right: none; border-bottom: 1px solid #eee; }
+    .stats-bar { flex-wrap: wrap; }
+    .stat { flex: 1 1 33%; }
+    .dish-name { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+<div class="card">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <div class="header-logo">
+        <img src="images/bowl-poke-logo.png" alt="BOWL Poke" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <span class="header-logo-text" style="display:none">BOWL POKE</span>
+      </div>
+      <span class="outlet-name">· BOWL Fresh Poke</span>
+    </div>
+    <div class="recipe-code">BWL-SRS-007</div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <img src="images/sushi-rice-seasoning.jpg" alt="Sushi Rice Seasoning" onerror="this.style.display='none';this.nextSibling.style.display='flex'">
+    <div class="hero-placeholder" style="display:none"><span>Sushi Rice Seasoning</span></div>
+    <div class="hero-overlay">
+      <div class="dish-category">Base Recipe · Rice</div>
+      <div class="dish-name">Sushi Rice Seasoning</div>
+      <div class="dish-subtitle">Rice vinegar and sugar seasoning for poke bowls</div>
+    </div>
+  </div>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-value">7.5×</div><div class="stat-label">Batch Size</div></div>
+    <div class="stat"><div class="stat-value">—</div><div class="stat-label">Yield</div></div>
+    <div class="stat"><div class="stat-value">5 min</div><div class="stat-label">Prep</div></div>
+    <div class="stat"><div class="stat-value">20 min</div><div class="stat-label">Rest</div></div>
+    <div class="stat"><div class="stat-value">—</div><div class="stat-label">Cost / Portion</div></div>
+    <div class="stat"><div class="stat-value">COMP-001</div><div class="stat-label">Base Ref</div></div>
+  </div>
+
+  <!-- BODY -->
+  <div class="body">
+    <div class="col">
+      <div class="section-title">Ingredients</div>
+      <table class="ing-table">
+        <thead>
+          <tr><th>Ingredient</th><th>Unit</th><th>Qty</th></tr>
+        </thead>
+        <tbody>
+          <tr class="component-header"><td colspan="3">Seasoning Mix</td></tr>
+          <tr>
+            <td>Rice Vinegar</td>
+            <td>litre</td>
+            <td>2.25</td>
+          </tr>
+          <tr>
+            <td>White Sugar</td>
+            <td>g</td>
+            <td>562.5</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col">
+      <div class="section-title">Method</div>
+      <ol class="method-steps">
+        <li>
+          <span class="step-num">1</span>
+          <span class="step-text">Combine rice vinegar and white sugar in a saucepan. Stir over gentle heat until sugar fully dissolves. Do not boil. Remove from heat and allow to cool slightly.</span>
+        </li>
+        <li>
+          <span class="step-num">2</span>
+          <span class="step-text">Spread freshly cooked hot rice into a large flat pan (23 × 33 cm / 9 × 13"). Drizzle half the seasoning evenly over the surface.</span>
+        </li>
+        <li>
+          <span class="step-num">3</span>
+          <span class="step-text">Using a rice paddle or rubber spatula, cut through the rice with a folding action — do not stir or mash. Fold and turn to distribute seasoning evenly.</span>
+        </li>
+        <li>
+          <span class="step-num">4</span>
+          <span class="step-text">After 1 minute of folding, drizzle remaining seasoning over rice. Continue folding for a further 1 minute. Rice will appear wet — this is correct.</span>
+        </li>
+        <li>
+          <span class="step-num">5</span>
+          <span class="step-text">Cool rice to warm or room temperature before use — approximately 20 minutes. Use a fan to speed cooling if available. Do not refrigerate while hot.</span>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- BOTTOM STRIP -->
+  <div class="bottom-strip">
+    <div class="strip-col">
+      <div class="strip-label">Plating / Service Notes</div>
+      <div class="strip-content">Use as base for all BOWL poke recipes. Season while rice is hot. Cool to room temp before portioning.</div>
+    </div>
+    <div class="strip-col">
+      <div class="strip-label">Equipment</div>
+      <div class="strip-content">Saucepan · Large flat pan · Rice paddle · Fan (optional)</div>
+    </div>
+    <div class="strip-col">
+      <div class="strip-label">Allergens</div>
+      <div class="allergen-badges">
+        <span class="badge badge-absent">G</span>
+        <span class="badge badge-absent">D</span>
+        <span class="badge badge-absent">E</span>
+        <span class="badge badge-absent">N</span>
+        <span class="badge badge-absent">P</span>
+        <span class="badge badge-absent">SF</span>
+        <span class="badge badge-absent">F</span>
+        <span class="badge badge-absent">S</span>
+        <span class="badge badge-absent">SE</span>
+        <span class="badge badge-may">SO₂</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPROVAL -->
+  <div class="approval">
+    <div class="approval-cell">
+      <div class="approval-label">Chef</div>
+      <div class="approval-value">D. Christie</div>
+    </div>
+    <div class="approval-cell">
+      <div class="approval-label">Date</div>
+      <div class="approval-value">March 2026</div>
+    </div>
+    <div class="approval-cell">
+      <div class="approval-label">Version</div>
+      <div class="approval-value">Rev 1.0</div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-left">Plantation Island Resort &nbsp;·&nbsp; BOWL Fresh Poke</div>
+    <div class="footer-right">Chef D. Christie &nbsp;·&nbsp; Rev 1.0 &nbsp;·&nbsp; March 2026</div>
+  </div>
+
+</div>
+</body>
+</html>
