@@ -22,5 +22,27 @@
     "image": "/images/PIR/copra/lunch/garden-veg-wrap/garden-veg-wrap.jpg",
     "recipeURL": "/PIR/copra/lunch/garden-veg-wrap/",
     "heroURL": "/PIR/copra/lunch/garden-veg-wrap/hero.html"
+  },
+  {
+    "name": "Ham and Cheese Croissant",
+    "property": "Plantation Island Resort",
+    "propertyCode": "PIR",
+    "outlet": "Tavola Restaurant & Bar",
+    "outletSlug": "tavola",
+    "service": "Breakfast",
+    "serviceSlug": "breakfast",
+    "slug": "ham-and-cheese-croissant",
+    "code": "—",
+    "price": 18,
+    "dietary": [],
+    "allergens": [
+      "G",
+      "D"
+    ],
+    "cat": "Breakfast",
+    "desc": "Champagne ham and cheddar cheese croissant",
+    "image": "/images/PIR/tavola/breakfast/ham-and-cheese-croissant/ham-and-cheese-croissant.jpg",
+    "recipeURL": "/PIR/tavola/breakfast/ham-and-cheese-croissant/",
+    "heroURL": "/PIR/tavola/breakfast/ham-and-cheese-croissant/hero.html"
   }
 ]
