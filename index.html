@@ -7,361 +7,80 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #0f1c32; min-height: 100vh; color: #fff; }
 
-  body {
-    font-family: 'Inter', system-ui, sans-serif;
-    background: #0f1c32;
-    min-height: 100vh;
-    color: #fff;
-  }
+  .nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .nav-brand { display: flex; align-items: center; gap: 12px; }
+  .nav-dot { width: 8px; height: 8px; background: #f0a500; border-radius: 50%; }
+  .nav-name { font-size: 13px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #fff; }
+  .nav-sub { font-size: 11px; color: rgba(255,255,255,0.4); letter-spacing: 0.08em; margin-top: 2px; }
+  .nav-link { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #0f1c32; text-decoration: none; padding: 9px 16px; border-radius: 6px; background: #f0a500; }
 
-  /* NAV */
-  .nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 40px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-  }
-
-  .nav-brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .nav-dot {
-    width: 8px; height: 8px;
-    background: #f0a500;
-    border-radius: 50%;
-  }
-
-  .nav-name {
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: #fff;
-  }
-
-  .nav-sub {
-    font-size: 11px;
-    font-weight: 400;
-    color: rgba(255,255,255,0.4);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-top: 1px;
-  }
-
-  .nav-meta {
-    font-size: 11px;
-    color: rgba(255,255,255,0.35);
-    letter-spacing: 0.06em;
-  }
-
-  /* HERO */
-  .hero {
-    padding: 64px 40px 48px;
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-
-  .hero-eyebrow {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: #f0a500;
-    margin-bottom: 16px;
-  }
-
-  .hero-title {
-    font-size: 52px;
-    font-weight: 900;
-    line-height: 1.0;
-    letter-spacing: -0.02em;
-    margin-bottom: 16px;
-  }
-
+  .hero { padding: 60px 40px 48px; max-width: 1200px; margin: 0 auto; }
+  .hero-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #f0a500; margin-bottom: 16px; }
+  .hero-title { font-size: clamp(36px,5vw,60px); font-weight: 900; line-height: 1.05; margin-bottom: 16px; }
   .hero-title span { color: #f0a500; }
+  .hero-desc { font-size: 15px; color: rgba(255,255,255,0.5); line-height: 1.6; max-width: 520px; margin-bottom: 40px; }
 
-  .hero-desc {
-    font-size: 15px;
-    color: rgba(255,255,255,0.5);
-    max-width: 520px;
-    line-height: 1.6;
-  }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: rgba(255,255,255,0.06); border-radius: 12px; overflow: hidden; margin-bottom: 56px; }
+  .stat { background: #0f1c32; padding: 24px 28px; }
+  .stat-num { font-size: 32px; font-weight: 900; color: #f0a500; line-height: 1; margin-bottom: 6px; }
+  .stat-label { font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.35); }
 
-  /* STATS ROW */
-  .stats-row {
-    display: flex;
-    gap: 0;
-    max-width: 1100px;
-    margin: 0 auto 48px;
-    padding: 0 40px;
-    border-top: 1px solid rgba(255,255,255,0.06);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-  }
+  .section { max-width: 1200px; margin: 0 auto; padding: 0 40px 48px; }
+  .section-title { font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); }
 
-  .stat-item {
-    padding: 20px 40px 20px 0;
-    margin-right: 40px;
-    border-right: 1px solid rgba(255,255,255,0.08);
-  }
+  .outlet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+  .outlet-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 24px; cursor: pointer; transition: all 0.2s; }
+  .outlet-card:hover { background: rgba(255,255,255,0.07); border-color: rgba(240,165,0,0.4); transform: translateY(-2px); }
+  .outlet-property { font-size: 10px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 8px; }
+  .outlet-name { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+  .outlet-desc { font-size: 12px; color: rgba(255,255,255,0.4); margin-bottom: 20px; }
+  .outlet-footer { display: flex; justify-content: space-between; align-items: center; }
+  .outlet-count { font-size: 28px; font-weight: 900; color: #f0a500; }
+  .outlet-count-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+  .outlet-arrow { width: 36px; height: 36px; border-radius: 50%; background: rgba(240,165,0,0.1); border: 1px solid rgba(240,165,0,0.2); display: flex; align-items: center; justify-content: center; color: #f0a500; font-size: 16px; }
 
-  .stat-item:last-child { border-right: none; }
+  .recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+  .recipe-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; overflow: hidden; text-decoration: none; display: block; transition: all 0.2s; }
+  .recipe-card:hover { transform: translateY(-3px); border-color: rgba(240,165,0,0.4); }
+  .recipe-photo { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; background: #1a2a40; }
+  .recipe-photo-placeholder { width: 100%; aspect-ratio: 4/3; background: linear-gradient(135deg,#1a2a40,#243347); display: flex; align-items: center; justify-content: center; font-size: 32px; }
+  .recipe-info { padding: 14px; }
+  .recipe-outlet { font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #f0a500; margin-bottom: 5px; }
+  .recipe-name { font-size: 14px; font-weight: 700; color: #fff; line-height: 1.3; margin-bottom: 5px; }
+  .recipe-desc { font-size: 11px; color: rgba(255,255,255,0.4); line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 10px; }
+  .recipe-footer { display: flex; justify-content: space-between; align-items: center; }
+  .recipe-price { font-size: 16px; font-weight: 800; color: #f0a500; }
+  .recipe-price span { font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.3); }
+  .allergen-badge { background: rgba(192,57,43,0.15); color: #e74c3c; border: 1px solid rgba(192,57,43,0.3); font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 3px; }
 
-  .stat-num {
-    font-size: 28px;
-    font-weight: 900;
-    color: #f0a500;
-    display: block;
-  }
+  .back-btn { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.5); cursor: pointer; margin-bottom: 24px; padding: 8px 0; letter-spacing: 0.06em; text-transform: uppercase; background: none; border: none; }
+  .back-btn:hover { color: #f0a500; }
+  .detail-header { margin-bottom: 32px; }
+  .detail-property { font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #f0a500; margin-bottom: 8px; }
+  .detail-name { font-size: 32px; font-weight: 900; color: #fff; margin-bottom: 8px; }
+  .detail-meta { font-size: 13px; color: rgba(255,255,255,0.4); }
 
-  .stat-lbl {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.35);
-    margin-top: 2px;
-  }
+  .empty { text-align: center; padding: 60px 20px; color: rgba(255,255,255,0.3); }
+  .empty h3 { font-size: 16px; margin-bottom: 8px; color: rgba(255,255,255,0.5); }
+  .empty a { color: #f0a500; text-decoration: none; font-weight: 600; }
 
-  /* OUTLETS GRID */
-  .section {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 40px 60px;
-  }
-
-  .section-header {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.3);
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-  }
-
-  .outlets-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin-bottom: 48px;
-  }
-
-  .outlet-card {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 6px;
-    padding: 24px;
-    text-decoration: none;
-    color: inherit;
-    transition: background 0.2s, border-color 0.2s, transform 0.15s;
-    display: block;
-    cursor: pointer;
-  }
-
-  .outlet-card:hover {
-    background: rgba(240,165,0,0.06);
-    border-color: rgba(240,165,0,0.3);
-    transform: translateY(-2px);
-  }
-
-  .outlet-property {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.3);
-    margin-bottom: 8px;
-  }
-
-  .outlet-name {
-    font-size: 18px;
-    font-weight: 800;
-    color: #fff;
-    margin-bottom: 4px;
-  }
-
-  .outlet-type {
-    font-size: 12px;
-    color: rgba(255,255,255,0.4);
-    margin-bottom: 20px;
-  }
-
-  .outlet-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 1px solid rgba(255,255,255,0.06);
-    padding-top: 16px;
-  }
-
-  .recipe-count {
-    font-size: 22px;
-    font-weight: 900;
-    color: #f0a500;
-  }
-
-  .recipe-count-label {
-    font-size: 10px;
-    color: rgba(255,255,255,0.3);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
-  .outlet-arrow {
-    width: 32px; height: 32px;
-    background: rgba(240,165,0,0.1);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    color: #f0a500;
-    transition: background 0.2s;
-  }
-
-  .outlet-card:hover .outlet-arrow {
-    background: rgba(240,165,0,0.25);
-  }
-
-  /* RECENT RECIPES */
-  .recent-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-  }
-
-  .recipe-card {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 6px;
-    overflow: hidden;
-    text-decoration: none;
-    color: inherit;
-    transition: border-color 0.2s, transform 0.15s;
-    display: block;
-  }
-
-  .recipe-card:hover {
-    border-color: rgba(240,165,0,0.25);
-    transform: translateY(-2px);
-  }
-
-  .recipe-card-image {
-    height: 140px;
-    background-size: cover;
-    background-position: center;
-    position: relative;
-  }
-
-  .recipe-card-image-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to bottom, transparent 40%, rgba(15,28,50,0.85));
-  }
-
-  .recipe-card-badge {
-    position: absolute;
-    top: 10px; right: 10px;
-    background: #f0a500;
-    color: #1a1a1a;
-    font-size: 9px;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    padding: 4px 8px;
-    border-radius: 2px;
-  }
-
-  .recipe-card-body {
-    padding: 16px;
-  }
-
-  .recipe-card-outlet {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: #f0a500;
-    margin-bottom: 6px;
-  }
-
-  .recipe-card-name {
-    font-size: 15px;
-    font-weight: 800;
-    color: #fff;
-    margin-bottom: 4px;
-    line-height: 1.2;
-  }
-
-  .recipe-card-meta {
-    font-size: 11px;
-    color: rgba(255,255,255,0.35);
-  }
-
-  .allergen-mini {
-    display: flex;
-    gap: 4px;
-    flex-wrap: wrap;
-    margin-top: 10px;
-  }
-
-  .allergen-mini-badge {
-    font-size: 9px;
-    font-weight: 700;
-    padding: 2px 6px;
-    border-radius: 2px;
-    background: rgba(192,57,43,0.2);
-    color: #e74c3c;
-    border: 1px solid rgba(192,57,43,0.3);
-  }
-
-  .allergen-mini-badge.may {
-    background: rgba(230,126,34,0.15);
-    color: #e67e22;
-    border-color: rgba(230,126,34,0.3);
-  }
-
-  /* FOOTER */
-  .footer {
-    border-top: 1px solid rgba(255,255,255,0.06);
-    padding: 24px 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .footer-text {
-    font-size: 11px;
-    color: rgba(255,255,255,0.2);
-    letter-spacing: 0.08em;
-  }
-
-  .footer-version {
-    font-size: 11px;
-    color: rgba(240,165,0,0.5);
-    font-weight: 600;
-  }
+  .spinner { width: 32px; height: 32px; border: 3px solid rgba(255,255,255,0.1); border-top-color: #f0a500; border-radius: 50%; animation: spin 0.7s linear infinite; margin: 60px auto; display: block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
   @media (max-width: 768px) {
     .nav { padding: 16px 20px; }
-    .hero { padding: 40px 20px 32px; }
-    .hero-title { font-size: 32px; }
-    .stats-row { padding: 0 20px; flex-wrap: wrap; }
+    .hero { padding: 36px 20px 32px; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
     .section { padding: 0 20px 40px; }
-    .outlets-grid { grid-template-columns: 1fr; }
-    .recent-grid { grid-template-columns: 1fr; }
-    .footer { padding: 20px; flex-direction: column; gap: 8px; text-align: center; }
+    .outlet-grid { grid-template-columns: 1fr; }
+    .recipe-grid { grid-template-columns: repeat(2, 1fr); }
   }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav class="nav">
   <div class="nav-brand">
     <div class="nav-dot"></div>
@@ -370,150 +89,139 @@
       <div class="nav-sub">Recipe Library</div>
     </div>
   </div>
-  <div class="nav-meta">Plantation Island · Lomani · Fiji Gateway</div>
+  <a href="/generator/" class="nav-link">+ New Card</a>
 </nav>
 
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-eyebrow">Group Executive Chef · Don Christie</div>
-  <h1 class="hero-title">Kitchen<br><span>Recipe Hub</span></h1>
-  <p class="hero-desc">Standardised, allergen-verified recipe cards for all Raffe properties. Scan any QR code in the kitchen to access the live version of any card.</p>
-</div>
-
-<!-- STATS -->
-<div class="stats-row">
-  <div class="stat-item">
-    <span class="stat-num">3</span>
-    <span class="stat-lbl">Properties</span>
+<!-- HOME VIEW -->
+<div id="view-home">
+  <div class="hero">
+    <div class="hero-eyebrow">Group Executive Chef · Don Christie</div>
+    <h1 class="hero-title">Kitchen<br><span>Recipe Hub</span></h1>
+    <p class="hero-desc">Standardised, allergen-verified recipe cards for all Raffe properties. Scan any QR code in the kitchen to access the live version of any card.</p>
+    <div class="stats">
+      <div class="stat"><div class="stat-num">3</div><div class="stat-label">Properties</div></div>
+      <div class="stat"><div class="stat-num">10</div><div class="stat-label">Outlets</div></div>
+      <div class="stat"><div class="stat-num" id="stat-recipes">—</div><div class="stat-label">Recipes Live</div></div>
+      <div class="stat"><div class="stat-num">14</div><div class="stat-label">Allergens Tracked</div></div>
+    </div>
   </div>
-  <div class="stat-item">
-    <span class="stat-num">5</span>
-    <span class="stat-lbl">Outlets</span>
+  <div class="section">
+    <div class="section-title">Outlets</div>
+    <div class="outlet-grid" id="outlet-grid"><div class="spinner"></div></div>
   </div>
-  <div class="stat-item">
-    <span class="stat-num" id="total-recipes">1</span>
-    <span class="stat-lbl">Recipes Live</span>
-  </div>
-  <div class="stat-item">
-    <span class="stat-num">14</span>
-    <span class="stat-lbl">Allergens Tracked</span>
+  <div class="section" id="recent-section" style="display:none">
+    <div class="section-title">Recently Added</div>
+    <div class="recipe-grid" id="recent-grid"></div>
   </div>
 </div>
 
-<!-- OUTLETS -->
-<div class="section">
-  <div class="section-header">Outlets</div>
-  <div class="outlets-grid">
-
-    <a class="outlet-card" href="./copra/">
-      <div class="outlet-property">Plantation Island Resort</div>
-      <div class="outlet-name">Copra Restaurant</div>
-      <div class="outlet-type">Full-service dining · All-day</div>
-      <div class="outlet-footer">
-        <div>
-          <div class="recipe-count">1</div>
-          <div class="recipe-count-label">Recipes</div>
-        </div>
-        <div class="outlet-arrow">→</div>
-      </div>
-    </a>
-
-    <a class="outlet-card" href="./baravi/">
-      <div class="outlet-property">Plantation Island Resort</div>
-      <div class="outlet-name">Baravi Snack Bar</div>
-      <div class="outlet-type">Casual · Poolside</div>
-      <div class="outlet-footer">
-        <div>
-          <div class="recipe-count">0</div>
-          <div class="recipe-count-label">Recipes</div>
-        </div>
-        <div class="outlet-arrow">→</div>
-      </div>
-    </a>
-
-    <a class="outlet-card" href="./bowl/">
-      <div class="outlet-property">Plantation Island Resort</div>
-      <div class="outlet-name">Bowl Fresh Poke</div>
-      <div class="outlet-type">Casual · Health-focused · Poolside</div>
-      <div class="outlet-footer">
-        <div>
-          <div class="recipe-count">0</div>
-          <div class="recipe-count-label">Recipes</div>
-        </div>
-        <div class="outlet-arrow">→</div>
-      </div>
-    </a>
-
-    <a class="outlet-card" href="./lomani/">
-      <div class="outlet-property">Lomani Island Resort</div>
-      <div class="outlet-name">Lomani Restaurant</div>
-      <div class="outlet-type">Premium dining · Adults only</div>
-      <div class="outlet-footer">
-        <div>
-          <div class="recipe-count">0</div>
-          <div class="recipe-count-label">Recipes</div>
-        </div>
-        <div class="outlet-arrow">→</div>
-      </div>
-    </a>
-
-    <a class="outlet-card" href="./lomani/">
-      <div class="outlet-property">Lomani Island Resort</div>
-      <div class="outlet-name">Tavola Restaurant & Bar</div>
-      <div class="outlet-type">Casual dining · Bar</div>
-      <div class="outlet-footer">
-        <div>
-          <div class="recipe-count">0</div>
-          <div class="recipe-count-label">Recipes</div>
-        </div>
-        <div class="outlet-arrow">→</div>
-      </div>
-    </a>
-
-    <a class="outlet-card" href="./gateway/">
-      <div class="outlet-property">Fiji Gateway Hotel</div>
-      <div class="outlet-name">Gateway Restaurant</div>
-      <div class="outlet-type">Hotel dining · Buffet &amp; à la carte</div>
-      <div class="outlet-footer">
-        <div>
-          <div class="recipe-count">0</div>
-          <div class="recipe-count-label">Recipes</div>
-        </div>
-        <div class="outlet-arrow">→</div>
-      </div>
-    </a>
-
-  </div>
-
-  <!-- RECENT RECIPES -->
-  <div class="section-header">Recently Added</div>
-  <div class="recent-grid">
-
-    <a class="recipe-card" href="./copra/sweet-smoked-pork-ribs/">
-      <div class="recipe-card-image" style="background-image: url('https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=70')">
-        <div class="recipe-card-image-overlay"></div>
-        <div class="recipe-card-badge">COP-P-001</div>
-      </div>
-      <div class="recipe-card-body">
-        <div class="recipe-card-outlet">Copra Restaurant</div>
-        <div class="recipe-card-name">Sweet Smoked Pork Ribs</div>
-        <div class="recipe-card-meta">10 portions · 6 hrs · 3-2-1 method</div>
-        <div class="allergen-mini">
-          <span class="allergen-mini-badge">Dairy</span>
-          <span class="allergen-mini-badge">Mustard</span>
-          <span class="allergen-mini-badge may">⚠ Gluten</span>
-        </div>
-      </div>
-    </a>
-
+<!-- OUTLET DETAIL VIEW -->
+<div id="view-outlet" style="display:none">
+  <div class="section" style="padding-top:32px">
+    <button class="back-btn" onclick="showHome()">← All Outlets</button>
+    <div class="detail-header">
+      <div class="detail-property" id="detail-property"></div>
+      <div class="detail-name" id="detail-name"></div>
+      <div class="detail-meta" id="detail-meta"></div>
+    </div>
+    <div class="recipe-grid" id="detail-grid"></div>
   </div>
 </div>
 
-<!-- FOOTER -->
-<footer class="footer">
-  <span class="footer-text">Raffe Hotels &amp; Resorts · Group Executive Chef Office · Confidential</span>
-  <span class="footer-version">v1.0 · Feb 2026</span>
-</footer>
+<script>
+const OUTLETS = [
+  { name:"Copra Restaurant",        property:"Plantation Island Resort", outletSlug:"copra",    desc:"Full-service dining · All-day" },
+  { name:"Tavola Restaurant & Bar", property:"Plantation Island Resort", outletSlug:"tavola",   desc:"Casual dining · Bar" },
+  { name:"Baravi Snack Bar",        property:"Plantation Island Resort", outletSlug:"baravi",   desc:"Casual · Poolside" },
+  { name:"Bowl Fresh Poke",         property:"Plantation Island Resort", outletSlug:"bowl",     desc:"Casual · Health-focused · Poolside" },
+  { name:"BataBata Ice Cream",      property:"Plantation Island Resort", outletSlug:"batabata", desc:"Ice cream · Poolside" },
+  { name:"Cocohut",                 property:"Plantation Island Resort", outletSlug:"cocohut",  desc:"Coffee & Café" },
+  { name:"Black Coral",             property:"Plantation Island Resort", outletSlug:"blackcoral", desc:"Fine dining · Beachfront" },
+  { name:"Flame Tree",              property:"Lomani Island Resort",     outletSlug:"flametree", desc:"Premium dining · Adults only" },
+  { name:"Bure Restaurant",         property:"Fiji Gateway Hotel",       outletSlug:"bure",     desc:"Hotel dining · Nadi · Buffet & à la carte" },
+  { name:"Dua Vata",                property:"Plantation Island Resort", outletSlug:"duavata",  desc:"Staff dining · PIR Village" }
+];
 
+let allCards = [];
+
+async function init() {
+  try {
+    const res = await fetch("/cards.json?v=" + Date.now());
+    allCards = res.ok ? await res.json() : [];
+  } catch(e) { allCards = []; }
+  document.getElementById("stat-recipes").textContent = allCards.length;
+  renderOutlets();
+  renderRecent();
+}
+
+function renderOutlets() {
+  const grid = document.getElementById("outlet-grid");
+  grid.innerHTML = OUTLETS.map(o => {
+    const count = allCards.filter(c => c.outletSlug === o.outletSlug).length;
+    return `<div class="outlet-card" onclick="showOutlet('${o.outletSlug}')">
+      <div class="outlet-property">${h(o.property)}</div>
+      <div class="outlet-name">${h(o.name)}</div>
+      <div class="outlet-desc">${h(o.desc)}</div>
+      <div class="outlet-footer">
+        <div><div class="outlet-count">${count}</div><div class="outlet-count-label">Recipes</div></div>
+        <div class="outlet-arrow">→</div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function renderRecent() {
+  const recent = [...allCards].reverse().slice(0, 8);
+  if (!recent.length) return;
+  document.getElementById("recent-section").style.display = "block";
+  document.getElementById("recent-grid").innerHTML = recent.map(cardHTML).join("");
+}
+
+function showOutlet(slug) {
+  const outlet = OUTLETS.find(o => o.outletSlug === slug);
+  if (!outlet) return;
+  const cards = allCards.filter(c => c.outletSlug === slug);
+  document.getElementById("detail-property").textContent = outlet.property;
+  document.getElementById("detail-name").textContent = outlet.name;
+  document.getElementById("detail-meta").textContent = cards.length + " recipe" + (cards.length !== 1 ? "s" : "") + " live";
+  document.getElementById("detail-grid").innerHTML = cards.length
+    ? cards.map(cardHTML).join("")
+    : `<div class="empty"><h3>No recipes yet</h3><p>Use the <a href="/generator/">generator</a> to add the first card.</p></div>`;
+  document.getElementById("view-home").style.display = "none";
+  document.getElementById("view-outlet").style.display = "block";
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function showHome() {
+  document.getElementById("view-home").style.display = "block";
+  document.getElementById("view-outlet").style.display = "none";
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function cardHTML(c) {
+  const photo = c.image
+    ? `<img class="recipe-photo" src="${h(c.image)}" alt="${h(c.name)}" loading="lazy" onerror="this.outerHTML='<div class=\'recipe-photo-placeholder\'>🍽</div>'">`
+    : `<div class="recipe-photo-placeholder">🍽</div>`;
+  const badge = c.allergens && c.allergens.length
+    ? `<span class="allergen-badge">${c.allergens.length} allergen${c.allergens.length > 1?"s":""}</span>`
+    : `<span style="font-size:11px;color:rgba(255,255,255,0.25)">No allergens</span>`;
+  return `<a class="recipe-card" href="${h(c.recipeURL||'#')}">
+    ${photo}
+    <div class="recipe-info">
+      <div class="recipe-outlet">${h(c.outlet)} · ${h(c.service)}</div>
+      <div class="recipe-name">${h(c.name)}</div>
+      <div class="recipe-desc">${h(c.desc||'')}</div>
+      <div class="recipe-footer">
+        <div class="recipe-price">$${c.price} <span>FJD</span></div>
+        ${badge}
+      </div>
+    </div>
+  </a>`;
+}
+
+function h(s) { return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+init();
+</script>
 </body>
 </html>
