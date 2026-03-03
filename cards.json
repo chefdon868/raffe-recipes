@@ -1,1 +1,26 @@
-[]
+[
+  {
+    "name": "Garden Veg Wrap",
+    "property": "Plantation Island Resort",
+    "propertyCode": "PIR",
+    "outlet": "Copra Restaurant",
+    "outletSlug": "copra",
+    "service": "Lunch",
+    "serviceSlug": "lunch",
+    "slug": "garden-veg-wrap",
+    "code": "—",
+    "price": 32,
+    "dietary": [
+      "VGN"
+    ],
+    "allergens": [
+      "G",
+      "E"
+    ],
+    "cat": "Wraps",
+    "desc": "Soft tortilla filled with grilled zucchini, roasted peppers, baby spinach, creamy hummus and garlic aioli",
+    "image": "/images/PIR/copra/lunch/garden-veg-wrap/garden-veg-wrap.jpg",
+    "recipeURL": "/PIR/copra/lunch/garden-veg-wrap/",
+    "heroURL": "/PIR/copra/lunch/garden-veg-wrap/hero.html"
+  }
+]
