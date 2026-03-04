@@ -44,5 +44,28 @@
     "image": "/images/PIR/tavola/breakfast/ham-and-cheese-croissant/ham-and-cheese-croissant.jpg",
     "recipeURL": "/PIR/tavola/breakfast/ham-and-cheese-croissant/",
     "heroURL": "/PIR/tavola/breakfast/ham-and-cheese-croissant/hero.html"
+  },
+  {
+    "name": "Ice Cream Cone — 1 Scoop",
+    "property": "Plantation Island Resort",
+    "propertyCode": "PIR",
+    "outlet": "BataBata",
+    "outletSlug": "batabata",
+    "service": "All Day",
+    "serviceSlug": "all-day",
+    "slug": "ice-cream-cone-1-scoop",
+    "code": "—",
+    "price": 6,
+    "dietary": [],
+    "allergens": [
+      "G",
+      "D",
+      "E"
+    ],
+    "cat": "Cones",
+    "desc": "Single scoop of house-made ice cream in a waffle cone",
+    "image": "/images/PIR/batabata/all-day/ice-cream-cone-1-scoop/ice-cream-cone-1-scoop.jpg",
+    "recipeURL": "/PIR/batabata/all-day/ice-cream-cone-1-scoop/",
+    "heroURL": "/PIR/batabata/all-day/ice-cream-cone-1-scoop/hero.html"
   }
 ]
