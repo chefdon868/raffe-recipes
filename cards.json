@@ -90,5 +90,28 @@
     "image": "/images/PIR/copra/lunch/garden-veg-wrap/garden-veg-wrap.jpg",
     "recipeURL": "/PIR/copra/lunch/garden-veg-wrap/",
     "heroURL": "/PIR/copra/lunch/garden-veg-wrap/hero.html"
+  },
+  {
+    "name": "Pesto Chicken Wrap",
+    "property": "Plantation Island Resort",
+    "propertyCode": "PIR",
+    "outlet": "Copra Restaurant",
+    "outletSlug": "copra",
+    "service": "Lunch",
+    "serviceSlug": "lunch",
+    "slug": "pesto-chicken-wrap",
+    "code": "—",
+    "price": 33,
+    "dietary": [],
+    "allergens": [
+      "G",
+      "D",
+      "N"
+    ],
+    "cat": "Wraps",
+    "desc": "Grilled chicken breast, basil pesto, marinated feta, fresh lettuce and tomato in a soft tortilla",
+    "image": "/images/PIR/copra/lunch/pesto-chicken-wrap/pesto-chicken-wrap.jpg",
+    "recipeURL": "/PIR/copra/lunch/pesto-chicken-wrap/",
+    "heroURL": "/PIR/copra/lunch/pesto-chicken-wrap/hero.html"
   }
 ]
