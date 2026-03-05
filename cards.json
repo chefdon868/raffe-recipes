@@ -323,5 +323,30 @@
     "image": "/images/PIR/copra/lunch/fish-chips/fish-chips.jpg",
     "recipeURL": "/PIR/copra/lunch/fish-chips/",
     "heroURL": "/PIR/copra/lunch/fish-chips/hero.html"
+  },
+  {
+    "name": "Tropical Quinoa Salad",
+    "property": "Plantation Island Resort",
+    "propertyCode": "PIR",
+    "outlet": "Copra Restaurant",
+    "outletSlug": "copra",
+    "service": "Lunch",
+    "serviceSlug": "lunch",
+    "slug": "tropical-quinoa-salad",
+    "code": "—",
+    "price": 32,
+    "dietary": [
+      "GF",
+      "V"
+    ],
+    "allergens": [
+      "SE",
+      "N"
+    ],
+    "cat": "Salads",
+    "desc": "A vibrant mix of quinoa, roasted pumpkin, pineapple and fresh mint tossed with a zesty tahini-lime vinaigrette",
+    "image": "/images/PIR/copra/lunch/tropical-quinoa-salad/tropical-quinoa-salad.jpg",
+    "recipeURL": "/PIR/copra/lunch/tropical-quinoa-salad/",
+    "heroURL": "/PIR/copra/lunch/tropical-quinoa-salad/hero.html"
   }
 ]
