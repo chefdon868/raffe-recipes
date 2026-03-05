@@ -45,6 +45,29 @@
     "heroURL": "/PIR/batabata/all-day/ice-cream-cone-1-scoop/hero.html"
   },
   {
+    "name": "Ice Cream Cone — 2 Scoops",
+    "property": "Plantation Island Resort",
+    "propertyCode": "PIR",
+    "outlet": "BataBata",
+    "outletSlug": "batabata",
+    "service": "All Day",
+    "serviceSlug": "all-day",
+    "slug": "ice-cream-cone-2-scoops",
+    "code": "—",
+    "price": 10,
+    "dietary": [],
+    "allergens": [
+      "G",
+      "D",
+      "E"
+    ],
+    "cat": "Cones",
+    "desc": "Double scoop of house-made ice cream in a waffle cone",
+    "image": "/images/PIR/batabata/all-day/ice-cream-cone-2-scoops/ice-cream-cone-2-scoops.jpg",
+    "recipeURL": "/PIR/batabata/all-day/ice-cream-cone-2-scoops/",
+    "heroURL": "/PIR/batabata/all-day/ice-cream-cone-2-scoops/hero.html"
+  },
+  {
     "name": "Garden Veg Wrap",
     "property": "Plantation Island Resort",
     "propertyCode": "PIR",
@@ -67,28 +90,5 @@
     "image": "/images/PIR/copra/lunch/garden-veg-wrap/garden-veg-wrap.jpg",
     "recipeURL": "/PIR/copra/lunch/garden-veg-wrap/",
     "heroURL": "/PIR/copra/lunch/garden-veg-wrap/hero.html"
-  },
-  {
-    "name": "Ice Cream Cone — 2 Scoops",
-    "property": "Plantation Island Resort",
-    "propertyCode": "PIR",
-    "outlet": "BataBata",
-    "outletSlug": "batabata",
-    "service": "All Day",
-    "serviceSlug": "all-day",
-    "slug": "ice-cream-cone-2-scoops",
-    "code": "—",
-    "price": 10,
-    "dietary": [],
-    "allergens": [
-      "G",
-      "D",
-      "E"
-    ],
-    "cat": "Cones",
-    "desc": "Double scoop of house-made ice cream in a waffle cone",
-    "image": "/images/PIR/batabata/all-day/ice-cream-cone-2-scoops/ice-cream-cone-2-scoops.jpg",
-    "recipeURL": "/PIR/batabata/all-day/ice-cream-cone-2-scoops/",
-    "heroURL": "/PIR/batabata/all-day/ice-cream-cone-2-scoops/hero.html"
   }
 ]
