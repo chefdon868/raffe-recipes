@@ -232,5 +232,27 @@
     "image": "/images/PIR/copra/lunch/ham-and-cheese-panini/ham-and-cheese-panini.jpg",
     "recipeURL": "/PIR/copra/lunch/ham-and-cheese-panini/",
     "heroURL": "/PIR/copra/lunch/ham-and-cheese-panini/hero.html"
+  },
+  {
+    "name": "Classic BLT",
+    "property": "Plantation Island Resort",
+    "propertyCode": "PIR",
+    "outlet": "Copra Restaurant",
+    "outletSlug": "copra",
+    "service": "Lunch",
+    "serviceSlug": "lunch",
+    "slug": "classic-blt",
+    "code": "—",
+    "price": 32,
+    "dietary": [],
+    "allergens": [
+      "G",
+      "E"
+    ],
+    "cat": "Sandwiches & Burgers",
+    "desc": "Toasted sourdough roll filled with crispy bacon, fresh lettuce, ripe tomato and creamy aioli",
+    "image": "/images/PIR/copra/lunch/classic-blt/classic-blt.jpg",
+    "recipeURL": "/PIR/copra/lunch/classic-blt/",
+    "heroURL": "/PIR/copra/lunch/classic-blt/hero.html"
   }
 ]
