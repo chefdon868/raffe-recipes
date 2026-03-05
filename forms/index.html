@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ExecChef · Kitchen Forms — Plantation Island Resort</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body, #root { height: 100%; overflow: hidden; }
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: #0c0c18;
+    color: #e8e8e8;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+  input[type=number]::-webkit-inner-spin-button { opacity: 0.4; }
+  select option { background: #1a1a2e; color: white; }
+  @media print {
+    body { background: white; color: black; }
+    .no-print { display: none !important; }
+    .print-only { display: block !important; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useMemo, useCallback, useRef } = React;
+
+// ─── DATA ────────────────────────────────────────────────────────────────────
+const OUTLET_DATA = {
+  "Black Coral": {
+    color: "#1a3a5c", accent: "#e8a020", icon: "🪸",
+    items: [
+      {code:"FD-001-0002",description:"Beef Rib Eye Steak",cost:60.6965,uom:"Kg",category:"BEEF"},
+      {code:"FD-001-0003",description:"Beef IMP Rump Steak",cost:24.9501,uom:"Kg",category:"BEEF"},
+      {code:"FD-001-0004",description:"Beef IMP Striploin",cost:39.95,uom:"Kg",category:"BEEF"},
+      {code:"FD-001-0005",description:"Frozen Beef Tenderloin",cost:79.9501,uom:"Kg",category:"BEEF"},
+      {code:"FD-001-0006",description:"Beef LOC Mince",cost:13.5,uom:"Kg",category:"BEEF"},
+      {code:"FD-001-0030",description:"Beef Bones",cost:5.0,uom:"Kg",category:"BEEF"},
+      {code:"FD-002-0006",description:"Fish Walu Fillet",cost:33.5,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-002-0009",description:"Fish Wahoo Fillet",cost:25.0,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-008-0001",description:"Seafood Lobster",cost:80.0,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-008-0002",description:"Seafood Mussel 1/2 Shell",cost:27.2003,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-008-0006",description:"Seafood Prawns Cutlets 26/30",cost:23.6015,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-008-0009",description:"Seafood Squid Tubes U10",cost:19.3545,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-008-0029",description:"Fish Salmon Fillet Skin on",cost:73.0,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-008-0030",description:"Seafood Slipper Bug",cost:60.0,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-015-0006",description:"Tuna Fillet",cost:25.0,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-005-0015",description:"Pork Local Bacon Steaky",cost:21.0,uom:"Kg",category:"PORK"},
+      {code:"FD-005-0021",description:"Pork Spareribs",cost:19.9799,uom:"Kg",category:"PORK"},
+      {code:"FD-005-0016",description:"Pork Local Belly",cost:24.2825,uom:"Kg",category:"PORK"},
+      {code:"FD-004-0004",description:"Lamb Baby French Rack",cost:71.7847,uom:"Kg",category:"LAMB"},
+      {code:"FD-007-0007",description:"Sausages Lamb Breakfast",cost:10.0647,uom:"Kg",category:"SAUSAGES"},
+      {code:"FD-006-0001",description:"Eggs 720g",cost:0.4317,uom:"Each",category:"POULTRY"},
+      {code:"FD-006-0004",description:"Chicken Supreme Cut 7.5kg",cost:13.9872,uom:"Kg",category:"POULTRY"},
+      {code:"FD-006-0006",description:"Chicken Wings 7.5kg",cost:11.1893,uom:"Kg",category:"POULTRY"},
+      {code:"FD-006-0018",description:"Chicken Whole #11",cost:10.4089,uom:"Kg",category:"POULTRY"},
+      {code:"FD-006-0037",description:"Chicken B/Less Thigh 7.5kg",cost:16.224,uom:"Kg",category:"POULTRY"},
+      {code:"FD-009-0012",description:"Ice Cream Vanilla 5L",cost:21.37,uom:"Each",category:"ICE CREAMS"},
+      {code:"FD-009-0019",description:"Ice Cream Lemon Sorbet 5L",cost:65.0333,uom:"Each",category:"ICE CREAMS"},
+      {code:"FD-010-0006",description:"Cheese Fetta",cost:24.71,uom:"Each",category:"CHEESE"},
+      {code:"FD-010-0010",description:"Cheese Parmesan Shaved 1kg",cost:42.72,uom:"Kg",category:"CHEESE"},
+      {code:"FD-010-0011",description:"Cheese Valumetric/Pizza Grated 5kg",cost:21.4992,uom:"Kg",category:"CHEESE"},
+      {code:"FD-010-0077",description:"Cheese Cheddar Slice Anchor 1.04kg",cost:26.156,uom:"Kg",category:"CHEESE"},
+      {code:"FD-011-0003",description:"Margarine Flora 1kg",cost:8.2126,uom:"Each",category:"DAIRY"},
+      {code:"FD-011-0009",description:"Whipping Cream 1L",cost:7.5,uom:"Each",category:"DAIRY"},
+      {code:"FD-012-0002",description:"Oil Cooking Canola 20L",cost:57.998,uom:"Each",category:"OIL"},
+      {code:"FD-003-0003",description:"Frozen Corn-on-Cobs",cost:7.7,uom:"Kg",category:"OTHER FROZEN"},
+      {code:"FD-003-0005",description:"Frozen French Fries",cost:4.25,uom:"Kg",category:"OTHER FROZEN"},
+      {code:"FD-003-0017",description:"Frozen Cassava",cost:3.0,uom:"Kg",category:"OTHER FROZEN"},
+      {code:"FD-003-0047",description:"Frozen Beans Edamame",cost:18.0111,uom:"Each",category:"OTHER FROZEN"},
+    ]
+  },
+  "Tavola": {
+    color: "#1e3d10", accent: "#8bc34a", icon: "🍕",
+    items: [
+      {code:"FD-001-0004",description:"Beef IMP Striploin",cost:39.95,uom:"Kg",category:"BEEF"},
+      {code:"FD-001-0006",description:"Beef LOC Mince",cost:13.5,uom:"Kg",category:"BEEF"},
+      {code:"FD-001-0007",description:"Salami Italian 1kg",cost:31.5003,uom:"Kg",category:"BEEF"},
+      {code:"FD-001-0008",description:"Beef Patties Angus 3.60kg",cost:24.95,uom:"Kg",category:"BEEF"},
+      {code:"FD-001-0010",description:"Salami Pepperoni",cost:35.0187,uom:"Kg",category:"BEEF"},
+      {code:"FD-002-0003",description:"Fish Mahimahi Fillets",cost:33.5,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-002-0009",description:"Fish Wahoo Fillet",cost:24.9798,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-008-0002",description:"Seafood Mussel 1/2 Shell",cost:27.2005,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-008-0006",description:"Seafood Prawns Cutlets 26/30",cost:23.6015,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-008-0009",description:"Seafood Squid Tubes U10",cost:19.3547,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-008-0029",description:"Fish Salmon Fillet Skin on",cost:73.0,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-004-0008",description:"Lamb Leg Netting Boneless",cost:24.95,uom:"Kg",category:"LAMB"},
+      {code:"FD-004-0010",description:"Lamb Shank",cost:16.038,uom:"Kg",category:"LAMB"},
+      {code:"FD-004-0018",description:"Lamb Kofta",cost:24.52,uom:"Kg",category:"LAMB"},
+      {code:"FD-005-0005",description:"Pork Block CP Ham",cost:19.4998,uom:"Kg",category:"PORK"},
+      {code:"FD-005-0015",description:"Pork Local Bacon Steaky",cost:21.0,uom:"Kg",category:"PORK"},
+      {code:"FD-005-0021",description:"Pork Spareribs",cost:19.9749,uom:"Kg",category:"PORK"},
+      {code:"FD-005-0023",description:"Ham Champagne",cost:30.4832,uom:"Kg",category:"PORK"},
+      {code:"FD-007-0007",description:"Sausages Lamb Breakfast",cost:10.064,uom:"Kg",category:"SAUSAGES"},
+      {code:"FD-003-0005",description:"Frozen French Fries",cost:4.25,uom:"Kg",category:"OTHER FROZEN"},
+      {code:"FD-003-0007",description:"Frozen Fruits Strawberry",cost:16.5,uom:"Kg",category:"OTHER FROZEN"},
+      {code:"FD-003-0009",description:"Frozen Hash Brown",cost:5.9994,uom:"Kg",category:"OTHER FROZEN"},
+      {code:"FD-003-0011",description:"Frozen Potato Wedge",cost:4.9488,uom:"Kg",category:"OTHER FROZEN"},
+      {code:"FD-003-0017",description:"Frozen Cassava",cost:3.0,uom:"Kg",category:"OTHER FROZEN"},
+      {code:"FD-003-0019",description:"Frozen Fruits Mixed Berries",cost:22.5,uom:"Kg",category:"OTHER FROZEN"},
+      {code:"FD-003-0053",description:"Frozen Pastry Croissant 55g (110)",cost:21.8073,uom:"Ctn",category:"OTHER FROZEN"},
+      {code:"FD-006-0001",description:"Eggs 720g",cost:0.454,uom:"Each",category:"POULTRY"},
+      {code:"FD-006-0004",description:"Chicken Supreme Cut 7.5kg",cost:13.9872,uom:"Kg",category:"POULTRY"},
+      {code:"FD-006-0028",description:"Chicken Thigh 7.5kg",cost:8.9547,uom:"Kg",category:"POULTRY"},
+      {code:"FD-006-0037",description:"Chicken B/Less Thigh 7.5kg",cost:16.224,uom:"Kg",category:"POULTRY"},
+      {code:"FD-009-0009",description:"Ice Cream Strawberry 5L",cost:21.37,uom:"Each",category:"ICE CREAMS"},
+      {code:"FD-009-0012",description:"Ice Cream Vanilla 5L",cost:21.37,uom:"Each",category:"ICE CREAMS"},
+      {code:"FD-010-0005",description:"Cheese Edam",cost:16.07,uom:"Each",category:"CHEESE"},
+      {code:"FD-010-0006",description:"Cheese Fetta",cost:24.71,uom:"Each",category:"CHEESE"},
+      {code:"FD-010-0011",description:"Cheese Valumetric/Pizza Grated 5kg",cost:21.4992,uom:"Kg",category:"CHEESE"},
+      {code:"FD-010-0077",description:"Cheese Cheddar Slice Anchor 1.04kg",cost:26.156,uom:"Kg",category:"CHEESE"},
+      {code:"FD-011-0003",description:"Margarine Flora 1kg",cost:8.2125,uom:"Each",category:"DAIRY"},
+      {code:"FD-012-0002",description:"Oil Cooking Canola 20L",cost:65.86,uom:"Each",category:"OIL"},
+      {code:"FD-017-0036",description:"Baking Pizza Base 12\" (50pcs)",cost:2.2005,uom:"Each",category:"BAKERY"},
+      {code:"FD-024-0036",description:"Pizza Sauce 10kg",cost:129.0438,uom:"Each",category:"SAUCES"},
+    ]
+  },
+  "Baravi": {
+    color: "#2d1040", accent: "#ce93d8", icon: "🍷",
+    items: [
+      {code:"FD-001-0006",description:"Beef LOC Mince",cost:13.5,uom:"Kg",category:"BEEF"},
+      {code:"FD-001-0007",description:"Salami Italian 1kg",cost:31.5003,uom:"Kg",category:"BEEF"},
+      {code:"FD-001-0010",description:"Salami Pepperoni",cost:43.0218,uom:"Kg",category:"BEEF"},
+      {code:"FD-002-0006",description:"Fish Walu Fillet",cost:33.5,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-002-0009",description:"Fish Wahoo Fillet",cost:25.0,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-008-0006",description:"Seafood Prawns Cutlets 26/30",cost:20.9896,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-005-0005",description:"Pork Block CP Ham",cost:19.4998,uom:"Kg",category:"PORK"},
+      {code:"FD-005-0015",description:"Pork Local Bacon Steaky",cost:19.5,uom:"Kg",category:"PORK"},
+      {code:"FD-005-0016",description:"Pork Local Belly",cost:25.5,uom:"Kg",category:"PORK"},
+      {code:"FD-005-0023",description:"Ham Champagne",cost:30.4888,uom:"Kg",category:"PORK"},
+      {code:"FD-007-0007",description:"Sausages Lamb Breakfast",cost:10.087,uom:"Kg",category:"SAUSAGES"},
+      {code:"FD-006-0004",description:"Chicken Supreme Cut 7.5kg",cost:13.9867,uom:"Kg",category:"POULTRY"},
+      {code:"FD-010-0006",description:"Cheese Fetta",cost:24.71,uom:"Each",category:"CHEESE"},
+      {code:"FD-010-0011",description:"Cheese Valumetric/Pizza Grated 5kg",cost:16.3324,uom:"Kg",category:"CHEESE"},
+      {code:"FD-010-0077",description:"Cheese Cheddar Slice Anchor 1.04kg",cost:26.156,uom:"Kg",category:"CHEESE"},
+      {code:"FD-011-0010",description:"Yogurt Plain 1kg",cost:4.9503,uom:"Each",category:"DAIRY"},
+      {code:"FD-012-0002",description:"Oil Cooking Canola 20L",cost:65.86,uom:"Each",category:"OIL"},
+      {code:"FD-012-0005",description:"Oil Sesame 2L",cost:42.5,uom:"Each",category:"OIL"},
+      {code:"FD-016-0008",description:"Capers in Vinegar Sandhurst 2kg",cost:30.0,uom:"Each",category:"A10 + TIN"},
+      {code:"FD-016-0024",description:"Pineapple Pizza Cut A10",cost:23.427,uom:"Each",category:"A10 + TIN"},
+      {code:"FD-017-0036",description:"Baking Pizza Base 12\" (50pcs)",cost:2.2005,uom:"Each",category:"BAKERY"},
+      {code:"FD-024-0036",description:"Pizza Sauce 10kg",cost:129.0438,uom:"Each",category:"SAUCES"},
+      {code:"FD-024-0151",description:"Sauce Sriracha",cost:10.3625,uom:"Each",category:"SAUCES"},
+      {code:"FD-030-0001",description:"Vege IMP Capsicum Green",cost:15.484,uom:"Kg",category:"VEGETABLES"},
+      {code:"FD-030-0002",description:"Vege IMP Capsicum Red",cost:14.4145,uom:"Kg",category:"VEGETABLES"},
+      {code:"FD-030-0007",description:"Vege IMP Leaves Basil Green",cost:48.0,uom:"Kg",category:"VEGETABLES"},
+      {code:"FD-030-0011",description:"Vege IMP Onions",cost:1.5935,uom:"Kg",category:"VEGETABLES"},
+      {code:"FD-030-0026",description:"Vege IMP Mushrooms Bottom",cost:19.1,uom:"Kg",category:"VEGETABLES"},
+      {code:"FD-003-0005",description:"Frozen French Fries",cost:4.25,uom:"Kg",category:"OTHER FROZEN"},
+      {code:"FD-003-0011",description:"Frozen Potato Wedge",cost:4.95,uom:"Kg",category:"OTHER FROZEN"},
+    ]
+  },
+  "BataBata": {
+    color: "#4a1010", accent: "#ff6b6b", icon: "🍦",
+    items: [
+      {code:"FD-009-0032",description:"Ice Cream Icefruit Strawberry 5L",cost:40.0,uom:"Each",category:"ICE CREAM",par:2},
+      {code:"FD-009-0034",description:"Ice Cream Icefruit Chocolate 5L",cost:56.0,uom:"Each",category:"ICE CREAM",par:2},
+      {code:"FD-009-0647",description:"Ice Cream Icefruit Vanilla 5L",cost:40.0,uom:"Each",category:"ICE CREAM",par:2},
+      {code:"FD-009-0016",description:"Ice Cream Icefruit Cookies & Cream 5L",cost:43.5,uom:"Each",category:"ICE CREAM",par:2},
+      {code:"FD-009-0651",description:"Ice Cream Icefruit Roasted Coconut 5L",cost:40.0,uom:"Each",category:"ICE CREAM",par:2},
+      {code:"FD-009-0652",description:"Ice Cream Icefruit Chocolate Chip 5L",cost:41.0,uom:"Each",category:"ICE CREAM",par:2},
+      {code:"FD-009-0653",description:"Ice Cream Icefruit Bounty Coconut 5L",cost:45.0,uom:"Each",category:"ICE CREAM",par:2},
+      {code:"FD-009-0654",description:"Ice Cream Icefruit Bubble Gum 5L",cost:40.0,uom:"Each",category:"ICE CREAM",par:2},
+      {code:"FD-009-0655",description:"Ice Cream Icefruit Mango Ripple 5L",cost:40.0,uom:"Each",category:"ICE CREAM",par:2},
+      {code:"FD-009-0656",description:"Ice Cream Icefruit Passionfruit 5L",cost:40.0,uom:"Each",category:"ICE CREAM",par:2},
+      {code:"FD-009-0014",description:"Ice Cream Icefruit Salted Caramel 5L",cost:45.0,uom:"Each",category:"ICE CREAM",par:2},
+      {code:"FD-009-0024",description:"Ice Cream Mango Passion Fruit Sorbet 5L",cost:55.0,uom:"Each",category:"ICE CREAM",par:2},
+      {code:"FD-009-0657",description:"Cone Waffle Flat Top Sugar 216s",cost:101.5,uom:"Ctn",category:"CONES",par:1},
+      {code:"FD-009-0658",description:"Cone Waffle Altimate Sleeves GF 220s",cost:270.0,uom:"Ctn",category:"CONES",par:1},
+      {code:"FD-009-0659",description:"Cone Waffle Disc Custom Print 1000s",cost:360.0,uom:"Ctn",category:"CONES",par:1},
+      {code:"FD-601-126",description:"Spoon Supa Paper Coloured 6000s",cost:510.0,uom:"Ctn",category:"SUPPLIES",par:1},
+      {code:"FD-017-0204",description:"Baking Golden Donut Mix 15kg",cost:6.5548,uom:"Kg",category:"BAKERY"},
+      {code:"FD-017-0007",description:"Baking Mix Chockex Supreme 5kg",cost:14.4925,uom:"Kg",category:"BAKERY"},
+      {code:"FD-012-0002",description:"Oil Cooking Canola 20L",cost:65.2525,uom:"Each",category:"OIL"},
+    ]
+  },
+  "Main Kitchen": {
+    color: "#0d2035", accent: "#40b4ff", icon: "👨‍🍳",
+    items: [
+      {code:"FD-001-0003",description:"Beef IMP Rump Steak",cost:24.9501,uom:"Kg",category:"BEEF"},
+      {code:"FD-001-0004",description:"Beef IMP Striploin",cost:39.95,uom:"Kg",category:"BEEF"},
+      {code:"FD-001-0006",description:"Beef LOC Mince",cost:13.5,uom:"Kg",category:"BEEF"},
+      {code:"FD-001-0008",description:"Beef Patties Angus 3.60kg",cost:24.95,uom:"Kg",category:"BEEF"},
+      {code:"FD-001-0010",description:"Salami Pepperoni",cost:35.825,uom:"Kg",category:"BEEF"},
+      {code:"FD-002-0006",description:"Fish Walu Fillet",cost:33.5,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-002-0009",description:"Fish Wahoo Fillet",cost:24.9775,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-002-0010",description:"Fish Fresh Tuna Fillet",cost:30.0,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-008-0002",description:"Seafood Mussel 1/2 Shell",cost:27.2492,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-008-0006",description:"Seafood Prawns Cutlets 26/30",cost:20.9528,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-008-0009",description:"Seafood Squid Tubes U10",cost:17.5,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-004-0006",description:"Lamb Neck Slices 2cm",cost:14.2313,uom:"Kg",category:"LAMB"},
+      {code:"FD-004-0008",description:"Lamb Leg Netting Boneless",cost:26.95,uom:"Kg",category:"LAMB"},
+      {code:"FD-004-0010",description:"Lamb Shank",cost:16.038,uom:"Kg",category:"LAMB"},
+      {code:"FD-004-0012",description:"Lamb Neck Curry Pieces",cost:14.2313,uom:"Kg",category:"LAMB"},
+      {code:"FD-004-0013",description:"Lamb IMP Chops BBQ",cost:21.4964,uom:"Kg",category:"LAMB"},
+      {code:"FD-005-0005",description:"Pork Block CP Ham",cost:17.0878,uom:"Kg",category:"PORK"},
+      {code:"FD-005-0011",description:"Pork Leg Bone In",cost:17.0878,uom:"Kg",category:"PORK"},
+      {code:"FD-005-0015",description:"Pork Local Bacon Steaky",cost:19.5,uom:"Kg",category:"PORK"},
+      {code:"FD-005-0016",description:"Pork Local Belly",cost:17.1684,uom:"Kg",category:"PORK"},
+      {code:"FD-005-0021",description:"Pork Spareribs",cost:19.9799,uom:"Kg",category:"PORK"},
+      {code:"FD-005-0023",description:"Ham Champagne",cost:30.4832,uom:"Kg",category:"PORK"},
+      {code:"FD-007-0007",description:"Sausages Lamb Breakfast",cost:10.087,uom:"Kg",category:"SAUSAGES"},
+      {code:"FD-007-0020",description:"Sausage Lamb BBQ 5kg",cost:8.7628,uom:"Kg",category:"SAUSAGES"},
+      {code:"FD-003-0002",description:"Frozen Cocktail Samosa",cost:10.928,uom:"Each",category:"OTHER FROZEN"},
+      {code:"FD-003-0003",description:"Frozen Corn-on-Cobs",cost:7.7,uom:"Kg",category:"OTHER FROZEN"},
+      {code:"FD-003-0005",description:"Frozen French Fries",cost:4.25,uom:"Kg",category:"OTHER FROZEN"},
+      {code:"FD-003-0009",description:"Frozen Hash Brown",cost:5.9996,uom:"Kg",category:"OTHER FROZEN"},
+      {code:"FD-003-0011",description:"Frozen Potato Wedge",cost:4.9488,uom:"Kg",category:"OTHER FROZEN"},
+      {code:"FD-003-0017",description:"Frozen Cassava",cost:3.0,uom:"Kg",category:"OTHER FROZEN"},
+      {code:"FD-003-0019",description:"Frozen Fruits Mixed Berries",cost:22.5,uom:"Kg",category:"OTHER FROZEN"},
+      {code:"FD-003-0042",description:"Frozen Chicken Dumpling",cost:11.0,uom:"Doz",category:"OTHER FROZEN"},
+      {code:"FD-003-0053",description:"Frozen Pastry Croissant 55g (110)",cost:34.6752,uom:"Ctn",category:"OTHER FROZEN"},
+      {code:"FD-006-0001",description:"Eggs 720g",cost:0.454,uom:"Each",category:"POULTRY"},
+      {code:"FD-006-0003",description:"Chicken Drum Stick 7.5kg",cost:8.6,uom:"Kg",category:"POULTRY"},
+      {code:"FD-006-0004",description:"Chicken Supreme Cut 7.5kg",cost:13.9872,uom:"Kg",category:"POULTRY"},
+      {code:"FD-006-0006",description:"Chicken Wings 7.5kg",cost:11.1893,uom:"Kg",category:"POULTRY"},
+      {code:"FD-006-0028",description:"Chicken Thigh 7.5kg",cost:8.9547,uom:"Kg",category:"POULTRY"},
+      {code:"FD-006-0037",description:"Chicken B/Less Thigh 7.5kg",cost:16.224,uom:"Kg",category:"POULTRY"},
+      {code:"FD-009-0001",description:"Ice Cream Chocolate 5L",cost:21.37,uom:"Each",category:"ICE CREAMS"},
+      {code:"FD-009-0009",description:"Ice Cream Strawberry 5L",cost:21.37,uom:"Each",category:"ICE CREAMS"},
+      {code:"FD-009-0012",description:"Ice Cream Vanilla 5L",cost:21.37,uom:"Each",category:"ICE CREAMS"},
+      {code:"FD-010-0004",description:"Cheese Cream 1kg",cost:18.5,uom:"Each",category:"CHEESE"},
+      {code:"FD-010-0006",description:"Cheese Fetta",cost:24.71,uom:"Each",category:"CHEESE"},
+      {code:"FD-010-0010",description:"Cheese Parmesan Grated 1kg",cost:42.72,uom:"Kg",category:"CHEESE"},
+      {code:"FD-010-0011",description:"Cheese Valumetric/Pizza Grated 5kg",cost:21.4992,uom:"Kg",category:"CHEESE"},
+      {code:"FD-010-0077",description:"Cheese Cheddar Slice Anchor 1.04kg",cost:26.156,uom:"Kg",category:"CHEESE"},
+      {code:"FD-011-0002",description:"Cream Sour 1L",cost:6.5,uom:"Each",category:"DAIRY"},
+      {code:"FD-011-0003",description:"Margarine Flora 1kg",cost:8.2126,uom:"Each",category:"DAIRY"},
+      {code:"FD-011-0006",description:"Milk Skim UHT 1L",cost:3.0933,uom:"Each",category:"DAIRY"},
+      {code:"FD-011-0009",description:"Whipping Cream 1L",cost:7.5,uom:"Each",category:"DAIRY"},
+      {code:"FD-011-0012",description:"Milk ANC Regular UHT 1L",cost:2.9091,uom:"Each",category:"DAIRY"},
+      {code:"FD-012-0002",description:"Oil Cooking Canola 20L",cost:65.2525,uom:"Each",category:"OIL"},
+      {code:"FD-012-0004",description:"Oil Cooking Olive Extra Virgin 5L",cost:58.5,uom:"Each",category:"OIL"},
+      {code:"FD-012-0005",description:"Oil Sesame 2L",cost:42.5,uom:"Each",category:"OIL"},
+      {code:"BV-135-0618",description:"Juice Real Orange 2L",cost:8.8,uom:"Each",category:"BEVERAGE"},
+      {code:"BV-135-0619",description:"Juice Real Apple 2L",cost:8.8,uom:"Each",category:"BEVERAGE"},
+      {code:"BV-135-0620",description:"Juice Real Tropical 2L",cost:8.8,uom:"Each",category:"BEVERAGE"},
+      {code:"BV-135-0621",description:"Juice Real Pineapple 2L",cost:8.8,uom:"Each",category:"BEVERAGE"},
+      {code:"BV-150-0072",description:"Cooking Red Wine Cask",cost:53.57,uom:"Each",category:"BEVERAGE"},
+      {code:"BV-151-0069",description:"Cooking White Wine Cask",cost:53.83,uom:"Each",category:"BEVERAGE"},
+      {code:"FD-024-0036",description:"Pizza Sauce 10kg",cost:129.0438,uom:"Each",category:"SAUCES"},
+      {code:"FD-024-0101",description:"Sauce Chilly Sweet 700g",cost:8.5,uom:"Each",category:"SAUCES"},
+      {code:"FD-024-0103",description:"Sauce Dark Soy Superior 750ml",cost:4.5,uom:"Each",category:"SAUCES"},
+    ]
+  },
+  "Palm Court": {
+    color: "#2a1a08", accent: "#d4a056", icon: "🌴",
+    items: [
+      {code:"FD-001-0003",description:"Beef IMP Rump Steak",cost:24.9501,uom:"Kg",category:"BEEF"},
+      {code:"FD-001-0004",description:"Beef IMP Striploin",cost:39.95,uom:"Kg",category:"BEEF"},
+      {code:"FD-001-0006",description:"Beef LOC Mince",cost:13.5,uom:"Kg",category:"BEEF"},
+      {code:"FD-001-0008",description:"Beef Patties Angus 3.60kg",cost:24.95,uom:"Kg",category:"BEEF"},
+      {code:"FD-002-0006",description:"Fish Walu Fillet",cost:33.5,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-002-0009",description:"Fish Wahoo Fillet",cost:24.9775,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-002-0010",description:"Fish Fresh Tuna Fillet",cost:30.0,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-008-0002",description:"Seafood Mussel 1/2 Shell",cost:27.2492,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-008-0006",description:"Seafood Prawns Cutlets 26/30",cost:20.9528,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-008-0009",description:"Seafood Squid Tubes U10",cost:17.5,uom:"Kg",category:"SEAFOOD"},
+      {code:"FD-004-0006",description:"Lamb Neck Slices 2cm",cost:14.2313,uom:"Kg",category:"LAMB"},
+      {code:"FD-004-0008",description:"Lamb Leg Netting Boneless",cost:26.95,uom:"Kg",category:"LAMB"},
+      {code:"FD-004-0010",description:"Lamb Shank",cost:16.038,uom:"Kg",category:"LAMB"},
+      {code:"FD-004-0013",description:"Lamb IMP Chops BBQ",cost:21.4964,uom:"Kg",category:"LAMB"},
+      {code:"FD-005-0005",description:"Pork Block CP Ham",cost:17.0878,uom:"Kg",category:"PORK"},
+      {code:"FD-005-0015",description:"Pork Local Bacon Steaky",cost:19.5,uom:"Kg",category:"PORK"},
+      {code:"FD-005-0016",description:"Pork Local Belly",cost:17.1684,uom:"Kg",category:"PORK"},
+      {code:"FD-005-0021",description:"Pork Spareribs",cost:19.9799,uom:"Kg",category:"PORK"},
+      {code:"FD-005-0023",description:"Ham Champagne",cost:30.4832,uom:"Kg",category:"PORK"},
+      {code:"FD-007-0007",description:"Sausages Lamb Breakfast",cost:10.087,uom:"Kg",category:"SAUSAGES"},
+      {code:"FD-006-0001",description:"Eggs 720g",cost:0.454,uom:"Each",category:"POULTRY"},
+      {code:"FD-006-0004",description:"Chicken Supreme Cut 7.5kg",cost:13.9872,uom:"Kg",category:"POULTRY"},
+      {code:"FD-006-0006",description:"Chicken Wings 7.5kg",cost:11.1893,uom:"Kg",category:"POULTRY"},
+      {code:"FD-006-0028",description:"Chicken Thigh 7.5kg",cost:8.9547,uom:"Kg",category:"POULTRY"},
+      {code:"FD-006-0037",description:"Chicken B/Less Thigh 7.5kg",cost:16.224,uom:"Kg",category:"POULTRY"},
+      {code:"FD-009-0001",description:"Ice Cream Chocolate 5L",cost:21.37,uom:"Each",category:"ICE CREAMS"},
+      {code:"FD-009-0009",description:"Ice Cream Strawberry 5L",cost:21.37,uom:"Each",category:"ICE CREAMS"},
+      {code:"FD-009-0012",description:"Ice Cream Vanilla 5L",cost:21.37,uom:"Each",category:"ICE CREAMS"},
+      {code:"FD-010-0004",description:"Cheese Cream 1kg",cost:18.5,uom:"Each",category:"CHEESE"},
+      {code:"FD-010-0006",description:"Cheese Fetta",cost:24.71,uom:"Each",category:"CHEESE"},
+      {code:"FD-010-0011",description:"Cheese Valumetric/Pizza Grated 5kg",cost:21.4992,uom:"Kg",category:"CHEESE"},
+      {code:"FD-010-0077",description:"Cheese Cheddar Slice Anchor 1.04kg",cost:26.156,uom:"Kg",category:"CHEESE"},
+      {code:"FD-011-0003",description:"Margarine Flora 1kg",cost:8.2126,uom:"Each",category:"DAIRY"},
+      {code:"FD-011-0006",description:"Milk Skim UHT 1L",cost:3.0933,uom:"Each",category:"DAIRY"},
+      {code:"FD-011-0009",description:"Whipping Cream 1L",cost:7.5,uom:"Each",category:"DAIRY"},
+      {code:"FD-012-0002",description:"Oil Cooking Canola 20L",cost:65.2525,uom:"Each",category:"OIL"},
+      {code:"BV-135-0618",description:"Juice Real Orange 2L",cost:8.8,uom:"Each",category:"BEVERAGE"},
+      {code:"BV-135-0619",description:"Juice Real Apple 2L",cost:8.8,uom:"Each",category:"BEVERAGE"},
+      {code:"BV-135-0620",description:"Juice Real Tropical 2L",cost:8.8,uom:"Each",category:"BEVERAGE"},
+      {code:"BV-135-0621",description:"Juice Real Pineapple 2L",cost:8.8,uom:"Each",category:"BEVERAGE"},
+      {code:"FD-003-0003",description:"Frozen Corn-on-Cobs",cost:7.7,uom:"Kg",category:"OTHER FROZEN"},
+      {code:"FD-003-0005",description:"Frozen French Fries",cost:4.25,uom:"Kg",category:"OTHER FROZEN"},
+      {code:"FD-003-0009",description:"Frozen Hash Brown",cost:5.9996,uom:"Kg",category:"OTHER FROZEN"},
+      {code:"FD-003-0011",description:"Frozen Potato Wedge",cost:4.9488,uom:"Kg",category:"OTHER FROZEN"},
+      {code:"FD-003-0017",description:"Frozen Cassava",cost:3.0,uom:"Kg",category:"OTHER FROZEN"},
+      {code:"FD-003-0042",description:"Frozen Chicken Dumpling",cost:11.0,uom:"Doz",category:"OTHER FROZEN"},
+    ]
+  }
+};
+
+const ALL_ITEMS = Object.values(OUTLET_DATA).reduce((acc, o) => {
+  o.items.forEach(item => { if (!acc.find(i => i.code === item.code)) acc.push({...item}); });
+  return acc;
+}, []).sort((a,b) => a.description.localeCompare(b.description));
+
+const WASTAGE_REASONS = ["Spoilage - Expired","Spoilage - Temperature","Over-production",
+  "Preparation waste","Portioning error","Dropped / Contaminated","Quality reject",
+  "Menu change","Event cancellation","Other"];
+
+const fmt = n => n != null ? `$${Number(n).toFixed(2)}` : "—";
+
+// ─── STYLES ──────────────────────────────────────────────────────────────────
+const S = {
+  input: {
+    background:"rgba(255,255,255,0.08)", border:"1px solid rgba(255,255,255,0.18)",
+    borderRadius:5, color:"white", fontSize:13, padding:"6px 10px", outline:"none", width:"100%",
+    fontFamily:"'DM Sans', system-ui, sans-serif"
+  },
+  select: {
+    background:"#1a1a2e", border:"1px solid rgba(255,255,255,0.18)",
+    borderRadius:5, color:"white", fontSize:13, padding:"6px 10px", outline:"none",
+    fontFamily:"'DM Sans', system-ui, sans-serif"
+  },
+};
+
+// ─── ORDERING GUIDE ───────────────────────────────────────────────────────────
+function OrderingGuide({ outletName }) {
+  const outlet = OUTLET_DATA[outletName];
+  const [orders, setOrders] = useState({});
+  const [search, setSearch] = useState("");
+  const [filterCat, setFilterCat] = useState("ALL");
+  const [showOrdered, setShowOrdered] = useState(false);
+
+  const handleQty = useCallback((code, qty) => {
+    setOrders(prev => ({...prev, [code]: qty}));
+  }, []);
+
+  const categories = useMemo(() => {
+    const cats = [...new Set(outlet.items.map(i => i.category).filter(Boolean))];
+    return ["ALL", ...cats];
+  }, [outlet]);
+
+  const filtered = useMemo(() => outlet.items.filter(item => {
+    const matchSearch = !search || item.description.toLowerCase().includes(search.toLowerCase()) || item.code.toLowerCase().includes(search.toLowerCase());
+    const matchCat = filterCat === "ALL" || item.category === filterCat;
+    const matchOrdered = !showOrdered || orders[item.code] > 0;
+    return matchSearch && matchCat && matchOrdered;
+  }), [outlet, search, filterCat, showOrdered, orders]);
+
+  const totalValue = useMemo(() =>
+    Object.entries(orders).reduce((sum, [code, qty]) => {
+      const item = outlet.items.find(i => i.code === code);
+      return sum + (item?.cost ? qty * item.cost : 0);
+    }, 0), [orders, outlet]);
+
+  const orderedCount = Object.values(orders).filter(v => v > 0).length;
+
+  const handlePrint = () => {
+    const ordered = outlet.items.filter(i => orders[i.code] > 0);
+    if (!ordered.length) { alert("No items ordered yet."); return; }
+    const today = new Date().toLocaleDateString('en-AU');
+    const rows = ordered.map(i => `
+      <tr>
+        <td style="font-family:monospace;font-size:11px;color:#666">${i.code}</td>
+        <td>${i.description}</td>
+        <td style="text-align:center">${i.uom}</td>
+        <td style="text-align:right;font-weight:600">${orders[i.code]}</td>
+        <td style="text-align:right">$${i.cost.toFixed(2)}</td>
+        <td style="text-align:right;font-weight:700">$${(i.cost * orders[i.code]).toFixed(2)}</td>
+      </tr>`).join('');
+    const win = window.open('','_blank');
+    win.document.write(`<!DOCTYPE html><html><head><title>Order — ${outletName} — ${today}</title>
+    <style>body{font-family:sans-serif;padding:20px;font-size:13px}
+    h2{margin:0 0 4px}p{margin:0 0 16px;color:#666}
+    table{width:100%;border-collapse:collapse}
+    th{background:#1a2b4a;color:white;padding:8px;text-align:left;font-size:11px;letter-spacing:0.06em}
+    td{padding:7px 8px;border-bottom:1px solid #eee}
+    tfoot td{font-weight:700;border-top:2px solid #333;background:#f9f9f9}
+    </style></head><body>
+    <h2>Ordering Guide — ${outletName}</h2>
+    <p>Plantation Island Resort · ${today}</p>
+    <table><thead><tr><th>CODE</th><th>DESCRIPTION</th><th>UOM</th><th>QTY</th><th>UNIT COST</th><th>TOTAL</th></tr></thead>
+    <tbody>${rows}</tbody>
+    <tfoot><tr><td colspan="5">TOTAL ORDER VALUE</td><td style="text-align:right">$${totalValue.toFixed(2)}</td></tr></tfoot>
+    </table></body></html>`);
+    win.document.close();
+    setTimeout(() => win.print(), 400);
+  };
+
+  const colStyle = { display:"grid", gridTemplateColumns:"88px 1fr 72px 50px 72px 80px 28px", gap:"0 8px" };
+
+  return (
+    <div style={{height:"100%", display:"flex", flexDirection:"column"}}>
+      {/* Controls */}
+      <div style={{padding:"12px 16px", borderBottom:"1px solid rgba(255,255,255,0.07)", background:"rgba(0,0,0,0.25)", flexShrink:0}}>
+        <div style={{display:"flex", gap:8, flexWrap:"wrap", alignItems:"center"}}>
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="🔍  Search items or code…"
+            style={{...S.input, flex:1, minWidth:160}} />
+          <select value={filterCat} onChange={e => setFilterCat(e.target.value)} style={{...S.select, minWidth:120}}>
+            {categories.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+          <button onClick={() => setShowOrdered(!showOrdered)} style={{
+            background: showOrdered ? outlet.accent : "rgba(255,255,255,0.1)",
+            border:"none", borderRadius:5, color: showOrdered ? "#000" : "white",
+            fontSize:12, padding:"7px 14px", cursor:"pointer", fontWeight:600, whiteSpace:"nowrap"
+          }}>
+            ✓ Ordered ({orderedCount})
+          </button>
+          <button onClick={handlePrint} style={{
+            background:"rgba(255,255,255,0.1)", border:"1px solid rgba(255,255,255,0.2)",
+            borderRadius:5, color:"white", fontSize:12, padding:"7px 14px", cursor:"pointer"
+          }}>🖨 Print</button>
+          <div style={{marginLeft:"auto", textAlign:"right"}}>
+            <div style={{fontSize:10, color:"#777", letterSpacing:"0.08em"}}>ORDER TOTAL</div>
+            <div style={{fontSize:22, fontWeight:800, color:outlet.accent, lineHeight:1}}>{fmt(totalValue)}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Header row */}
+      <div style={{...colStyle, padding:"6px 16px", background:"rgba(255,255,255,0.04)", borderBottom:"1px solid rgba(255,255,255,0.08)", flexShrink:0}}>
+        {["CODE","DESCRIPTION","UNIT COST","UOM","ORDER QTY","LINE TOTAL",""].map((h,i) => (
+          <span key={i} style={{fontSize:10, fontWeight:700, color:"#666", letterSpacing:"0.07em",
+            textAlign: i===0||i===1 ? "left" : "right"}}>{h}</span>
+        ))}
+      </div>
+
+      {/* Items */}
+      <div style={{flex:1, overflowY:"auto"}}>
+        {filtered.length === 0 && (
+          <div style={{padding:40, textAlign:"center", color:"#444"}}>No items match filters</div>
+        )}
+        {(() => {
+          let lastCat = null;
+          return filtered.map(item => {
+            const showHeader = item.category && item.category !== lastCat;
+            lastCat = item.category;
+            const qty = orders[item.code] || 0;
+            const total = qty && item.cost ? qty * item.cost : null;
+            return (
+              <React.Fragment key={item.code}>
+                {showHeader && (
+                  <div style={{...colStyle, padding:"5px 16px",
+                    background:`linear-gradient(90deg, ${outlet.color}cc, transparent)`,
+                    borderTop:"1px solid rgba(255,255,255,0.05)"}}>
+                    <span style={{fontSize:10, fontWeight:700, letterSpacing:"0.1em",
+                      color:outlet.accent, gridColumn:"1/-1"}}>
+                      {item.category}
+                      {item.par != null && <span style={{marginLeft:10, color:"#888", fontWeight:400}}>PAR: {item.par}</span>}
+                    </span>
+                  </div>
+                )}
+                <div style={{...colStyle, padding:"7px 16px",
+                  borderBottom:"1px solid rgba(255,255,255,0.04)",
+                  background: qty > 0 ? "rgba(255,255,255,0.05)" : "transparent",
+                  alignItems:"center", transition:"background 0.1s"}}>
+                  <span style={{fontSize:11, color:"#555", fontFamily:"'DM Mono', monospace"}}>{item.code}</span>
+                  <span style={{fontSize:13, color: qty > 0 ? "#eee" : "#aaa", fontWeight: qty > 0 ? 600 : 400}}>{item.description}</span>
+                  <span style={{fontSize:12, color:"#888", textAlign:"right", fontFamily:"'DM Mono', monospace"}}>
+                    {item.cost ? `$${item.cost.toFixed(2)}` : "—"}
+                  </span>
+                  <span style={{fontSize:12, color:"#666", textAlign:"right"}}>{item.uom}</span>
+                  <input type="number" min="0" step="0.5" value={qty||""} placeholder="0"
+                    onChange={e => handleQty(item.code, parseFloat(e.target.value)||0)}
+                    style={{...S.input, textAlign:"right", padding:"5px 8px", fontSize:13,
+                      borderColor: qty > 0 ? outlet.accent+"88" : "rgba(255,255,255,0.15)"}}
+                  />
+                  <span style={{fontSize:13, textAlign:"right", fontWeight:700,
+                    color: total ? "#4ade80" : "#333", fontFamily:"'DM Mono', monospace"}}>
+                    {total ? fmt(total) : "—"}
+                  </span>
+                  <span></span>
+                </div>
+              </React.Fragment>
+            );
+          });
+        })()}
+        <div style={{height:40}} />
+      </div>
+    </div>
+  );
+}
+
+// ─── WASTAGE FORM ─────────────────────────────────────────────────────────────
+function WastageForm() {
+  const today = new Date().toISOString().slice(0,10);
+  const [outlet, setOutlet] = useState("Main Kitchen");
+  const [date, setDate] = useState(today);
+  const [chef, setChef] = useState("");
+  const [shift, setShift] = useState("AM");
+  const [entries, setEntries] = useState([{id:1,code:"",description:"",cost:null,uom:"",qty:"",reason:"Spoilage - Expired",note:""}]);
+  const [submitted, setSubmitted] = useState(false);
+
+  const addRow = () => setEntries(p => [...p, {id:Date.now(),code:"",description:"",cost:null,uom:"",qty:"",reason:"Spoilage - Expired",note:""}]);
+  const removeRow = id => setEntries(p => p.filter(e => e.id !== id));
+
+  const updateEntry = (id, field, value) => setEntries(p => p.map(e => {
+    if (e.id !== id) return e;
+    if (field === "description") {
+      const match = ALL_ITEMS.find(i => i.description === value);
+      if (match) return {...e, code:match.code, description:match.description, cost:match.cost, uom:match.uom};
+    }
+    return {...e, [field]: value};
+  }));
+
+  const total = entries.reduce((sum, e) => {
+    const qty = parseFloat(e.qty)||0;
+    return sum + (e.cost && qty ? e.cost * qty : 0);
+  }, 0);
+
+  const handlePrint = () => {
+    const valid = entries.filter(e => e.description && parseFloat(e.qty) > 0);
+    if (!valid.length) { alert("Add at least one item first."); return; }
+    const rows = valid.map(e => {
+      const qty = parseFloat(e.qty);
+      const lineTotal = e.cost ? e.cost * qty : null;
+      return `<tr>
+        <td style="font-family:monospace;font-size:11px;color:#666">${e.code}</td>
+        <td>${e.description}</td>
+        <td style="text-align:center">${e.uom}</td>
+        <td style="text-align:right">${qty}</td>
+        <td style="text-align:right">${e.cost ? '$'+e.cost.toFixed(2) : '—'}</td>
+        <td style="text-align:right;color:#c0392b;font-weight:700">${lineTotal ? '$'+lineTotal.toFixed(2) : '—'}</td>
+        <td>${e.reason}</td>
+        <td style="color:#666">${e.note}</td>
+      </tr>`;}).join('');
+    const win = window.open('','_blank');
+    win.document.write(`<!DOCTYPE html><html><head><title>Wastage — ${outlet} — ${date}</title>
+    <style>body{font-family:sans-serif;padding:20px;font-size:13px}
+    h2{margin:0 0 4px}p{margin:0 0 16px;color:#666}
+    table{width:100%;border-collapse:collapse}
+    th{background:#1a2b4a;color:white;padding:8px;text-align:left;font-size:11px;letter-spacing:0.06em}
+    td{padding:7px 8px;border-bottom:1px solid #eee;vertical-align:top}
+    tfoot td{font-weight:700;border-top:2px solid #333;background:#fff0f0}
+    .sig{margin-top:40px;display:flex;gap:60px}
+    .sig div{border-top:1px solid #333;padding-top:8px;font-size:11px;color:#666;width:180px}
+    </style></head><body>
+    <h2>Wastage Record — ${outlet}</h2>
+    <p>Plantation Island Resort · ${date} · ${shift} Shift · Chef: ${chef||'—'}</p>
+    <table><thead><tr><th>CODE</th><th>ITEM</th><th>UOM</th><th>QTY</th><th>UNIT COST</th><th>LOSS VALUE</th><th>REASON</th><th>NOTES</th></tr></thead>
+    <tbody>${rows}</tbody>
+    <tfoot><tr><td colspan="5">TOTAL WASTAGE VALUE</td><td style="color:#c0392b">$${total.toFixed(2)}</td><td colspan="2"></td></tr></tfoot>
+    </table>
+    <div class="sig">
+      <div>Chef Signature</div>
+      <div>Supervisor Sign-off</div>
+      <div>Date Submitted</div>
+    </div>
+    </body></html>`);
+    win.document.close();
+    setTimeout(() => win.print(), 400);
+  };
+
+  const handleSubmit = () => {
+    setSubmitted(true);
+    setTimeout(() => {
+      setSubmitted(false);
+      setEntries([{id:1,code:"",description:"",cost:null,uom:"",qty:"",reason:"Spoilage - Expired",note:""}]);
+    }, 3500);
+  };
+
+  if (submitted) return (
+    <div style={{display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", height:"100%", gap:12}}>
+      <div style={{fontSize:54}}>✅</div>
+      <div style={{fontSize:22, fontWeight:800, color:"#4ade80"}}>Wastage Recorded</div>
+      <div style={{color:"#888", fontSize:14}}>{outlet} · {date} · {shift} shift</div>
+      <div style={{fontSize:18, color:"#f87171", fontWeight:700, marginTop:4}}>Total loss: {fmt(total)}</div>
+    </div>
+  );
+
+  return (
+    <div style={{height:"100%", display:"flex", flexDirection:"column"}}>
+      {/* Header */}
+      <div style={{padding:"12px 16px", borderBottom:"1px solid rgba(255,255,255,0.07)", background:"rgba(0,0,0,0.25)", flexShrink:0}}>
+        <div style={{display:"flex", gap:10, flexWrap:"wrap", alignItems:"flex-end"}}>
+          {[
+            {label:"OUTLET", el: <select value={outlet} onChange={e=>setOutlet(e.target.value)} style={{...S.select, minWidth:150}}>
+              {Object.keys(OUTLET_DATA).map(o=><option key={o} value={o}>{o}</option>)}</select>},
+            {label:"DATE", el: <input type="date" value={date} onChange={e=>setDate(e.target.value)} style={{...S.input, width:148}} />},
+            {label:"SHIFT", el: <select value={shift} onChange={e=>setShift(e.target.value)} style={{...S.select, width:90}}>
+              <option>AM</option><option>PM</option><option>SPLIT</option></select>},
+            {label:"CHEF / STAFF", el: <input value={chef} onChange={e=>setChef(e.target.value)} placeholder="Name…" style={{...S.input, width:170}} />},
+          ].map(({label,el}) => (
+            <div key={label} style={{display:"flex", flexDirection:"column", gap:3}}>
+              <label style={{fontSize:9, color:"#666", letterSpacing:"0.1em", fontWeight:700}}>{label}</label>
+              {el}
+            </div>
+          ))}
+          <div style={{marginLeft:"auto", textAlign:"right"}}>
+            <div style={{fontSize:10, color:"#777", letterSpacing:"0.08em"}}>TOTAL WASTAGE COST</div>
+            <div style={{fontSize:22, fontWeight:800, color:"#f87171", lineHeight:1}}>{fmt(total)}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Table header */}
+      <div style={{display:"grid", gridTemplateColumns:"1fr 76px 52px 68px 160px 1fr 32px",
+        gap:"0 8px", padding:"6px 16px",
+        background:"rgba(255,255,255,0.04)", borderBottom:"1px solid rgba(255,255,255,0.08)", flexShrink:0}}>
+        {["ITEM","UNIT COST","UOM","QTY","REASON","NOTES",""].map((h,i) => (
+          <span key={i} style={{fontSize:10, fontWeight:700, color:"#666", letterSpacing:"0.07em"}}>{h}</span>
+        ))}
+      </div>
+
+      {/* Rows */}
+      <div style={{flex:1, overflowY:"auto", padding:"6px 0"}}>
+        {entries.map(entry => {
+          const qty = parseFloat(entry.qty)||0;
+          const lineTotal = entry.cost && qty ? entry.cost * qty : null;
+          return (
+            <div key={entry.id} style={{display:"grid", gridTemplateColumns:"1fr 76px 52px 68px 160px 1fr 32px",
+              gap:"0 8px", padding:"6px 16px", borderBottom:"1px solid rgba(255,255,255,0.04)", alignItems:"center"}}>
+              <div>
+                <input list={`items-${entry.id}`} value={entry.description}
+                  onChange={e => updateEntry(entry.id, "description", e.target.value)}
+                  placeholder="Type to search item…" style={S.input} />
+                <datalist id={`items-${entry.id}`}>
+                  {ALL_ITEMS.map(i => <option key={i.code} value={i.description} />)}
+                </datalist>
+              </div>
+              <span style={{fontSize:12, color: entry.cost ? "#4ade80":"#444",
+                fontFamily:"'DM Mono',monospace", textAlign:"right"}}>
+                {entry.cost ? `$${entry.cost.toFixed(2)}` : "—"}
+              </span>
+              <span style={{fontSize:12, color:"#777", textAlign:"center"}}>{entry.uom||"—"}</span>
+              <input type="number" min="0" step="0.1" value={entry.qty} placeholder="0"
+                onChange={e => updateEntry(entry.id, "qty", e.target.value)}
+                style={{...S.input, textAlign:"right"}} />
+              <select value={entry.reason} onChange={e => updateEntry(entry.id, "reason", e.target.value)}
+                style={S.select}>
+                {WASTAGE_REASONS.map(r => <option key={r} value={r}>{r}</option>)}
+              </select>
+              <div style={{display:"flex", alignItems:"center", gap:6}}>
+                <input value={entry.note} onChange={e => updateEntry(entry.id, "note", e.target.value)}
+                  placeholder="Note…" style={{...S.input, flex:1}} />
+                {lineTotal && <span style={{fontSize:12, color:"#f87171", fontWeight:700, whiteSpace:"nowrap",
+                  fontFamily:"'DM Mono',monospace"}}>{fmt(lineTotal)}</span>}
+              </div>
+              <button onClick={() => removeRow(entry.id)} style={{
+                background:"rgba(239,68,68,0.15)", border:"1px solid rgba(239,68,68,0.25)",
+                borderRadius:4, color:"#f87171", cursor:"pointer", fontSize:16,
+                width:30, height:30, display:"flex", alignItems:"center", justifyContent:"center"}}>×</button>
+            </div>
+          );
+        })}
+        <div style={{padding:"10px 16px"}}>
+          <button onClick={addRow} style={{
+            background:"rgba(255,255,255,0.07)", border:"1px dashed rgba(255,255,255,0.2)",
+            borderRadius:5, color:"#aaa", cursor:"pointer", fontSize:13, padding:"7px 20px",
+            width:"100%"}}>+ Add Item</button>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div style={{padding:"12px 16px", borderTop:"1px solid rgba(255,255,255,0.07)",
+        display:"flex", gap:10, alignItems:"center", background:"rgba(0,0,0,0.25)", flexShrink:0}}>
+        <span style={{fontSize:13, color:"#666"}}>{entries.filter(e=>e.description).length} items</span>
+        <div style={{flex:1}} />
+        <button onClick={handlePrint} style={{
+          background:"rgba(255,255,255,0.08)", border:"1px solid rgba(255,255,255,0.15)",
+          borderRadius:5, color:"white", cursor:"pointer", fontSize:13, padding:"8px 18px"}}>🖨 Print</button>
+        <button onClick={handleSubmit} style={{
+          background:"#dc2626", border:"none", borderRadius:5, color:"white",
+          cursor:"pointer", fontSize:13, padding:"8px 24px", fontWeight:700}}>Submit Wastage ›</button>
+      </div>
+    </div>
+  );
+}
+
+// ─── APP SHELL ────────────────────────────────────────────────────────────────
+const TABS = [
+  ...Object.keys(OUTLET_DATA).map(name => ({id:name, label:name, icon:OUTLET_DATA[name].icon, type:"order"})),
+  {id:"wastage", label:"Wastage", icon:"🗑️", type:"wastage"}
+];
+
+function App() {
+  const [active, setActive] = useState("Main Kitchen");
+  const outlet = OUTLET_DATA[active];
+
+  return (
+    <div style={{height:"100vh", display:"flex", flexDirection:"column", overflow:"hidden", background:"#0c0c18", color:"white"}}>
+
+      {/* ── Top bar ── */}
+      <div style={{
+        background:"linear-gradient(135deg, #080d14 0%, #12082a 100%)",
+        borderBottom:"1px solid rgba(255,255,255,0.07)",
+        display:"flex", alignItems:"stretch", flexShrink:0,
+        overflowX:"auto", minHeight:54
+      }}>
+        {/* Brand */}
+        <div style={{display:"flex", alignItems:"center", padding:"0 20px 0 16px",
+          borderRight:"1px solid rgba(255,255,255,0.07)", gap:10, flexShrink:0}}>
+          <div style={{width:28, height:28, borderRadius:6, background:"linear-gradient(135deg,#d4a056,#8b5e1a)",
+            display:"flex", alignItems:"center", justifyContent:"center", fontSize:15}}>👨‍🍳</div>
+          <div>
+            <div style={{fontSize:12, fontWeight:800, letterSpacing:"0.12em", color:"#d4a056"}}>EXECHEF</div>
+            <div style={{fontSize:9, color:"#555", letterSpacing:"0.08em"}}>KITCHEN FORMS · PIR</div>
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div style={{display:"flex", alignItems:"stretch", overflowX:"auto"}}>
+          {TABS.map(tab => {
+            const isActive = active === tab.id;
+            const accentColor = tab.type === "wastage" ? "#f87171" : (OUTLET_DATA[tab.id]?.accent || "#aaa");
+            return (
+              <button key={tab.id} onClick={() => setActive(tab.id)} style={{
+                background: isActive ? `${accentColor}14` : "transparent",
+                border:"none", borderBottom: isActive ? `2px solid ${accentColor}` : "2px solid transparent",
+                color: isActive ? accentColor : "#555",
+                cursor:"pointer", fontSize:12, fontWeight: isActive ? 700 : 500,
+                padding:"0 16px", whiteSpace:"nowrap", display:"flex", alignItems:"center",
+                gap:5, transition:"all 0.15s", flexShrink:0, fontFamily:"'DM Sans', system-ui, sans-serif"
+              }}>
+                <span>{tab.icon}</span>{tab.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Right side label */}
+        <div style={{marginLeft:"auto", display:"flex", alignItems:"center",
+          paddingRight:16, flexShrink:0, gap:6}}>
+          <span style={{fontSize:10, color:"#444"}}>forms.exechef.com</span>
+        </div>
+      </div>
+
+      {/* ── Content ── */}
+      <div style={{flex:1, overflow:"hidden", display:"flex", flexDirection:"column"}}>
+        {active === "wastage" ? (
+          <WastageForm />
+        ) : outlet ? (
+          <OrderingGuide outletName={active} />
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+</body>
+</html>
