@@ -301,30 +301,6 @@
     "heroURL": "/PIR/copra/lunch/loaded-nachos/hero.html"
   },
   {
-    "name": "Fish & Chips",
-    "property": "Plantation Island Resort",
-    "propertyCode": "PIR",
-    "outlet": "Copra Restaurant",
-    "outletSlug": "copra",
-    "service": "Lunch",
-    "serviceSlug": "lunch",
-    "slug": "fish-chips",
-    "code": "—",
-    "price": 34,
-    "dietary": [],
-    "allergens": [
-      "G",
-      "E",
-      "F",
-      "D"
-    ],
-    "cat": "Copra Classics",
-    "desc": "Beer-battered fresh fillet of the day served with crispy potato chips, tartar sauce and a side salad",
-    "image": "/images/PIR/copra/lunch/fish-chips/fish-chips.jpg",
-    "recipeURL": "/PIR/copra/lunch/fish-chips/",
-    "heroURL": "/PIR/copra/lunch/fish-chips/hero.html"
-  },
-  {
     "name": "Tropical Quinoa Salad",
     "property": "Plantation Island Resort",
     "propertyCode": "PIR",
@@ -348,5 +324,29 @@
     "image": "/images/PIR/copra/lunch/tropical-quinoa-salad/tropical-quinoa-salad.jpg",
     "recipeURL": "/PIR/copra/lunch/tropical-quinoa-salad/",
     "heroURL": "/PIR/copra/lunch/tropical-quinoa-salad/hero.html"
+  },
+  {
+    "name": "Fish & Chips",
+    "property": "Plantation Island Resort",
+    "propertyCode": "PIR",
+    "outlet": "Copra Restaurant",
+    "outletSlug": "copra",
+    "service": "Lunch",
+    "serviceSlug": "lunch",
+    "slug": "fish-chips",
+    "code": "—",
+    "price": 34,
+    "dietary": [],
+    "allergens": [
+      "G",
+      "E",
+      "F",
+      "D"
+    ],
+    "cat": "Copra Classics",
+    "desc": "Beer-battered fresh fillet of the day served with crispy potato chips, tartar sauce and a side salad",
+    "image": "/images/PIR/copra/lunch/fish-chips/fish-chips.jpg",
+    "recipeURL": "/PIR/copra/lunch/fish-chips/",
+    "heroURL": "/PIR/copra/lunch/fish-chips/hero.html"
   }
 ]
