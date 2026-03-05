@@ -209,5 +209,28 @@
     "image": "/images/PIR/copra/lunch/smoked-chicken-panini/smoked-chicken-panini.jpg",
     "recipeURL": "/PIR/copra/lunch/smoked-chicken-panini/",
     "heroURL": "/PIR/copra/lunch/smoked-chicken-panini/hero.html"
+  },
+  {
+    "name": "Ham and Cheese Panini",
+    "property": "Plantation Island Resort",
+    "propertyCode": "PIR",
+    "outlet": "Copra Restaurant",
+    "outletSlug": "copra",
+    "service": "Lunch",
+    "serviceSlug": "lunch",
+    "slug": "ham-and-cheese-panini",
+    "code": "—",
+    "price": 33,
+    "dietary": [],
+    "allergens": [
+      "G",
+      "D",
+      "MUS"
+    ],
+    "cat": "Panini",
+    "desc": "Grilled panini with shaved ham, melted cheddar cheese and wholegrain mustard on artisan bread",
+    "image": "/images/PIR/copra/lunch/ham-and-cheese-panini/ham-and-cheese-panini.jpg",
+    "recipeURL": "/PIR/copra/lunch/ham-and-cheese-panini/",
+    "heroURL": "/PIR/copra/lunch/ham-and-cheese-panini/hero.html"
   }
 ]
