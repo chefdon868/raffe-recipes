@@ -299,5 +299,29 @@
     "image": "/images/PIR/copra/lunch/loaded-nachos/loaded-nachos.jpg",
     "recipeURL": "/PIR/copra/lunch/loaded-nachos/",
     "heroURL": "/PIR/copra/lunch/loaded-nachos/hero.html"
+  },
+  {
+    "name": "Fish & Chips",
+    "property": "Plantation Island Resort",
+    "propertyCode": "PIR",
+    "outlet": "Copra Restaurant",
+    "outletSlug": "copra",
+    "service": "Lunch",
+    "serviceSlug": "lunch",
+    "slug": "fish-chips",
+    "code": "—",
+    "price": 34,
+    "dietary": [],
+    "allergens": [
+      "G",
+      "E",
+      "F",
+      "D"
+    ],
+    "cat": "Copra Classics",
+    "desc": "Beer-battered fresh fillet of the day served with crispy potato chips, tartar sauce and a side salad",
+    "image": "/images/PIR/copra/lunch/fish-chips/fish-chips.jpg",
+    "recipeURL": "/PIR/copra/lunch/fish-chips/",
+    "heroURL": "/PIR/copra/lunch/fish-chips/hero.html"
   }
 ]
