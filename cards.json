@@ -278,5 +278,26 @@
     "image": "/images/PIR/copra/lunch/kokoda/kokoda.jpg",
     "recipeURL": "/PIR/copra/lunch/kokoda/",
     "heroURL": "/PIR/copra/lunch/kokoda/hero.html"
+  },
+  {
+    "name": "Loaded Nachos",
+    "property": "Plantation Island Resort",
+    "propertyCode": "PIR",
+    "outlet": "Copra Restaurant",
+    "outletSlug": "copra",
+    "service": "Lunch",
+    "serviceSlug": "lunch",
+    "slug": "loaded-nachos",
+    "code": "—",
+    "price": 34,
+    "dietary": [],
+    "allergens": [
+      "D"
+    ],
+    "cat": "Copra Classics",
+    "desc": "Crispy corn chips topped with spiced beef con carne, melted cheese, fresh tomato salsa, sour cream and guacamole",
+    "image": "/images/PIR/copra/lunch/loaded-nachos/loaded-nachos.jpg",
+    "recipeURL": "/PIR/copra/lunch/loaded-nachos/",
+    "heroURL": "/PIR/copra/lunch/loaded-nachos/hero.html"
   }
 ]
