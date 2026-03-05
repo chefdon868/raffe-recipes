@@ -160,5 +160,30 @@
     "image": "/images/PIR/copra/lunch/caesar-chicken-wrap/caesar-chicken-wrap.jpg",
     "recipeURL": "/PIR/copra/lunch/caesar-chicken-wrap/",
     "heroURL": "/PIR/copra/lunch/caesar-chicken-wrap/hero.html"
+  },
+  {
+    "name": "Caprese Panini",
+    "property": "Plantation Island Resort",
+    "propertyCode": "PIR",
+    "outlet": "Copra Restaurant",
+    "outletSlug": "copra",
+    "service": "Lunch",
+    "serviceSlug": "lunch",
+    "slug": "caprese-panini",
+    "code": "—",
+    "price": 30,
+    "dietary": [
+      "VGN"
+    ],
+    "allergens": [
+      "G",
+      "D",
+      "N"
+    ],
+    "cat": "Panini",
+    "desc": "Fresh mozzarella, vine-ripened tomatoes, baby spinach and basil pesto on toasted artisan bread",
+    "image": "/images/PIR/copra/lunch/caprese-panini/caprese-panini.jpg",
+    "recipeURL": "/PIR/copra/lunch/caprese-panini/",
+    "heroURL": "/PIR/copra/lunch/caprese-panini/hero.html"
   }
 ]
