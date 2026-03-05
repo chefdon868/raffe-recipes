@@ -254,5 +254,29 @@
     "image": "/images/PIR/copra/lunch/classic-blt/classic-blt.jpg",
     "recipeURL": "/PIR/copra/lunch/classic-blt/",
     "heroURL": "/PIR/copra/lunch/classic-blt/hero.html"
+  },
+  {
+    "name": "Kokoda",
+    "property": "Plantation Island Resort",
+    "propertyCode": "PIR",
+    "outlet": "Copra Restaurant",
+    "outletSlug": "copra",
+    "service": "Lunch",
+    "serviceSlug": "lunch",
+    "slug": "kokoda",
+    "code": "—",
+    "price": 26,
+    "dietary": [
+      "GF",
+      "DF"
+    ],
+    "allergens": [
+      "F"
+    ],
+    "cat": "Copra Classics",
+    "desc": "Local reef fish cured in fresh lime and coconut, served island-style with herbs and crisp vegetables",
+    "image": "/images/PIR/copra/lunch/kokoda/kokoda.jpg",
+    "recipeURL": "/PIR/copra/lunch/kokoda/",
+    "heroURL": "/PIR/copra/lunch/kokoda/hero.html"
   }
 ]
