@@ -113,5 +113,28 @@
     "image": "/images/PIR/copra/lunch/pesto-chicken-wrap/pesto-chicken-wrap.jpg",
     "recipeURL": "/PIR/copra/lunch/pesto-chicken-wrap/",
     "heroURL": "/PIR/copra/lunch/pesto-chicken-wrap/hero.html"
+  },
+  {
+    "name": "Spicy Tuna Wrap",
+    "property": "Plantation Island Resort",
+    "propertyCode": "PIR",
+    "outlet": "Copra Restaurant",
+    "outletSlug": "copra",
+    "service": "Lunch",
+    "serviceSlug": "lunch",
+    "slug": "spicy-tuna-wrap",
+    "code": "—",
+    "price": 33,
+    "dietary": [],
+    "allergens": [
+      "G",
+      "E",
+      "F"
+    ],
+    "cat": "Wraps",
+    "desc": "Local tuna marinated in chili and lime, with cucumber, red onion, shredded lettuce and sriracha mayo",
+    "image": "/images/PIR/copra/lunch/spicy-tuna-wrap/spicy-tuna-wrap.jpg",
+    "recipeURL": "/PIR/copra/lunch/spicy-tuna-wrap/",
+    "heroURL": "/PIR/copra/lunch/spicy-tuna-wrap/hero.html"
   }
 ]
