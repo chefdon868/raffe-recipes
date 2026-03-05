@@ -185,5 +185,29 @@
     "image": "/images/PIR/copra/lunch/caprese-panini/caprese-panini.jpg",
     "recipeURL": "/PIR/copra/lunch/caprese-panini/",
     "heroURL": "/PIR/copra/lunch/caprese-panini/hero.html"
+  },
+  {
+    "name": "Smoked Chicken Panini",
+    "property": "Plantation Island Resort",
+    "propertyCode": "PIR",
+    "outlet": "Copra Restaurant",
+    "outletSlug": "copra",
+    "service": "Lunch",
+    "serviceSlug": "lunch",
+    "slug": "smoked-chicken-panini",
+    "code": "—",
+    "price": 32,
+    "dietary": [],
+    "allergens": [
+      "G",
+      "D",
+      "E",
+      "MUS"
+    ],
+    "cat": "Panini",
+    "desc": "Toasted panini with smoked chicken, sharp cheddar, caramelised onions and Dijon mayonnaise on rustic bread",
+    "image": "/images/PIR/copra/lunch/smoked-chicken-panini/smoked-chicken-panini.jpg",
+    "recipeURL": "/PIR/copra/lunch/smoked-chicken-panini/",
+    "heroURL": "/PIR/copra/lunch/smoked-chicken-panini/hero.html"
   }
 ]
