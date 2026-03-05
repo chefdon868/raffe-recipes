@@ -136,5 +136,29 @@
     "image": "/images/PIR/copra/lunch/spicy-tuna-wrap/spicy-tuna-wrap.jpg",
     "recipeURL": "/PIR/copra/lunch/spicy-tuna-wrap/",
     "heroURL": "/PIR/copra/lunch/spicy-tuna-wrap/hero.html"
+  },
+  {
+    "name": "Caesar Chicken Wrap",
+    "property": "Plantation Island Resort",
+    "propertyCode": "PIR",
+    "outlet": "Copra Restaurant",
+    "outletSlug": "copra",
+    "service": "Lunch",
+    "serviceSlug": "lunch",
+    "slug": "caesar-chicken-wrap",
+    "code": "—",
+    "price": 34,
+    "dietary": [],
+    "allergens": [
+      "G",
+      "D",
+      "E",
+      "F"
+    ],
+    "cat": "Wraps",
+    "desc": "Crisp chopped romaine lettuce tossed in creamy Caesar dressing, topped with grilled chicken, crispy bacon and shaved Parmesan",
+    "image": "/images/PIR/copra/lunch/caesar-chicken-wrap/caesar-chicken-wrap.jpg",
+    "recipeURL": "/PIR/copra/lunch/caesar-chicken-wrap/",
+    "heroURL": "/PIR/copra/lunch/caesar-chicken-wrap/hero.html"
   }
 ]
