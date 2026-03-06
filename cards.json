@@ -348,5 +348,28 @@
     "image": "/images/PIR/copra/lunch/fish-chips/fish-chips.jpg",
     "recipeURL": "/PIR/copra/lunch/fish-chips/",
     "heroURL": "/PIR/copra/lunch/fish-chips/hero.html"
+  },
+  {
+    "name": "Gourmet Donut — Double Chocolate",
+    "property": "Lomani Island Resort",
+    "propertyCode": "LOM",
+    "outlet": "BataBata",
+    "outletSlug": "batabata",
+    "service": "All Day",
+    "serviceSlug": "all-day",
+    "slug": "gourmet-donut-double-chocolate",
+    "code": "—",
+    "price": 8,
+    "dietary": [],
+    "allergens": [
+      "G",
+      "D",
+      "E"
+    ],
+    "cat": "Gourmet Donuts",
+    "desc": "House-made fried donut dipped in chocolate ganache and topped with chocolate sprinkles",
+    "image": "/images/LOM/batabata/all-day/gourmet-donut-double-chocolate/gourmet-donut-double-chocolate.jpg",
+    "recipeURL": "/LOM/batabata/all-day/gourmet-donut-double-chocolate/",
+    "heroURL": "/LOM/batabata/all-day/gourmet-donut-double-chocolate/hero.html"
   }
 ]
