@@ -371,5 +371,28 @@
     "image": "/images/LOM/batabata/all-day/gourmet-donut-double-chocolate/gourmet-donut-double-chocolate.jpg",
     "recipeURL": "/LOM/batabata/all-day/gourmet-donut-double-chocolate/",
     "heroURL": "/LOM/batabata/all-day/gourmet-donut-double-chocolate/hero.html"
+  },
+  {
+    "name": "Gourmet Donut — Custard",
+    "property": "Plantation Island Resort",
+    "propertyCode": "PIR",
+    "outlet": "BataBata",
+    "outletSlug": "batabata",
+    "service": "All Day",
+    "serviceSlug": "all-day",
+    "slug": "gourmet-donut-custard",
+    "code": "—",
+    "price": 8,
+    "dietary": [],
+    "allergens": [
+      "G",
+      "D",
+      "E"
+    ],
+    "cat": "Gourmet Donuts",
+    "desc": "House-made fried donut filled with vanilla custard, dusted with icing sugar",
+    "image": "/images/PIR/batabata/all-day/gourmet-donut-custard/gourmet-donut-custard.jpg",
+    "recipeURL": "/PIR/batabata/all-day/gourmet-donut-custard/",
+    "heroURL": "/PIR/batabata/all-day/gourmet-donut-custard/hero.html"
   }
 ]
